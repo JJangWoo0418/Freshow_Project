@@ -1,12 +1,13 @@
-import { Text, View, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { Text, View, SafeAreaView, Image, TouchableOpacity, StatusBar } from 'react-native';
 import { Stack } from 'expo-router';
 import { COLORS, SIZES } from "../constants";
 import { ScrollView } from 'react-native';
 import styles from '../app/components/css/homestyle';
 
 const Home = ({ navigation }) => {
-    return (
+    return (        
         <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor={COLORS.lightWhite} />
             <Stack.Screen
                 options={{
                     headerTitle: "프래시오",
@@ -14,34 +15,36 @@ const Home = ({ navigation }) => {
                     headerShadowVisible: false,
                 }}
             />
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={styles.container}>
-                    <Image
-                        source={require('../assets/fridge-logo.png')}
-                        style={styles.mascot}
-                    />
+            <View
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', alignItems: 'center' }}
+        showsVerticalScrollIndicator={false}
+    >
+        <View style={styles.topContent}>
+            <Image
+                source={require('../assets/Freshow Intro.png')}
+                style={styles.mascot}
+            />
+        </View>
 
-                    <Text style={styles.title}>프래시오</Text>
+        <View style={styles.bottomContent}>
+            <TouchableOpacity
+                style={styles.startButton}
+                onPress={() => navigation.navigate('Main')}
+            >
+                <Image 
+                    source={require('../assets/IntroStartBtn.png')}
+                    style={styles.startButtonText}/>
+            </TouchableOpacity>
 
-                    <Text style={styles.description}>
-                        냉장고를 지켜주면서{'\n'}효율적으로 <Text style={styles.highlight}>레시피</Text>도 알려준다고??
-                    </Text>
-
-                    <TouchableOpacity
-                        style={styles.startButton}
-                        onPress={() => navigation.navigate('Main')}
-                    >
-                        <Text style={styles.startButtonText}>시작하기</Text>
-                    </TouchableOpacity>
-
-                    <Text style={styles.loginText}>
-                        이미 계정이 있나요?{' '}
-                        <Text style={styles.loginLink} onPress={() => navigation.navigate('Login')}>
-                            로그인
-                        </Text>
-                    </Text>
-                </View>
-            </ScrollView>
+            <TouchableOpacity>
+                <Image
+                    source={require('../assets/LoginLinkBtn.png')}
+                    style={styles.loginLink} 
+                    onPress={() => navigation.navigate('Login')}>
+                </Image>
+            </TouchableOpacity>
+        </View>
+    </View>
         </SafeAreaView>
     );
 }

@@ -7,15 +7,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: COLORS.white,
         paddingHorizontal: SIZES.large,
     },
+    topContent: {
+        flex: 1,
+        alignItems: 'center',
+        marginBottom: 20
+    },
+    bottomContent: {
+        alignItems: 'center',
+        marginBottom: 30, // 버튼과 로그인 텍스트의 하단 여백
+    },
     mascot: {
-        width: width * 0.4, // 화면 폭의 40%로 크기 조정
-        height: height * 0.2, // 화면 높이의 20%로 크기 조정
+        width: width * 0.8,
+        height: height * 0.75,
         marginBottom: SIZES.large,
-        resizeMode: 'contain', // 비율을 유지하면서 이미지 크기 조정
+        resizeMode: 'contain',
     },
     title: {
         fontSize: SIZES.xLarge,
@@ -35,11 +43,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     startButton: {
-        backgroundColor: COLORS.primary,
         paddingVertical: SIZES.medium,
-        paddingHorizontal: width * 0.3, // 화면 폭의 30%로 버튼 크기 조정
+        paddingHorizontal: width * 0.3,
         borderRadius: SIZES.radius,
-        marginBottom: SIZES.medium,
+        marginBottom: 2,        
     },
     startButtonText: {
         fontSize: SIZES.large,
@@ -47,12 +54,13 @@ const styles = StyleSheet.create({
         color: COLORS.black,
     },
     loginText: {
-        fontSize: SIZES.small,
+        fontSize: SIZES.medium,
         color: COLORS.gray,
+        marginBottom: 20,
     },
     loginLink: {
-        color: COLORS.primary,
-        fontWeight: 'bold',
+        resizeMode: 'contain',
+        marginTop:10
     },
 });
 
