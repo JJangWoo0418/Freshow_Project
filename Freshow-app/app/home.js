@@ -1,10 +1,11 @@
 import { Text, View, SafeAreaView, Image, TouchableOpacity, StatusBar } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { COLORS, SIZES } from "../constants";
-import { ScrollView } from 'react-native';
 import styles from '../app/components/css/homestyle';
 
-const Home = ({ navigation }) => {
+const Home = () => {
+    const router = useRouter(); // useRouter를 통해 router 사용
+
     return (        
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={COLORS.lightWhite} />
@@ -16,35 +17,37 @@ const Home = ({ navigation }) => {
                 }}
             />
             <View
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', alignItems: 'center' }}
-        showsVerticalScrollIndicator={false}
-    >
-        <View style={styles.topContent}>
-            <Image
-                source={require('../assets/Freshow Intro.png')}
-                style={styles.mascot}
-            />
-        </View>
-
-        <View style={styles.bottomContent}>
-            <TouchableOpacity
-                style={styles.startButton}
-                onPress={() => navigation.navigate('Main')}
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', alignItems: 'center' }}
+                showsVerticalScrollIndicator={false}
             >
-                <Image 
-                    source={require('../assets/IntroStartBtn.png')}
-                    style={styles.startButtonText}/>
-            </TouchableOpacity>
+                <View style={styles.topContent}>
+                    <Image
+                        source={require('../assets/Freshow Intro.png')}
+                        style={styles.mascot}
+                    />
+                </View>
 
-            <TouchableOpacity>
-                <Image
-                    source={require('../assets/LoginLinkBtn.png')}
-                    style={styles.loginLink} 
-                    onPress={() => navigation.navigate('Login')}>
-                </Image>
-            </TouchableOpacity>
-        </View>
-    </View>
+                <View style={styles.bottomContent}>
+                    {/* Start Button */}
+                    <TouchableOpacity
+                        style={styles.startButton}
+                        onPress={() => router.push('/fridgeselect')} // router.push로 페이지 이동
+                    >
+                        <Image 
+                            source={require('../assets/IntroStartBtn.png')}
+                            style={styles.startButtonImage} // 스타일 이름을 그대로 유지
+                        />
+                    </TouchableOpacity>
+
+                    {/* Login Button */}
+                    <TouchableOpacity onPress={() => router.push('/login')}>
+                        <Image
+                            source={require('../assets/LoginLinkBtn.png')}
+                            style={styles.loginLinkImage} // 스타일 이름을 그대로 유지
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </SafeAreaView>
     );
 }
