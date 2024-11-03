@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput } from 'react-native';
-import { Stack } from 'expo-router';
-import styles from '../app/components/css/loginstyle';
+import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, StatusBar } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import styles from './components/css/loginstyle';
 import { COLORS } from "../constants";
 
-const Login = ({ navigation }) => {
+const Login = () => {
+    const router = useRouter();
+
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor={COLORS.lightWhite} />
             <Stack.Screen
                 options={{
                     headerTitle: "프래시오",
@@ -36,7 +39,7 @@ const Login = ({ navigation }) => {
                 <TextInput style={styles.input} placeholder="비밀번호" placeholderTextColor={COLORS.gray} secureTextEntry />
             </View>
 
-            <TouchableOpacity style={styles.startButton} onPress={() => navigation.navigate('Main')}>
+            <TouchableOpacity style={styles.startButton} onPress={() => router.push('Main')}>
                 <Text style={styles.startButtonText}>프래시오 이용하기</Text>
             </TouchableOpacity>
 
@@ -45,7 +48,7 @@ const Login = ({ navigation }) => {
                     <Text style={styles.footerText}>비밀번호 찾기</Text>
                 </TouchableOpacity>
                 <Text style={styles.footerSeparator}>|</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                <TouchableOpacity onPress={() => router.push('Signup')}>
                     <Text style={styles.footerText}>아직 계정이 없으세요? 회원가입하기</Text>
                 </TouchableOpacity>
             </View>
