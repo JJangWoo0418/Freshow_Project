@@ -57,6 +57,6 @@ const FridgeSelect = () => {
             )}
         </View>
     );
-};
+ };
 
 export default FridgeSelect;
