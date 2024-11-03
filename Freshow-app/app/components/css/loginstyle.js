@@ -7,18 +7,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        backgroundColor: '#E6F2F5',
+        backgroundColor: COLORS.White,
         paddingHorizontal: SIZES.large,
     },
     topContent: {
         alignItems: 'center',
-        marginTop: 30,
+        marginTop: 20,
         marginBottom: 20,
     },
     mascot: {
-        width: 80,
-        height: 80,
-        marginBottom: 10,
+        width: 250,
+        height: 250,
         resizeMode: 'contain',
     },
     title: {
@@ -38,18 +37,15 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: "100%",
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 12,
+        marginTop: 2
     },
     socialButton: {
-        width: "90%",
+        width: "110%",
         height: 45,
         justifyContent: "center",
         alignItems: "center",
-        marginVertical: 5,
-        backgroundColor: COLORS.white,
-        borderColor: COLORS.gray,
-        borderWidth: 1,
-        borderRadius: SIZES.radius,
+        marginVertical: 10,
         flexDirection: "row",
     },
     socialIcon: {
@@ -60,25 +56,25 @@ const styles = StyleSheet.create({
     inputContainer: {
         width: "100%",
         alignItems: "center",
-        marginBottom: 20,
+        marginBottom: 5,
     },
     input: {
-        width: "90%",
+        width: "77%",
         height: 45,
         backgroundColor: COLORS.white,
         paddingHorizontal: 10,
         borderRadius: SIZES.radius,
         borderColor: COLORS.gray,
         borderWidth: 1,
-        marginVertical: 5,
+        marginVertical: 8,
+        alignItems: "center",
     },
     startButton: {
         width: "90%",
-        backgroundColor: '#B3E5FC',
         paddingVertical: 12,
         alignItems: "center",
         borderRadius: SIZES.radius,
-        marginBottom: 15,
+        marginBottom: 3,
     },
     startButtonText: {
         fontSize: 16,
@@ -99,7 +95,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: COLORS.gray,
         marginHorizontal: 5,
+        marginLeft: 15,
+        marginRight: 15,
     },
+    stickBar:{
+        width: 300, 
+        height: 3,
+        marginBottom: 20, 
+        marginTop: 2,
+        alignItems: 'center',
+    }
 });
 
 export default styles;

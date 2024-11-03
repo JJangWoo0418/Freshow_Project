@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, StatusBar } from 'react-native';
+import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, StatusBar} from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import styles from './components/css/loginstyle';
 import { COLORS } from "../constants";
@@ -7,13 +7,14 @@ import { COLORS } from "../constants";
 const Login = () => {
     const router = useRouter();
 
-    return (
+    return (        
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor={COLORS.lightWhite} />
+            <StatusBar barStyle="dark-content"/>
+
             <Stack.Screen
                 options={{
                     headerTitle: "프래시오",
-                    headerStyle: { backgroundColor: COLORS.lightWhite },
+                    headerStyle: { backgroundColor: COLORS.lightWhite},
                     headerShadowVisible: false,
                 }}
             />
@@ -34,22 +35,25 @@ const Login = () => {
                 </TouchableOpacity>
             </View>
 
+            <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
+
             <View style={styles.inputContainer}>
                 <TextInput style={styles.input} placeholder="아이디" placeholderTextColor={COLORS.gray} />
                 <TextInput style={styles.input} placeholder="비밀번호" placeholderTextColor={COLORS.gray} secureTextEntry />
             </View>
 
             <TouchableOpacity style={styles.startButton} onPress={() => router.push('Main')}>
-                <Text style={styles.startButtonText}>프래시오 이용하기</Text>
+                <Image source={require('../assets/Btn2.png')} />
             </TouchableOpacity>
 
             <View style={styles.footer}>
                 <TouchableOpacity>
-                    <Text style={styles.footerText}>비밀번호 찾기</Text>
+                    <Image source={require('../assets/PasswordSearch.png')} /> 
                 </TouchableOpacity>
-                <Text style={styles.footerSeparator}>|</Text>
+                
+                <Text style={styles.footerSeparator}> | </Text>
                 <TouchableOpacity onPress={() => router.push('Signup')}>
-                    <Text style={styles.footerText}>아직 계정이 없으세요? 회원가입하기</Text>
+                    <Image source={require('../assets/RegisterBtn.png')} />
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
