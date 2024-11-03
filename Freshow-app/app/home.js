@@ -39,7 +39,7 @@ const Home = () => {
                         />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => router.push('Login')}>
+                    <TouchableOpacity onPress={() => router.push('login')}>
                         <Image
                             source={require('../assets/LoginLinkBtn.png')}
                             style={styles.loginLink}
