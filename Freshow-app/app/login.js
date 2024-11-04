@@ -52,7 +52,7 @@ const Login = () => {
                 </TouchableOpacity>
                 
                 <Text style={styles.footerSeparator}> | </Text>
-                <TouchableOpacity onPress={() => router.push('Signup')}>
+                <TouchableOpacity onPress={() => router.push('register')}>
                     <Image source={require('../assets/RegisterBtn.png')} />
                 </TouchableOpacity>
             </View>
