@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, TextInput, StatusBar } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, TextInput, StatusBar, Image } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import styles from './components/css/registerstyle';
 import { COLORS } from "../constants";
@@ -40,16 +40,16 @@ const Register = () => {
             />
 
             <View style={styles.content}>
-                <Text style={styles.title}>회원가입</Text>
+                <Text style={styles.title}>회원가입                                                </Text>
 
                 <View style={styles.inputContainer}>
                     <TextInput
-                        style={styles.input}
+                        style={styles.idinput}
                         placeholder="아이디"
                         placeholderTextColor={COLORS.gray}
                     />
                     <TouchableOpacity style={styles.duplicateCheckButton}>
-                        <Text style={styles.duplicateCheckText}>중복 확인</Text>
+                        <Image source={require('../assets/duplicatecheckbtn.png')} />
                     </TouchableOpacity>
                 </View>
 
@@ -74,14 +74,15 @@ const Register = () => {
                     <Text style={styles.errorText}>{passwordError}</Text>
                 ) : null}
 
+                <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
+
                 <TouchableOpacity style={styles.registerButton}>
-                    <Text style={styles.registerButtonText}>회원가입</Text>
+                    <Image source={require('../assets/registerbtn2.png')} />
                 </TouchableOpacity>
 
                 <View style={styles.footer}>
-                    <Text style={styles.footerText}>이미 계정이 있나요?</Text>
-                    <TouchableOpacity onPress={() => router.push('Login')}>
-                        <Text style={styles.loginLink}>로그인</Text>
+                    <TouchableOpacity onPress={() => router.push('login')}>
+                        <Image source={require('../assets/registerquestionbtn.png')} />
                     </TouchableOpacity>
                 </View>
             </View>

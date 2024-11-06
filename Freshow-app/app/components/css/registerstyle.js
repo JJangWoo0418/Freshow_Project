@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+        alignItems: 'center',
         justifyContent: 'center',
     },
     title: {
@@ -19,12 +20,23 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         flexDirection: 'row',
+        marginBottom: 9,
+        marginRight: 5
+    },
+    idinput: {
+        height: 40,
+        width: 190,
+        borderColor: COLORS.gray,
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 1,
+        backgroundColor: COLORS.lightGray,
         alignItems: 'center',
-        marginBottom: 15,
     },
     input: {
-        flex: 1,
         height: 40,
+        width: 330,
         borderColor: COLORS.gray,
         borderWidth: 1,
         borderRadius: 5,
@@ -33,11 +45,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.lightGray,
     },
     duplicateCheckButton: {
-        backgroundColor: '#B2DAF4',
-        paddingVertical: 8,
         paddingHorizontal: 15,
-        borderRadius: 5,
-        marginLeft: 10,
+        marginLeft: 8,
+        marginBottom: 1
     },
     duplicateCheckText: {
         color: COLORS.black,
@@ -49,7 +59,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     registerButton: {
-        backgroundColor: '#B2DAF4',
         paddingVertical: 10,
         alignItems: 'center',
         borderRadius: 5,
@@ -73,6 +82,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 5,
     },
+    stickBar:{
+        width: 330, 
+        height: 3,
+        marginBottom: 20, 
+        marginTop: 20,
+        alignItems: 'center',
+    }
 });
 
 export default styles;
