@@ -44,21 +44,29 @@ const FridgeAdd = () => {
             </TouchableOpacity>
 
             <Text style={styles.header}>냉장고 추가</Text>
+            
             <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
-                {image ? <Image source={{ uri: image }} style={styles.image} /> : <Text>사진 등록</Text>}
+                {image ? (
+                    <Image source={{ uri: image }} style={styles.image} />
+                ) : (
+                    <Text style={styles.placeholderText}>사진 등록</Text>
+                )}
             </TouchableOpacity>
+            
             <TextInput
                 placeholder="이름"
                 value={name}
                 onChangeText={setName}
                 style={styles.input}
             />
+            
             <TextInput
                 placeholder="메모"
                 value={description}
                 onChangeText={setDescription}
                 style={styles.input}
             />
+            
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Text style={styles.saveButtonText}>저장</Text>
             </TouchableOpacity>

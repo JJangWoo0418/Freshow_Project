@@ -32,6 +32,10 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderRadius: 8,
     },
+    placeholderText: {
+        fontSize: 18,
+        color: '#555',
+    },
     image: {
         width: '100%',
         height: '100%',
@@ -44,10 +48,10 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 20,
         borderRadius: 8,
-        backgroundColor: '#CDEEFF',
+        backgroundColor: '#F5F5F5',
     },
     saveButton: {
-        backgroundColor: '#CDEEFF',
+        backgroundColor: '#87CEEB',
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
@@ -55,7 +59,7 @@ const styles = StyleSheet.create({
     saveButtonText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#000',
+        color: '#fff',
     },
 });
 
