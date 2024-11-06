@@ -11,10 +11,10 @@ const Login = () => {
 
     // Google 로그인 프로바이더 초기화
     const [request, response, promptAsync] = Google.useAuthRequest({
-        expoClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
-        androidClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
-        iosClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
-        webClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
+        expoClientId: "",
+        androidClientId: "",
+        iosClientId: "",
+        webClientId: "",
     });
 
     React.useEffect(() => {
