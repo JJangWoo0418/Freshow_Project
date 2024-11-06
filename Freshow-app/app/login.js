@@ -1,11 +1,37 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, StatusBar} from 'react-native';
+import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, StatusBar, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import styles from './components/css/loginstyle';
 import { COLORS } from "../constants";
+import * as Google from 'expo-auth-session/providers/google';
+import { firebase } from '../app/firebaseconfig';
 
 const Login = () => {
     const router = useRouter();
+
+    // Google 로그인 프로바이더 초기화
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        expoClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
+        androidClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
+        iosClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
+        webClientId: "408945478098-jpfe9uqqkcbpv4o3vcce37s7qc2aserd.apps.googleusercontent.com",
+    });
+
+    React.useEffect(() => {
+        if (response?.type === 'success') {
+            const { id_token } = response.params;
+            const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+            
+            firebase.auth().signInWithCredential(credential)
+                .then(() => {
+                    Alert.alert("로그인 성공", "Google 로그인에 성공했습니다.");
+                    router.push('Main');
+                })
+                .catch(error => {
+                    Alert.alert("로그인 오류", error.message);
+                });
+        }
+    }, [response]);
 
     return (        
         <SafeAreaView style={styles.container}>
@@ -24,7 +50,11 @@ const Login = () => {
             </View>
 
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.socialButton}>
+                <TouchableOpacity
+                    style={styles.socialButton}
+                    disabled={!request}
+                    onPress={() => promptAsync()}
+                >
                     <Image source={require('../assets/GoogleLoginBtn.png')} style={styles.socialIcon} />             
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.socialButton}>

@@ -47,6 +47,7 @@ const Register = () => {
                         style={styles.idinput}
                         placeholder="아이디"
                         placeholderTextColor={COLORS.gray}
+                        
                     />
                     <TouchableOpacity style={styles.duplicateCheckButton}>
                         <Image source={require('../assets/duplicatecheckbtn.png')} />
@@ -60,6 +61,7 @@ const Register = () => {
                     secureTextEntry
                     value={password}
                     onChangeText={handlePasswordChange}
+                    autoCompleteType="off"
                 />
                 <TextInput
                     style={styles.input}
@@ -68,6 +70,7 @@ const Register = () => {
                     secureTextEntry
                     value={confirmPassword}
                     onChangeText={handleConfirmPasswordChange}
+                    autoCompleteType="off"
                 />
                 
                 {passwordError ? (
