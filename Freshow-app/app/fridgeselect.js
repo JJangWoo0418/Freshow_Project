@@ -73,11 +73,11 @@ const FridgeSelect = () => {
                                 renderLeftActions={() => renderLeftActions(item.id)}
                                 renderRightActions={() => renderRightActions(item)}
                             >
-                                <Card>
+                                <Card containerStyle={{ borderRadius: 15, overflow: 'hidden' }}>
                                     <Card.Title>{item.name}</Card.Title>
                                     <Card.Divider />
                                     <Card.Image source={item.image} style={styles.fridgeImage} />
-                                    <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+                                    <Text style={{ marginBottom: 10 , marginTop:10}}>{item.description}</Text>
                                     <Button
                                         icon={
                                             <MaterialCommunityIcons
@@ -96,6 +96,7 @@ const FridgeSelect = () => {
                                         title="냉장고 보러가기"
                                         onPress={() => router.push('/main')}
                                     />
+                                    <Text style={styles.emptyText}>좌,우로 스와이프하여 삭제, 수정을 해보세요!</Text>
                                 </Card>
                             </Swipeable>
                         )}
@@ -137,8 +138,10 @@ const styles = StyleSheet.create({
         paddingTop: 50,
     },
     emptyText: {
-        fontSize: 18,
+        fontSize: 15,
         color: '#aaa',
+        marginTop: 10,
+        marginBottom: 0,
     },
     fridgeImage: {
         width: '100%',
