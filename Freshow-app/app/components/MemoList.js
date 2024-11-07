@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 
 export default function MemoList() {
-    // 메모 데이터를 임시로 생성
     const memos = [
         { title: '제목1', content: '메모 내용1', color: '#FFFCED' },
         { title: '제목2', content: '메모 내용2', color: '#CFFFD0' },
@@ -16,7 +16,9 @@ export default function MemoList() {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-                <Ionicons name="arrow-back" size={24} color="black" />
+                <Link href="/home">
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </Link>
                 <Text style={styles.headerTitle}>MEMO</Text>
             </View>
             {memos.map((memo, index) => (
