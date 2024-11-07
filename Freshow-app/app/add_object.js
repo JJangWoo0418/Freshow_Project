@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-nativ
 
 export default function App() {
   const [count, setCount] = useState(0);
+  const [selectedType, setSelectedType] = useState("냉장");
 
   const handleCountChange = (delta) => {
     setCount(Math.max(0, count + delta));
@@ -22,20 +23,48 @@ export default function App() {
       </TouchableOpacity>
 
       {/* Image Section */}
-      <View style={styles.imageContainer}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.imageText}>사진 등록</Text>
-        </View>
-      </View>
+      <Text style={styles.label}>사진 등록</Text>
+      <TouchableOpacity style={styles.imageButton}>
+        <Text style={styles.imageButtonText}>사진 등록</Text>
+      </TouchableOpacity>
 
-      {/* Item Type */}
+      {/* Item Type Label and Toggle */}
+      <Text style={styles.label}>물건 종류</Text>
       <View style={styles.itemTypeContainer}>
-        <TouchableOpacity style={styles.itemTypeButton}>
-          <Text style={styles.itemTypeText}>냉장</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.itemTypeButton}>
-          <Text style={styles.itemTypeText}>냉동</Text>
-        </TouchableOpacity>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              selectedType === "냉장" && styles.selectedToggleButton,
+            ]}
+            onPress={() => setSelectedType("냉장")}
+          >
+            <Text
+              style={[
+                styles.toggleButtonText,
+                selectedType === "냉장" && styles.selectedToggleButtonText,
+              ]}
+            >
+              냉장
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              selectedType === "냉동" && styles.selectedToggleButton,
+            ]}
+            onPress={() => setSelectedType("냉동")}
+          >
+            <Text
+              style={[
+                styles.toggleButtonText,
+                selectedType === "냉동" && styles.selectedToggleButtonText,
+              ]}
+            >
+              냉동
+            </Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity style={styles.tagButton}>
           <Text style={styles.tagButtonText}>태그 설정</Text>
         </TouchableOpacity>
@@ -43,7 +72,11 @@ export default function App() {
 
       {/* Name Input */}
       <Text style={styles.label}>이름</Text>
-      <TextInput style={styles.input} placeholder="물건의 이름" />
+      <TextInput
+        style={styles.input}
+        placeholder="물건의 이름"
+        placeholderTextColor="rgba(0, 0, 0, 0.5)"
+      />
 
       {/* Count Section */}
       <Text style={styles.label}>남은 수량</Text>
@@ -55,12 +88,20 @@ export default function App() {
         <TouchableOpacity style={styles.countButton} onPress={() => handleCountChange(1)}>
           <Text style={styles.countButtonText}>+</Text>
         </TouchableOpacity>
-        <TextInput style={styles.quantityInput} placeholder="용량" />
+        <TextInput
+          style={styles.quantityInput}
+          placeholder="용량"
+          placeholderTextColor="rgba(0, 0, 0, 0.5)"
+        />
       </View>
 
       {/* Memo Input */}
       <Text style={styles.label}>메모</Text>
-      <TextInput style={styles.input} placeholder="물건의 메모" />
+      <TextInput
+        style={styles.input}
+        placeholder="물건의 메모"
+        placeholderTextColor="rgba(0, 0, 0, 0.5)"
+      />
 
       {/* Expiration Date */}
       <Text style={styles.label}>유통기한</Text>
@@ -104,47 +145,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#000",
   },
   barcodeButtonText: {
     fontSize: 16,
     color: "#333",
   },
-  imageContainer: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  imagePlaceholder: {
-    width: "80%",
-    height: 120,
+  imageButton: {
     backgroundColor: "#E0F7FA",
-    justifyContent: "center",
+    paddingVertical: 20,
     alignItems: "center",
     borderRadius: 8,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#000",
   },
-  imageText: {
+  imageButtonText: {
     color: "#333",
+    fontSize: 16,
   },
   itemTypeContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
-  itemTypeButton: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
+  toggleContainer: {
+    flexDirection: "row",
     borderRadius: 8,
-    backgroundColor: "#B3E5FC",
-    marginHorizontal: 5,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#000",
   },
-  itemTypeText: {
+  toggleButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#B3E5FC",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  selectedToggleButton: {
+    backgroundColor: "#81D4FA",
+  },
+  toggleButtonText: {
     color: "#333",
+  },
+  selectedToggleButtonText: {
+    fontWeight: "bold",
   },
   tagButton: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
     backgroundColor: "#FFB6C1",
+    borderWidth: 1,
+    borderColor: "#000",
+    marginLeft: 10,
   },
   tagButtonText: {
     color: "#333",
@@ -156,7 +212,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "#ddd",
+    borderColor: "#000",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -174,7 +230,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#000",
   },
   countButtonText: {
     fontSize: 20,
@@ -187,7 +243,7 @@ const styles = StyleSheet.create({
   },
   quantityInput: {
     height: 40,
-    borderColor: "#ddd",
+    borderColor: "#000",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -200,6 +256,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#000",
   },
   dateButtonText: {
     color: "#333",
