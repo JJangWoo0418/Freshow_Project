@@ -15,12 +15,14 @@ const Login = () => {
         androidClientId: "",
         iosClientId: "",
         webClientId: "",
+        scopes: ["profile", "email"],
+        // redirectUri: "https://auth.expo.io/@shim010418/Freshow-App"
     });
 
     React.useEffect(() => {
         if (response?.type === 'success') {
-            const { id_token } = response.params;
-            const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+            const { authentication } = response;
+            const credential = firebase.auth.GoogleAuthProvider.credential(authentication.idToken);
             
             firebase.auth().signInWithCredential(credential)
                 .then(() => {
@@ -53,7 +55,7 @@ const Login = () => {
                 <TouchableOpacity
                     style={styles.socialButton}
                     disabled={!request}
-                    onPress={() => promptAsync()}
+                    onPress={() => promptAsync({ useProxy: true })}
                 >
                     <Image source={require('../assets/GoogleLoginBtn.png')} style={styles.socialIcon} />             
                 </TouchableOpacity>
