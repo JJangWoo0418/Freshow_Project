@@ -10,12 +10,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom:0,
     },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#3b5998',
+    // headerTitle: {
+    //     fontSize: 24,
+    //     fontWeight: 'bold',
+    //     color: '#3b5998',
+    // },
+    logo: {
+        marginTop: 20,
+        marginLeft: 0,
+        resizeMode: 'contain',
+        width: 1,
+        height: 1,
     },
     addButton: {
         backgroundColor: '#CDEEFF',
@@ -68,6 +75,64 @@ const styles = StyleSheet.create({
     settingsButtonText: {
         fontSize: 18,
         color: '#000',
+    },
+
+
+
+
+
+
+    container: {
+        flex: 2,
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15,
+        backgroundColor: '#CDEEFF',
+    },
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    addButton: {
+        backgroundColor: '#CDEEFF',
+        padding: 10,
+        borderRadius: 20,
+    },
+    addButtonText: {
+        fontSize: 24,
+        color: '#000',
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 50,
+    },
+    emptyText: {
+        fontSize: 18,
+        color: '#aaa',
+    },
+    fridgeImage: {
+        width: '100%',
+        height: 200,
+    },
+    deleteButton: {
+        backgroundColor: '#FFB3B3',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 75,
+    },
+    editButton: {
+        backgroundColor: '#B3D9FF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 75,
+    },
+    actionText: {
+        color: '#fff',
+        fontSize: 16,
     },
 });
 

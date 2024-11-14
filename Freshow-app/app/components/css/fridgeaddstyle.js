@@ -4,7 +4,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#ffffff',
+        color: 'white'
     },
     backButton: {
         position: 'absolute',
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#3b5998',
+        color: '#ffffff',
         marginBottom: 20,
         textAlign: 'center',
     },
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
-        borderRadius: 8,
+        borderRadius: 10,
     },
     placeholderText: {
         fontSize: 18,
