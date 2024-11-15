@@ -54,7 +54,10 @@ const FridgeAdd = () => {
         <View style={styles.container}>
             {/* 뒤로 가기 버튼 */}
             <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Text style={styles.backButtonText}>←</Text>
+                <Image
+                        source={require('../assets/Arrow-Left.png')}
+                        style={styles.backButtonImage}
+                    />
             </TouchableOpacity>
 
             <Text style={styles.header}>냉장고 추가</Text>

@@ -17,6 +17,13 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: '#3b5998',
     },
+    backButtonImage: {
+        width: 24,  // 적절한 크기로 설정
+        height: 24,
+        resizeMode: 'contain',
+        marginTop: 10,
+        marginBottom: 22
+    },
     header: {
         fontSize: 24,
         fontWeight: 'bold',

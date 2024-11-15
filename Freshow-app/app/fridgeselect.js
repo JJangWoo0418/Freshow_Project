@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Alert, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { db } from '../firebaseConfig';
-import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, setDoc } from "firebase/firestore";
+import styles from './components/css/fridgeselectstyle';
 
 const FridgeSelect = () => {
     const router = useRouter();
@@ -20,18 +21,31 @@ const FridgeSelect = () => {
         setFridges(fridgesData);
     };
 
-    // 새로운 냉장고 추가
+    // 새로운 냉장고 추가 (순차적 ID 생성)
     const addFridge = async (fridgeData) => {
         const fridgeCollection = collection(db, "fridges");
-        await addDoc(fridgeCollection, fridgeData);
-        fetchFridges(); // 데이터를 추가한 후 다시 불러옵니다.
+
+        const fridgeSnapshot = await getDocs(fridgeCollection);
+        const fridgeIds = fridgeSnapshot.docs.map(doc => doc.id);
+
+        const maxId = fridgeIds.reduce((max, id) => {
+            const num = parseInt(id.replace('fridge', ''));
+            return num > max ? num : max;
+        }, 0);
+
+        const newId = `fridge${maxId + 1}`;
+        const fridgeDoc = doc(fridgeCollection, newId);
+        await setDoc(fridgeDoc, fridgeData);
+
+        // 추가 후 즉시 최신 데이터를 불러옴
+        fetchFridges();
     };
 
     // 냉장고 삭제
     const deleteFridge = async (id) => {
         const fridgeDoc = doc(db, "fridges", id);
         await deleteDoc(fridgeDoc);
-        fetchFridges(); // 데이터를 삭제한 후 다시 불러옵니다.
+        fetchFridges(); 
     };
 
     // 삭제 확인 알림
@@ -65,7 +79,7 @@ const FridgeSelect = () => {
                 <View style={styles.header}>
                     <Image
                         source={require('../assets/Freshow.png')}
-                        style={styles.mascot}
+                        style={styles.freshow}
                     />
                     <TouchableOpacity style={styles.addButton} onPress={() => router.push('/fridgeadd')}>
                         <Image
@@ -124,66 +138,9 @@ const FridgeSelect = () => {
                 </Swipeable>
             )}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.container} // 스타일 적용
+            contentContainerStyle={styles.container}
         />
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        paddingBottom: 20, // 하단 여백 추가
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-        backgroundColor: '#CDEEFF',
-    },
-    mascot: {
-        width: 50,
-        height: 50,
-    },
-    addButton: {
-        padding: 10,
-        borderRadius: 20,
-    },
-    emptyContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 50,
-    },
-    emptyText: {
-        fontSize: 18,
-        color: '#aaa',
-    },
-    infoText: {
-        fontSize: 15,
-        color: '#aaa',
-        marginLeft: 50,
-        marginTop: 10,
-    },
-    fridgeImage: {
-        width: '100%',
-        height: 200,
-        borderRadius: 10,
-    },
-    deleteButton: {
-        backgroundColor: '#FFB3B3',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 75,
-    },
-    editButton: {
-        backgroundColor: '#B3D9FF',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 75,
-    },
-    actionText: {
-        color: '#fff',
-        fontSize: 16,
-    },
-});
 
 export default FridgeSelect;
