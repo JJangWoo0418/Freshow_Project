@@ -8,7 +8,6 @@ import {
   Modal,
 } from "react-native";
 import { Camera } from "expo-camera";
-import { BarCodeScanner } from "expo-barcode-scanner";
 
 export default function App() {
   const [count, setCount] = useState(0);
@@ -42,9 +41,9 @@ export default function App() {
     setIsCameraOpen(false);
   };
 
-  const handleBarCodeScanned = async ({ type, data }) => {
+  const handleBarCodeScanned = async ({ data: barcodeData }) => {
     setIsCameraOpen(false); // 바코드를 인식하면 카메라를 닫음
-    await fetchProductInfo(data); // 바코드 번호로 정보 조회
+    await fetchProductInfo(barcodeData); // 바코드 번호로 정보 조회
   };
 
   const fetchProductInfo = async (barcode) => {
@@ -85,9 +84,12 @@ export default function App() {
       {isCameraOpen && (
         <Modal visible={isCameraOpen} animationType="slide">
           <View style={styles.cameraContainer}>
-            <BarCodeScanner
-              onBarCodeScanned={handleBarCodeScanned}
+            <Camera
               style={styles.camera}
+              onBarCodeScanned={handleBarCodeScanned}
+              barCodeScannerSettings={{
+                barCodeTypes: [Camera?.Constants?.BarCodeType?.ean13],
+              }}
             />
             <TouchableOpacity style={styles.closeButton} onPress={closeCamera}>
               <Text style={styles.closeButtonText}>닫기</Text>
