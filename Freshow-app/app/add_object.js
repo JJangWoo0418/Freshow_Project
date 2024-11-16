@@ -14,6 +14,7 @@ export default function App() {
   const [selectedType, setSelectedType] = useState("냉장");
   const [hasPermission, setHasPermission] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [productInfo, setProductInfo] = useState(null); // 바코드로 가져온 상품 정보 상태
 
   const API_KEY = "47ca0c2f56d24717bafb"; // 한국식품안전정보원 API 키
@@ -30,6 +31,10 @@ export default function App() {
   };
 
   const openCamera = () => {
+    if (hasPermission === null) {
+      alert("카메라 권한을 확인 중입니다. 잠시만 기다려 주세요.");
+      return;
+    }
     if (hasPermission) {
       setIsCameraOpen(true);
     } else {
@@ -42,17 +47,20 @@ export default function App() {
   };
 
   const handleBarCodeScanned = async ({ data: barcodeData }) => {
-    setIsCameraOpen(false); // 바코드를 인식하면 카메라를 닫음
-    await fetchProductInfo(barcodeData); // 바코드 번호로 정보 조회
+    if (isScanning) return; // 중복 호출 방지
+    setIsScanning(true);
+    setIsCameraOpen(false); // 카메라 닫기
+    await fetchProductInfo(barcodeData);
+    setIsScanning(false);
   };
 
   const fetchProductInfo = async (barcode) => {
     try {
       const response = await fetch(
-        `http://openapi.foodsafetykorea.go.kr/api/${API_KEY}/I2570/json/1/5/BRCD_NO=${barcode}`
+        `http://openapi.foodsafetykorea.go.kr/api/${API_KEY}/I2570/json/1/5/?BRCD_NO=${barcode}`
       );
       const data = await response.json();
-      if (data.I2570.row && data.I2570.row.length > 0) {
+      if (data.I2570?.row?.length > 0) {
         setProductInfo({
           name: data.I2570.row[0].PRDT_NM,
           manufacturer: data.I2570.row[0].BSSH_NM,
@@ -84,16 +92,16 @@ export default function App() {
       {isCameraOpen && (
         <Modal visible={isCameraOpen} animationType="slide">
           <View style={styles.cameraContainer}>
-            <Camera
-              style={styles.camera}
-              onBarCodeScanned={handleBarCodeScanned}
-              barCodeScannerSettings={{
-                barCodeTypes: [Camera?.Constants?.BarCodeType?.ean13],
-              }}
-            />
-            <TouchableOpacity style={styles.closeButton} onPress={closeCamera}>
+            <TouchableOpacity style={styles.closeButtonTop} onPress={closeCamera}>
               <Text style={styles.closeButtonText}>닫기</Text>
             </TouchableOpacity>
+            <Camera
+              style={styles.camera}
+              onBarCodeScanned={isScanning ? undefined : handleBarCodeScanned}
+              barCodeScannerSettings={{
+                barCodeTypes: [Camera.Constants.BarCodeType.ean13],
+              }}
+            />
           </View>
         </Modal>
       )}
@@ -107,13 +115,12 @@ export default function App() {
         </View>
       )}
 
-      {/* Image Section */}
+      {/* Remaining components... */}
       <Text style={styles.label}>사진 등록</Text>
       <TouchableOpacity style={styles.imageButton}>
         <Text style={styles.imageButtonText}>사진 등록</Text>
       </TouchableOpacity>
 
-      {/* Item Type Label and Toggle */}
       <Text style={styles.label}>물건 종류</Text>
       <View style={styles.itemTypeContainer}>
         <View style={styles.toggleContainer}>
@@ -155,7 +162,6 @@ export default function App() {
         </TouchableOpacity>
       </View>
 
-      {/* Name Input */}
       <Text style={styles.label}>이름</Text>
       <TextInput
         style={styles.input}
@@ -163,7 +169,6 @@ export default function App() {
         placeholderTextColor="rgba(0, 0, 0, 0.5)"
       />
 
-      {/* Count Section */}
       <Text style={styles.label}>남은 수량</Text>
       <View style={styles.countContainer}>
         <TouchableOpacity style={styles.countButton} onPress={() => handleCountChange(-1)}>
@@ -180,7 +185,6 @@ export default function App() {
         />
       </View>
 
-      {/* Memo Input */}
       <Text style={styles.label}>메모</Text>
       <TextInput
         style={styles.input}
@@ -188,7 +192,6 @@ export default function App() {
         placeholderTextColor="rgba(0, 0, 0, 0.5)"
       />
 
-      {/* Expiration Date */}
       <Text style={styles.label}>유통기한</Text>
       <TouchableOpacity style={styles.dateButton}>
         <Text style={styles.dateButtonText}>유통기한 인식하기</Text>
