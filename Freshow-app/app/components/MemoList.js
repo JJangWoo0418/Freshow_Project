@@ -32,6 +32,10 @@ export default function MemoList() {
                 id: doc.id,
                 ...doc.data(),
             }));
+
+            // 수정된 시간 기준으로 내림차순 정렬
+            fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds);
+
             setMemos(fetchedMemos);
         } catch (error) {
             console.error('Error fetching memos:', error);
@@ -106,6 +110,28 @@ export default function MemoList() {
         }
     };
 
+    // 시간 차이를 "n시간 전" 또는 "몇분 전" 형식으로 표시하는 함수
+    const getTimeAgo = (timestamp) => {
+        if (!timestamp) return '';
+        const now = new Date();
+        const updatedAt = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp.seconds * 1000); // Firebase timestamp 처리
+        const diffInSeconds = Math.floor((now - updatedAt) / 1000);
+
+        if (diffInSeconds < 60) {
+            return `${diffInSeconds}초 전`;
+        }
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        if (diffInMinutes < 60) {
+            return `${diffInMinutes}분 전`;
+        }
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        if (diffInHours < 24) {
+            return `${diffInHours}시간 전`;
+        }
+        const diffInDays = Math.floor(diffInHours / 24);
+        return `${diffInDays}일 전`;
+    };
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -173,6 +199,9 @@ export default function MemoList() {
                                 >
                                     <Ionicons name="ellipsis-vertical" size={20} color="black" />
                                 </TouchableOpacity>
+
+                                {/* 수정된 시간 표시 */}
+                                <Text style={styles.timeAgo}>{getTimeAgo(memo.updatedAt)}</Text>
                             </View>
                         ))}
 
@@ -182,8 +211,9 @@ export default function MemoList() {
                                     <View style={styles.modalOverlay} />
                                 </TouchableWithoutFeedback>
                                 <View style={styles.optionsMenu}>
+                                    {/* X 버튼을 close 버튼으로 변경 */}
                                     <TouchableOpacity
-                                        style={styles.closeButton}
+                                        style={styles.closeButton} // 수정된 스타일
                                         onPress={() => setShowOptions(false)}
                                     >
                                         <Ionicons name="close" size={24} color="black" />
@@ -191,52 +221,34 @@ export default function MemoList() {
                                     <View style={styles.colorGrid}>
                                         <TouchableOpacity
                                             onPress={() => updateMemoColor('#FFFCED')}
-                                            style={[
-                                                styles.colorOption,
-                                                { backgroundColor: '#FFFCED' },
-                                            ]}
+                                            style={[styles.colorOption, { backgroundColor: '#FFFCED' }]}
                                         />
                                         <TouchableOpacity
                                             onPress={() => updateMemoColor('#CFFFD0')}
-                                            style={[
-                                                styles.colorOption,
-                                                { backgroundColor: '#CFFFD0' },
-                                            ]}
+                                            style={[styles.colorOption, { backgroundColor: '#CFFFD0' }]}
                                         />
                                         <TouchableOpacity
                                             onPress={() => updateMemoColor('#FFD9C8')}
-                                            style={[
-                                                styles.colorOption,
-                                                { backgroundColor: '#FFD9C8' },
-                                            ]}
+                                            style={[styles.colorOption, { backgroundColor: '#FFD9C8' }]}
                                         />
                                         <TouchableOpacity
                                             onPress={() => updateMemoColor('#D6CFFF')}
-                                            style={[
-                                                styles.colorOption,
-                                                { backgroundColor: '#D6CFFF' },
-                                            ]}
+                                            style={[styles.colorOption, { backgroundColor: '#D6CFFF' }]}
                                         />
                                         <TouchableOpacity
-                                            onPress={() => updateMemoColor('#D9D9D9')}
-                                            style={[
-                                                styles.colorOption,
-                                                { backgroundColor: '#D9D9D9' },
-                                            ]}
+                                            onPress={() => updateMemoColor('#E0F7FA')}
+                                            style={[styles.colorOption, { backgroundColor: '#E0F7FA' }]}
                                         />
                                         <TouchableOpacity
-                                            onPress={() => updateMemoColor('#FFF7BF')}
-                                            style={[
-                                                styles.colorOption,
-                                                { backgroundColor: '#FFF7BF' },
-                                            ]}
+                                            onPress={() => updateMemoColor('#FFF3E0')}
+                                            style={[styles.colorOption, { backgroundColor: '#FFF3E0' }]}
                                         />
                                     </View>
                                     <TouchableOpacity
-                                        onPress={() => deleteMemo(selectedMemo.id)}
                                         style={styles.deleteOption}
+                                        onPress={() => deleteMemo(selectedMemo.id)}
                                     >
-                                        <Text>삭제하기</Text>
+                                        <Text style={{ color: 'red' }}>삭제</Text>
                                     </TouchableOpacity>
                                 </View>
                             </Modal>

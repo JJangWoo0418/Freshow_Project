@@ -52,6 +52,7 @@ export const styles = StyleSheet.create({
     memoContent: {
         fontFamily: 'ONE Mobile POP',
         fontSize: 14,
+        height:100,
         color: '#555',
         textAlign: 'left',
         marginBottom: 100,

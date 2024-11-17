@@ -73,6 +73,14 @@ export default StyleSheet.create({
         fontSize: 12,
         textAlignVertical: 'top',
     },
+    titleInput: {
+        width: '100%',
+        height: 30,
+        fontFamily: "ONE Mobile POP",
+        color: '#000',
+        fontSize: 20,
+        textAlignVertical: 'top',
+    },
     ingredientSection: {
         borderRadius: 12,
         borderWidth: 1,
@@ -117,4 +125,35 @@ export default StyleSheet.create({
         height: '100%',
         borderRadius: 4,
     },
+    
+    popupContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)', // 배경을 반투명하게
+    },
+    popupContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    popupText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'green',
+    },
+    closeButton: {
+        marginTop: 10,
+        backgroundColor: '#CDEEFF', // 변경된 색상
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: 'black',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
 });
