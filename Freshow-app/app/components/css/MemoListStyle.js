@@ -1,4 +1,4 @@
-// MemoListStyles.js
+// MemoListStyle.js
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -17,41 +17,61 @@ export const styles = StyleSheet.create({
         fontSize: 24,
     },
     memoCard: {
-        borderRadius: 12,
-        padding: 20, // 패딩을 더 넓게 설정하여 메모 카드 크기 증가
-        marginBottom: 16,
+        // 기존 스타일에 position: 'relative' 추가
+        position: 'relative',
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 8,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     memoHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 10, // 제목과 점 세게 부분을 위로 올리기 위한 마진 감소
+        alignItems: 'center',
+    },
+    menuButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+    },
+    memoCardTouchable: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 10,
+        borderRadius: 8,
     },
     memoTitle: {
         fontFamily: 'ONE Mobile POP',
         fontSize: 18,
-        textAlign: 'left', // 제목 왼쪽 정렬
+        textAlign: 'left',
     },
     memoContent: {
         fontFamily: 'ONE Mobile POP',
-        fontSize: 14, // 메모 내용 글자 크기 작게 조정
+        fontSize: 14,
         color: '#555',
-        textAlign: 'left', // 메모 내용 왼쪽 정렬
+        textAlign: 'left',
         marginBottom: 100,
     },
-    modalBackground: {
+    modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
-    colorPicker: {
+    optionsMenu: {
+        position: 'absolute',
+        alignSelf: 'center',
+        top: '40%',
         backgroundColor: 'white',
         padding: 16,
         borderRadius: 8,
+    },
+    colorGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        width: '80%',
-        justifyContent: 'space-around',
+        justifyContent: 'center',
     },
     colorOption: {
         width: 40,
@@ -62,9 +82,5 @@ export const styles = StyleSheet.create({
     deleteOption: {
         alignItems: 'center',
         marginTop: 16,
-    },
-    deleteText: {
-        fontSize: 16,
-        color: 'gray',
     },
 });
