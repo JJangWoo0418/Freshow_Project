@@ -1,13 +1,13 @@
-import React from 'react';
-import { Text, View, SafeAreaView, Image, TouchableOpacity, StatusBar } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Button, Alert, Text, TextInput, SafeAreaView, Image, TouchableOpacity, StatusBar } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { COLORS } from "../constants";
-import styles from '../app/components/css/homestyle';
+import styles from './components/css/homestyle';
 
 const Home = () => {
     const router = useRouter();
 
-    return (        
+    return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={COLORS.lightWhite} />
             <Stack.Screen
@@ -17,38 +17,54 @@ const Home = () => {
                     headerShadowVisible: false,
                 }}
             />
-            <View
-                contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', alignItems: 'center' }}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.topContent}>
+            <View style={styles.topContent}>
+                <Image
+                    source={require('../assets/Freshow Intro.png')}
+                    style={styles.mascot}
+                />
+            </View>
+
+            <View style={styles.bottomContent}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="아이디"
+                    placeholderTextColor={COLORS.gray}
+                />
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="비밀번호"
+                    placeholderTextColor={COLORS.gray}
+                    secureTextEntry
+                    autoCompleteType="off"
+                />
+
+                <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => router.push('Main')}
+                >
+                    <Image source={require('../assets/LoginBtn.png')}/>
+                </TouchableOpacity>
+
+                <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
+
+                <TouchableOpacity style={styles.kakaoButton}>
                     <Image
-                        source={require('../assets/Freshow Intro.png')}
-                        style={styles.mascot}
+                        source={require('../assets/KakaoBtn.png')}
+                        style={styles.socialIcon}
                     />
-                </View>
+                </TouchableOpacity>
 
-                <View style={styles.bottomContent}>
-                    <TouchableOpacity
-                        style={styles.startButton}
-                        onPress={() => router.push('Main')}
-                    >
-                        <Image 
-                            source={require('../assets/IntroStartBtn.png')}
-                            style={styles.startButtonText}
-                        />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => router.push('login')}>
-                        <Image
-                            source={require('../assets/LoginLinkBtn.png')}
-                            style={styles.loginLink}
-                        />
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={() => router.push('register')}>
+                    <Image 
+                        source={require('../assets/RegisterBtn.png')}
+                        style={styles.registerBtn}
+                    />
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
 }
 
 export default Home;
+

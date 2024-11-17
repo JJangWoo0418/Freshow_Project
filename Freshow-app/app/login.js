@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, SafeAreaView, Image, TouchableOpacity, TextInput, StatusBar, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import styles from './components/css/loginstyle';
