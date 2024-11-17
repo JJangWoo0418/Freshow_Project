@@ -9,11 +9,11 @@ const Home = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" backgroundColor={COLORS.lightWhite} />
+            <StatusBar barStyle="dark-content" backgroundColor={COLORS.White} />
             <Stack.Screen
                 options={{
                     headerTitle: "프래시오",
-                    headerStyle: { backgroundColor: COLORS.lightWhite },
+                    headerStyle: { backgroundColor: COLORS.White },
                     headerShadowVisible: false,
                 }}
             />
@@ -27,7 +27,7 @@ const Home = () => {
             <View style={styles.bottomContent}>
                 <TextInput
                     style={styles.input}
-                    placeholder="아이디"
+                    placeholder="이메일"
                     placeholderTextColor={COLORS.gray}
                 />
 

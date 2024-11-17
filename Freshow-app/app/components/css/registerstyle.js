@@ -17,13 +17,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: COLORS.black,
         marginBottom: 20,
+        marginRight: 245,
     },
     inputContainer: {
         flexDirection: 'row',
         marginBottom: 9,
         marginRight: 5
     },
-    idinput: {
+    emailinput: {
         height: 40,
         width: 190,
         borderColor: COLORS.gray,
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
         marginBottom: 1,
         backgroundColor: COLORS.lightGray,
         alignItems: 'center',
+        marginLeft: 13,
     },
     input: {
         height: 40,
