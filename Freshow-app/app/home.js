@@ -1,13 +1,18 @@
+// home.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../app/components/css/style';
 
+import { db } from '../firebase';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+
 export default function FridgeApp() {
     const [memo, setMemo] = useState('');
     const [isMemoFocused, setIsMemoFocused] = useState(false);
     const [date, setDate] = useState(new Date());
+    const [memos, setMemos] = useState([]);
 
     const [ingredients, setIngredients] = useState([
         { name: '한우', expiryDays: 3, image: require('../assets/삼겹살.jpg') },
@@ -15,11 +20,24 @@ export default function FridgeApp() {
         { name: '상추', expiryDays: 10, image: require('../assets/채소.png') },
     ]);
 
-    const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+    // Firestore에서 메모 가져오기
+    const fetchMemos = async () => {
+        const querySnapshot = await getDocs(collection(db, "memos"));
+        const fetchedMemos = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setMemos(fetchedMemos);
+    };
+
+    useEffect(() => {
+        fetchMemos();
+    }, []);
+
+    // Firestore에 메모 추가하기
+    const addMemo = async () => {
+        if (memo.trim()) {
+            await addDoc(collection(db, "memos"), { content: memo, createdAt: new Date() });
+            setMemo(''); // 입력창 초기화
+            fetchMemos(); // 메모 목록 갱신
+        }
     };
 
     useEffect(() => {
@@ -62,10 +80,13 @@ export default function FridgeApp() {
                 </Link>
             </View>
 
-            {/* 메모 및 날짜와 햄버거 버튼 영역 */}
+            {/* 메모 및 저장, 햄버거 버튼 영역 */}
             <View style={styles.memoSection}>
                 <View style={styles.memoHeader}>
-                    <Text style={styles.memoDate}>{formatDate(date)}</Text>
+                    <TouchableOpacity onPress={addMemo} style={styles.saveButton}>
+                        <Ionicons name="arrow-back" size={24} color="black" />
+                        <Text>저장</Text>
+                    </TouchableOpacity>
                     <Link href="/components/MemoList" style={styles.menuIcon}>
                         <Ionicons name="menu" size={24} color="black" />
                     </Link>
@@ -81,6 +102,7 @@ export default function FridgeApp() {
                 />
             </View>
 
+            {/* 재료 관리 영역 */}
             <View style={styles.ingredientSection}>
                 <Text style={styles.sectionTitle}>재료관리</Text>
                 {ingredients.map((ingredient, index) => (
