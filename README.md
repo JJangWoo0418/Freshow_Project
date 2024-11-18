@@ -1,1 +1,3 @@
-👋 Refrigerator management software
+# 👋 Refrigerator management software
+
+![IntroPageScreenShot](Freshow-app/assets/IntroPageFigma.png)
