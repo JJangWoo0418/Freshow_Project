@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import { db } from '../firebaseConfig';
+import { db } from './firebaseconfig';
 import { collection, getDocs, doc, deleteDoc, setDoc } from "firebase/firestore";
 import styles from './components/css/fridgeselectstyle';
 
