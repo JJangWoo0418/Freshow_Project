@@ -1,11 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { View, Button, Alert, Text, TextInput, SafeAreaView, Image, TouchableOpacity, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Alert, Text, TextInput, SafeAreaView, Image, TouchableOpacity, StatusBar } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { COLORS } from "../constants";
 import styles from './components/css/homestyle';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const Home = () => {
-    const router = useRouter();
+    const router = useRouter(); // 페이지 이동을 위한 router
+    const [email, setEmail] = useState(''); // 이메일 입력 상태
+    const [password, setPassword] = useState(''); // 비밀번호 입력 상태
+
+    // Firebase Authentication 인스턴스 가져오기
+    const auth = getAuth();
+
+    // 로그인 처리 함수
+    const handleLogin = async () => {
+        if (!email || !password) {
+            // 이메일 또는 비밀번호가 입력되지 않았을 경우 경고 메시지 표시
+            Alert.alert('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.');
+            console.log('입력 오류', '이메일과 비밀번호를 모두 입력해주세요.')
+            return;
+        }
+
+        try {
+            // Firebase Authentication을 통해 사용자 로그인 처리
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // 로그인 성공 시 메시지와 함께 메인 페이지로 이동
+            Alert.alert('로그인 성공', `${user.email}님, 환영합니다!`);
+            console.log('로그인 성공', `${user.email}님, 환영합니다!`)
+            router.push('Main');
+        } catch (error) {
+            // 로그인 실패 시 오류 메시지 표시
+            console.error('Login Error:', error);
+            console.log('로그인 실패', '이메일 또는 비밀번호를 확인해주세요.')
+            Alert.alert('로그인 실패', '이메일 또는 비밀번호를 확인해주세요.');
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -18,6 +50,7 @@ const Home = () => {
                 }}
             />
             <View style={styles.topContent}>
+                {/* 상단에 마스코트 이미지 */}
                 <Image
                     source={require('../assets/Freshow Intro.png')}
                     style={styles.mascot}
@@ -25,29 +58,38 @@ const Home = () => {
             </View>
 
             <View style={styles.bottomContent}>
+                {/* 이메일 입력 필드 */}
                 <TextInput
                     style={styles.input}
                     placeholder="이메일"
                     placeholderTextColor={COLORS.gray}
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
                 />
 
+                {/* 비밀번호 입력 필드 */}
                 <TextInput
                     style={styles.input}
                     placeholder="비밀번호"
                     placeholderTextColor={COLORS.gray}
                     secureTextEntry
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
                     autoCompleteType="off"
                 />
 
+                {/* 로그인 버튼 */}
                 <TouchableOpacity
                     style={styles.loginButton}
-                    onPress={() => router.push('Main')}
+                    onPress={handleLogin} // 로그인 함수 호출
                 >
                     <Image source={require('../assets/LoginBtn.png')}/>
                 </TouchableOpacity>
 
+                {/* 구분선 */}
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
 
+                {/* 소셜 로그인 버튼 (예: 카카오) */}
                 <TouchableOpacity style={styles.kakaoButton}>
                     <Image
                         source={require('../assets/KakaoBtn.png')}
@@ -55,6 +97,7 @@ const Home = () => {
                     />
                 </TouchableOpacity>
 
+                {/* 회원가입 버튼 */}
                 <TouchableOpacity onPress={() => router.push('register')}>
                     <Image 
                         source={require('../assets/RegisterBtn.png')}
@@ -67,4 +110,3 @@ const Home = () => {
 }
 
 export default Home;
-

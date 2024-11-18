@@ -53,7 +53,7 @@ const Register = () => {
             const user = await signup({ name: email, email, password });
             
             // Firestore 데이터베이스에 사용자 정보 저장
-            await addDoc(collection(db, 'users'), {
+            await addDoc(collection(db, '계정'), {
                 uid: user.uid, // 사용자 고유 ID
                 email: user.email, // 이메일
                 name: email, // 이름 (여기서는 이메일과 동일)
