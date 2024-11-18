@@ -9,7 +9,7 @@ import { collection, addDoc } from 'firebase/firestore';
 
 const Register = () => {
     const router = useRouter(); // 화면 이동을 위한 useRouter
-    const [email, setEmail] = useState(''); // 이메일 입력 상태
+    const [username, setUsername] = useState(''); // 아이디 입력 상태
     const [password, setPassword] = useState(''); // 비밀번호 입력 상태
     const [confirmPassword, setConfirmPassword] = useState(''); // 비밀번호 확인 입력 상태
     const [passwordError, setPasswordError] = useState(''); // 비밀번호 오류 메시지 상태
@@ -37,7 +37,7 @@ const Register = () => {
     // 회원가입 처리 함수
     const handleSignup = async () => {
         // 입력 필드가 비어 있으면 경고창 출력
-        if (!email || !password || !confirmPassword) {
+        if (!username || !password || !confirmPassword) {
             Alert.alert('입력 오류', '모든 입력 필드를 채워주세요.');
             return;
         }
@@ -49,19 +49,18 @@ const Register = () => {
         }
 
         try {
-            // Firebase Authentication을 사용해 회원가입 처리
-            const user = await signup({ name: email, email, password });
-            
+            // Firebase Authentication을 사용해 회원가입 처리 (기본 이메일로 가입 필요)
+            const user = await signup({ name: username, email: `${username}@example.com`, password });
+
             // Firestore 데이터베이스에 사용자 정보 저장
             await addDoc(collection(db, '계정'), {
                 uid: user.uid, // 사용자 고유 ID
-                email: user.email, // 이메일
-                name: email, // 이름 (여기서는 이메일과 동일)
+                username, // 사용자 아이디
                 createdAt: new Date(), // 생성 날짜
             });
 
             // 성공 메시지와 함께 홈 화면으로 이동
-            Alert.alert('회원가입 성공', `${user.displayName}님, 환영합니다!`);
+            Alert.alert('회원가입 성공', `${username}님, 환영합니다!`);
             console.log('회원가입 성공!');
             router.push('home'); // 'home' 화면으로 이동
         } catch (error) {
@@ -88,26 +87,16 @@ const Register = () => {
             <View style={styles.content}>
                 <Text style={styles.title}>회원가입</Text> 
 
-                {/* 이메일 입력 */}
+                {/* 아이디 입력 */}
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.emailinput}
-                        placeholder="이메일"
+                        placeholder="아이디"
                         placeholderTextColor={COLORS.gray}
-                        value={email}
-                        onChangeText={(text) => setEmail(text)} // 이메일 상태 업데이트
+                        value={username}
+                        onChangeText={(text) => setUsername(text)} // 아이디 상태 업데이트
                     />
-                    <TouchableOpacity style={styles.duplicateCheckButton}>
-                        <Image source={require('../assets/EmailAuthBtn.png')} /> {/* 이메일 인증 버튼 */}
-                    </TouchableOpacity>
                 </View>
-
-                {/* 이메일 인증 키 입력 */}
-                <TextInput
-                    style={styles.input}
-                    placeholder="이메일 인증 키"
-                    placeholderTextColor={COLORS.gray}
-                />
 
                 {/* 비밀번호 입력 */}
                 <TextInput
