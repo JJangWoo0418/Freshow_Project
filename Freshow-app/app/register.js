@@ -38,13 +38,13 @@ const Register = () => {
     const handleSignup = async () => {
         // 입력 필드가 비어 있으면 경고창 출력
         if (!username || !password || !confirmPassword) {
-            Alert.alert('입력 오류', '모든 입력 필드를 채워주세요.');
+            Alert.alert('🚨 모든 입력 필드를 채워주세요.');
             return;
         }
 
         // 비밀번호와 확인 비밀번호가 다르면 경고창 출력
         if (password !== confirmPassword) {
-            Alert.alert('비밀번호 오류', '비밀번호가 일치하지 않습니다.');
+            Alert.alert('🚨 비밀번호가 일치하지 않습니다.');
             return;
         }
 
@@ -60,14 +60,14 @@ const Register = () => {
             });
 
             // 성공 메시지와 함께 홈 화면으로 이동
-            Alert.alert('회원가입 성공', `${username}님, 환영합니다!`);
+            Alert.alert('🎉 회원가입 성공', `${username}님, 환영합니다!`);
             console.log('회원가입 성공!');
             router.push('home'); // 'home' 화면으로 이동
         } catch (error) {
             // 오류 발생 시 콘솔 출력 및 경고창 표시
             console.error('Signup Error:', error);
-            console.log('회원가입 실패!');
-            Alert.alert('회원가입 실패', error.message);
+            console.log('이미 사용중인 아이디입니다!');
+            Alert.alert('🚨 이미 사용중인 아이디입니다!');
         }
     };
 

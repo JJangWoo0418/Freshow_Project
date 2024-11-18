@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
     emailinput: {
         height: 40,
-        width: 190,
+        width: 330,
         borderColor: COLORS.gray,
         borderWidth: 1,
         borderRadius: 5,
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         marginBottom: 1,
         backgroundColor: COLORS.lightGray,
         alignItems: 'center',
-        marginLeft: 13,
+        marginLeft: 5,
     },
     input: {
         height: 40,

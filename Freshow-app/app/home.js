@@ -17,7 +17,7 @@ const Home = () => {
     const handleLogin = async () => {
         if (!username || !password) {
             // 아이디 또는 비밀번호가 입력되지 않았을 경우 경고 메시지 표시
-            Alert.alert('입력 오류', '아이디와 비밀번호를 모두 입력해주세요.');
+            Alert.alert('🚨 입력 오류', '아이디와 비밀번호를 모두 입력해주세요.');
             console.log('입력 오류', '아이디와 비밀번호를 모두 입력해주세요.');
             return;
         }
@@ -31,14 +31,14 @@ const Home = () => {
             const user = userCredential.user;
 
             // 로그인 성공 시 메시지와 함께 메인 페이지로 이동
-            Alert.alert('로그인 성공', `${username}님, 환영합니다!`);
+            Alert.alert('👏 로그인 성공', `${username}님, 환영합니다!`);
             console.log('로그인 성공', `${username}님, 환영합니다!`);
             router.push('Main'); // 메인 페이지로 이동
         } catch (error) {
             // 로그인 실패 시 오류 메시지 표시
             console.error('Login Error:', error);
             console.log('로그인 실패', '아이디 또는 비밀번호를 확인해주세요.');
-            Alert.alert('로그인 실패', '아이디 또는 비밀번호를 확인해주세요.');
+            Alert.alert('🚨 로그인 실패', '아이디 또는 비밀번호를 확인해주세요.');
         }
     };
 
