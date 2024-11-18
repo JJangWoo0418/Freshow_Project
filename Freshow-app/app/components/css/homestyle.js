@@ -1,66 +1,81 @@
-import { StyleSheet, Dimensions } from "react-native";
-import { COLORS, FONT, SIZES } from "../../../constants";
-
-const { width, height } = Dimensions.get("window");
+import { StyleSheet } from 'react-native';
+import { COLORS, SIZES } from '../../../constants';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        backgroundColor: COLORS.white,
-        paddingHorizontal: SIZES.large,
+        backgroundColor: COLORS.White,
     },
     topContent: {
-        flex: 1,
         alignItems: 'center',
-        marginBottom: 20
-    },
-    bottomContent: {
-        alignItems: 'center',
-        marginBottom: 30, // 버튼과 로그인 텍스트의 하단 여백
+        marginTop: 50,
     },
     mascot: {
-        width: width * 0.8,
-        height: height * 0.75,
-        marginBottom: SIZES.large,
+        width: 350,
+        height: 350,
         resizeMode: 'contain',
     },
-    title: {
-        fontSize: SIZES.xLarge,
-        fontFamily: FONT.bold,
-        color: COLORS.black,
-        marginBottom: SIZES.small,
-    },
-    description: {
-        fontSize: SIZES.medium,
+    subtitle: {
+        marginTop: 20,
+        fontSize: SIZES.large,
         color: COLORS.black,
         textAlign: 'center',
-        marginBottom: SIZES.large,
-        lineHeight: SIZES.large,
     },
-    highlight: {
-        color: COLORS.accent,
-        fontWeight: 'bold',
+    bottomContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
     },
-    startButton: {
-        paddingVertical: SIZES.medium,
-        paddingHorizontal: width * 0.3,
-        borderRadius: SIZES.radius,
-        marginBottom: 2,        
+    input: {
+        width: '95%',
+        height: 50,
+        borderColor: COLORS.gray,
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        marginBottom: 15,
     },
-    startButtonText: {
-        fontSize: SIZES.large,
-        fontWeight: 'bold',
-        color: COLORS.black,
+    loginButton: {
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8,
+        marginBottom: 15,
     },
-    loginText: {
+    loginButtonText: {
+        color: COLORS.white,
         fontSize: SIZES.medium,
-        color: COLORS.gray,
-        marginBottom: 20,
+        fontWeight: 'bold',
     },
-    loginLink: {
+    kakaoButton: {
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    socialIcon: {
+        width: '80%',
+        height: '80%',
         resizeMode: 'contain',
-        marginTop:10
+    },
+    registerLink: {
+        color: COLORS.gray,
+        fontSize: SIZES.medium,
+        textDecorationLine: 'underline',
+        marginTop: 15,
+    },
+    stickBar:{
+        width: 350, 
+        height: 3,
+        marginBottom: 20, 
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    registerBtn: {
+        marginTop: 10,
     },
 });
 
