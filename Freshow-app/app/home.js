@@ -42,7 +42,7 @@ const Home = () => {
         }
     };
 
-    return (
+    return (        
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={COLORS.White} />
             <Stack.Screen
@@ -88,7 +88,6 @@ const Home = () => {
                 >
                     <Image source={require('../assets/LoginBtn.png')} />
                 </TouchableOpacity>
-
                 {/* 구분선 */}
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
 
@@ -99,6 +98,7 @@ const Home = () => {
                         style={styles.socialIcon}
                     />
                 </TouchableOpacity>
+                
 
                 {/* 회원가입 버튼 */}
                 <TouchableOpacity onPress={() => router.push('register')}>
@@ -111,5 +111,6 @@ const Home = () => {
         </SafeAreaView>
     );
 }
+
 
 export default Home;
