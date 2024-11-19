@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router'; // expo-router 사용
 import { Ionicons } from '@expo/vector-icons';
 
 export default function FridgeApp() {
-    const navigation = useNavigation();
+    const router = useRouter(); // router 사용
     const [memo, setMemo] = useState('');
     const [isMemoFocused, setIsMemoFocused] = useState(false);
     const [date, setDate] = useState(new Date());
@@ -46,7 +46,14 @@ export default function FridgeApp() {
 
             <View style={styles.topIcons}>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('RecipeRecommendation')}
+                    onPress={() =>
+                        router.push({
+                            pathname: '/recipelist',
+                            params: {
+                                ingredients: ingredients.map((ingredient) => ingredient.name), // 냉장고 재료 이름 리스트 전달
+                            },
+                        })
+                    }
                     style={styles.iconWrapper}
                 >
                     <Image source={require('../assets/레시피북.png')} style={styles.icon} />
@@ -54,7 +61,7 @@ export default function FridgeApp() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('AddIngredient')}
+                    onPress={() => router.push('/addingredient')}
                     style={styles.iconWrapper}
                 >
                     <Image source={require('../assets/냉장고.png')} style={styles.icon} />
@@ -69,7 +76,7 @@ export default function FridgeApp() {
                 {isMemoFocused && (
                     <TouchableOpacity
                         style={styles.menuIcon}
-                        onPress={() => navigation.navigate('MemoList')}
+                        onPress={() => router.push('/memolist')}
                     >
                         <Ionicons name="menu" size={24} color="black" />
                     </TouchableOpacity>
