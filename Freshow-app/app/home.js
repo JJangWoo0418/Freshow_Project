@@ -10,11 +10,14 @@ import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore
 export default function FridgeApp() {
     const [memo, setMemo] = useState('');
     const [title, setTitle] = useState('');
-    const [isMemoFocused, setIsMemoFocused] = useState(false);
-    const [date, setDate] = useState(new Date());
     const [memos, setMemos] = useState([]);
     const [ingredients, setIngredients] = useState([]);
     const [showPopup, setShowPopup] = useState(false); // 저장 후 알림 표시 상태
+
+    /* 사용안하는 코드라 삭제해도 될거 같음
+    const [isMemoFocused, setIsMemoFocused] = useState(false);
+    const [date, setDate] = useState(new Date());
+    */
 
     // Firestore에서 메모 가져오기
     const fetchMemos = async () => {
