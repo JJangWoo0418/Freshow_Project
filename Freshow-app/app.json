@@ -5,9 +5,55 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": [
+              "https://devrepo.kakao.com/nexus/content/groups/public/"
+            ],
+            "newArchEnabled": true
+          },
+          "ios":{
+            "newArchEnabled": true
+          }
+        }
+      ],
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "7918f5af5f6725651803eb6d8411f64e",
+          "android": {
+            "authCodeHandlerActivity": true
+          },
+          "ios": {
+            "handleKakaoOpenUrl": true
+          }
+        }
+      ]
     ],
     "name": "Freshow-App",
-    "slug": "Freshow-App"
+    "slug": "Freshow-App",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2ce3950e-43df-4898-8984-45a111a9efce"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2ce3950e-43df-4898-8984-45a111a9efce"
+    },
+    "android": {
+      "package": "com.shim010418.FreshowApp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.shim010418.FreshowApp"
+    }
   }
 }
