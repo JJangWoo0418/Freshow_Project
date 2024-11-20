@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, Modal } from 'react-native';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../app/components/css/style';
 
@@ -8,6 +8,7 @@ import { db } from '../app/firebase';
 import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
 
 export default function FridgeApp() {
+    const router = useRouter(); // expo-router 사용
     const [memo, setMemo] = useState('');
     const [title, setTitle] = useState('');
     const [memos, setMemos] = useState([]);
@@ -86,23 +87,29 @@ export default function FridgeApp() {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-                <Link href="../" style={styles.backButton}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="black" />
-                </Link>
+                </TouchableOpacity>
                 <Text style={styles.title}>냉장고 이름</Text>
                 <View style={{ width: 24 }} />
             </View>
 
             <View style={styles.topIcons}>
-                <Link href="/recipe-recommendation" style={styles.iconWrapper}>
+                <TouchableOpacity
+                    onPress={() => router.push('/recipelist')}
+                    style={styles.iconWrapper}
+                >
                     <Image source={require('../assets/레시피북.png')} style={styles.icon} />
                     <Text style={styles.iconText}>레시피 추천</Text>
-                </Link>
+                </TouchableOpacity>
 
-                <Link href="/add-ingredient" style={styles.iconWrapper}>
+                <TouchableOpacity
+                    onPress={() => router.push('/add-ingredient')}
+                    style={styles.iconWrapper}
+                >
                     <Image source={require('../assets/냉장고.png')} style={styles.icon} />
                     <Text style={styles.iconText}>재료 추가</Text>
-                </Link>
+                </TouchableOpacity>
             </View>
 
             {/* 메모 및 제목, 햄버거 버튼 영역 */}
@@ -116,9 +123,9 @@ export default function FridgeApp() {
                         onBlur={handleBlur}
                         onSubmitEditing={handleSubmitEditing}
                     />
-                    <Link href="/components/MemoList" style={styles.menuIcon}>
+                    <TouchableOpacity onPress={() => router.push('/components/MemoList')} style={styles.menuIcon}>
                         <Ionicons name="menu" size={24} color="black" />
-                    </Link>
+                    </TouchableOpacity>
                 </View>
                 <TextInput
                     style={styles.memoInput}
