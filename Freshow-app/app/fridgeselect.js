@@ -118,7 +118,7 @@ const FridgeSelect = () => {
                                 <Card.Title>{item.name}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image source={item.image} style={styles.fridgeImage} />
-                                <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+                                <Text style={{ marginBottom: 10, marginTop:10, color: '#aaa'}}>{item.description}</Text>
                                 <Button
                                     icon={
                                         <MaterialCommunityIcons
