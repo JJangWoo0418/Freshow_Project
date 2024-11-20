@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Alert, Image, ScrollView, StatusBar} from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -73,73 +73,79 @@ const FridgeSelect = () => {
     }, [newFridge]);
 
     return (
-        <FlatList
-            data={fridges}
-            ListHeaderComponent={
-                <View style={styles.header}>
+        <View style={{ flex: 1 }}>
+            <StatusBar barStyle="dark-content"/>
+            {/* Header를 ScrollView와 FlatList 외부에 배치 */}
+            <View style={styles.header}>
+                <Image
+                    source={require('../assets/Freshow.png')}
+                    style={styles.freshow}
+                />
+                <TouchableOpacity style={styles.addButton} onPress={() => router.push('/fridgeadd')}>
                     <Image
-                        source={require('../assets/Freshow.png')}
-                        style={styles.freshow}
+                        source={require('../assets/plus.png')}
+                        style={styles.mascot}
                     />
-                    <TouchableOpacity style={styles.addButton} onPress={() => router.push('/fridgeadd')}>
-                        <Image
-                            source={require('../assets/plus.png')}
-                            style={styles.mascot}
-                        />
-                    </TouchableOpacity>
-                </View>
-            }
-            ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>냉장고가 없습니다. + 버튼을 눌러 추가하세요.</Text>
-                </View>
-            }
-            renderItem={({ item }) => (
-                <Swipeable
-                    renderLeftActions={() => (
-                        <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(item.id)}>
-                            <Text style={styles.actionText}>삭제</Text>
-                        </TouchableOpacity>
-                    )}
-                    renderRightActions={() => (
-                        <TouchableOpacity
-                            style={styles.editButton}
-                            onPress={() => router.push('/fridgeedit', { fridge: JSON.stringify(item) })}
+                </TouchableOpacity>
+            </View>
+
+            {/* Scrollable content */}
+            <ScrollView>
+                <FlatList
+                    data={fridges}
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>냉장고가 없습니다. + 버튼을 눌러 추가하세요.</Text>
+                        </View>
+                    }
+                    renderItem={({ item }) => (
+                        <Swipeable
+                            renderLeftActions={() => (
+                                <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(item.id)}>
+                                    <Text style={styles.actionText}>삭제</Text>
+                                </TouchableOpacity>
+                            )}
+                            renderRightActions={() => (
+                                <TouchableOpacity
+                                    style={styles.editButton}
+                                    onPress={() => router.push('/fridgeedit', { fridge: JSON.stringify(item) })}
+                                >
+                                    <Text style={styles.actionText}>수정</Text>
+                                </TouchableOpacity>
+                            )}
                         >
-                            <Text style={styles.actionText}>수정</Text>
-                        </TouchableOpacity>
-                    )}
-                >
-                    <Card>
-                        <Card.Title>{item.name}</Card.Title>
-                        <Card.Divider />
-                        <Card.Image source={item.image} style={styles.fridgeImage} />
-                        <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-                        <Button
-                            icon={
-                                <MaterialCommunityIcons
-                                    name="fridge"
-                                    size={20}
-                                    color="#ffffff"
-                                    style={{ marginRight: 10 }}
+                            <Card>
+                                <Card.Title>{item.name}</Card.Title>
+                                <Card.Divider />
+                                <Card.Image source={item.image} style={styles.fridgeImage} />
+                                <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+                                <Button
+                                    icon={
+                                        <MaterialCommunityIcons
+                                            name="fridge"
+                                            size={20}
+                                            color="#ffffff"
+                                            style={{ marginRight: 10 }}
+                                        />
+                                    }
+                                    buttonStyle={{
+                                        borderRadius: 10,
+                                        marginLeft: 0,
+                                        marginRight: 0,
+                                        marginBottom: 0,
+                                    }}
+                                    title="냉장고 보러가기"
+                                    onPress={() => router.push('/main')}
                                 />
-                            }
-                            buttonStyle={{
-                                borderRadius: 10,
-                                marginLeft: 0,
-                                marginRight: 0,
-                                marginBottom: 0,
-                            }}
-                            title="냉장고 보러가기"
-                            onPress={() => router.push('/main')}
-                        />
-                        <Text style={styles.infoText}>좌우로 스와이프하여 설정해보세요!</Text>
-                    </Card>
-                </Swipeable>
-            )}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.container}
-        />
+                                <Text style={styles.infoText}>좌우로 스와이프하여 설정해보세요!</Text>
+                            </Card>
+                        </Swipeable>
+                    )}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={styles.container}
+                />
+            </ScrollView>
+        </View>
     );
 };
 
