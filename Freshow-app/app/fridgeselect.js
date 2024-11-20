@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Alert, Image, ScrollView, StatusBar} from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Alert, Image, ScrollView, StatusBar } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,13 +12,16 @@ const FridgeSelect = () => {
     const router = useRouter();
     const { newFridge } = useLocalSearchParams();
     const [fridges, setFridges] = useState([]);
+    const [isFetching, setIsFetching] = useState(false);
 
     // Firestore에서 냉장고 데이터 가져오기
     const fetchFridges = async () => {
+        setIsFetching(true);
         const fridgeCollection = collection(db, "fridges");
         const fridgeSnapshot = await getDocs(fridgeCollection);
         const fridgesData = fridgeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setFridges(fridgesData);
+        setIsFetching(false);
     };
 
     // 새로운 냉장고 추가 (순차적 ID 생성)
@@ -68,13 +71,18 @@ const FridgeSelect = () => {
     useEffect(() => {
         if (newFridge) {
             const parsedFridge = JSON.parse(newFridge);
-            addFridge(parsedFridge);
+
+            // 중복 방지: 같은 냉장고 이름이 이미 있는지 확인
+            const isDuplicate = fridges.some((fridge) => fridge.name === parsedFridge.name);
+            if (!isDuplicate) {
+                addFridge(parsedFridge);
+            }
         }
     }, [newFridge]);
 
     return (
         <View style={{ flex: 1 }}>
-            <StatusBar barStyle="dark-content"/>
+            <StatusBar barStyle="dark-content" />
             {/* Header를 ScrollView와 FlatList 외부에 배치 */}
             <View style={styles.header}>
                 <Image
@@ -135,7 +143,7 @@ const FridgeSelect = () => {
                                         marginBottom: 0,
                                     }}
                                     title="냉장고 보러가기"
-                                    onPress={() => router.push('/main')}
+                                    onPress={() => router.push('/mainpage')}
                                 />
                                 <Text style={styles.infoText}>좌우로 스와이프하여 설정해보세요!</Text>
                             </Card>

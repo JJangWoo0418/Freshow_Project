@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../app/components/css/style';
 
-import { db } from '../firebase';
+import { db } from '../app/firebase';
 import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
 
 export default function FridgeApp() {
@@ -12,12 +12,7 @@ export default function FridgeApp() {
     const [title, setTitle] = useState('');
     const [memos, setMemos] = useState([]);
     const [ingredients, setIngredients] = useState([]);
-    const [showPopup, setShowPopup] = useState(false); // 저장 후 알림 표시 상태
-
-    /* 사용안하는 코드라 삭제해도 될거 같음
-    const [isMemoFocused, setIsMemoFocused] = useState(false);
-    const [date, setDate] = useState(new Date());
-    */
+    const [showPopup, setShowPopup] = useState(false);
 
     // Firestore에서 메모 가져오기
     const fetchMemos = async () => {
@@ -76,7 +71,6 @@ export default function FridgeApp() {
         }
     };
 
-    // 제목과 메모 입력 시 자동저장 방지 및 저장
     const handleBlur = () => {
         if (memo.trim() && title.trim()) {
             handleMemoSave();
@@ -132,7 +126,6 @@ export default function FridgeApp() {
                     onChangeText={setMemo}
                     placeholder="메모 내용을 입력하세요..."
                     multiline
-                    onFocus={() => setIsMemoFocused(true)}
                     onBlur={handleBlur}
                     onSubmitEditing={handleSubmitEditing}
                 />
