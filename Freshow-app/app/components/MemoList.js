@@ -14,7 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { styles } from '../components/css/MemoListStyle';
-import { db } from '../../firebase';
+import { db } from '../firebaseconfig';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function MemoList() {

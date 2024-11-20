@@ -1,26 +1,22 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore"; // Firestore 추가
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDdLLeIMp9wKvplBHWyW8mD7bTEg33VLD0",
-    authDomain: "freshow-37d2c.firebaseapp.com",
-    projectId: "freshow-37d2c",
-    storageBucket: "freshow-37d2c.firebasestorage.app",
-    messagingSenderId: "1029028050369",
-    appId: "1:1029028050369:web:ade74210577c610ccd2b40",
-    measurementId: "G-PRBBCJGNJ9"
+    apiKey: "AIzaSyCO1nny7grAWytLf60b_THVUopwAYtD2Ho",
+    authDomain: "freshow-f9eef.firebaseapp.com",
+    projectId: "freshow-f9eef",
+    storageBucket: "freshow-f9eef.firebasestorage.app",
+    messagingSenderId: "571998176592",
+    appId: "1:571998176592:web:035c93fdd55886980d9855",
+    measurementId: "G-3B76C34WVN",
 };
 
-// Initialize Firebase
+// Firebase 초기화
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const db = getFirestore(app); // Firestore 초기화
+const auth = getAuth(app); // Firebase Auth
+const db = getFirestore(app); // Firestore
+const analytics = getAnalytics(app); // Analytics
 
-export { db }; // Firestore를 외부에서 사용하도록 내보내기
+export { auth, db, analytics }; // 필요한 객체를 내보냄

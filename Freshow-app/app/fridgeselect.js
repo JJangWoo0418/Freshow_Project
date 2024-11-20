@@ -135,7 +135,7 @@ const FridgeSelect = () => {
                                         marginBottom: 0,
                                     }}
                                     title="냉장고 보러가기"
-                                    onPress={() => router.push('/main')}
+                                    onPress={() => router.push('/mainpage')}
                                 />
                                 <Text style={styles.infoText}>좌우로 스와이프하여 설정해보세요!</Text>
                             </Card>
