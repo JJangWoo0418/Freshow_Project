@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     Modal,
     TextInput,
-    TouchableWithoutFeedback,
+    Pressable, // Pressable로 변경
     KeyboardAvoidingView,
     Keyboard,
     Platform,
@@ -25,7 +25,11 @@ import {
     serverTimestamp,
 } from 'firebase/firestore';
 
+// expo-router를 사용하는 경우
+import { useLocalSearchParams } from 'expo-router';
+
 export default function MemoList() {
+    const { fridgeId } = useLocalSearchParams();  // fridgeId를 받아옵니다.
     const [memos, setMemos] = useState([]);
     const [selectedMemo, setSelectedMemo] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -37,14 +41,18 @@ export default function MemoList() {
     const getMemoCollection = () => {
         const currentUser = auth.currentUser;
         if (!currentUser) throw new Error('사용자가 로그인되어 있지 않습니다.');
-        return collection(
-            db,
-            '계정',
-            currentUser.uid,
-            '냉장고',
-            '2wvW7agElYIU0oe5YCiM',
-            '메모'
-        );
+        if (!fridgeId) {
+            throw new Error('냉장고 선택이 필요합니다.');  // fridgeId가 없을 때 경고 메시지 출력
+        }
+
+        let memoPath;
+        if (fridgeId) {
+            memoPath = `/계정/${currentUser.uid}/냉장고/${fridgeId}/메모`;  // 해당 냉장고에 맞는 경로로 설정
+        } else {
+            throw new Error('유효하지 않은 냉장고 ID');
+        }
+
+        return collection(db, memoPath);
     };
 
     // 메모 가져오기
@@ -62,7 +70,7 @@ export default function MemoList() {
         }
     };
 
-    // 메모 생성
+    // 새 메모 생성
     const createMemo = async () => {
         try {
             const newMemo = {
@@ -88,7 +96,7 @@ export default function MemoList() {
                 '계정',
                 auth.currentUser.uid,
                 '냉장고',
-                '2wvW7agElYIU0oe5YCiM',
+                fridgeId,
                 '메모',
                 selectedMemo.id
             );
@@ -114,7 +122,7 @@ export default function MemoList() {
                 '계정',
                 auth.currentUser.uid,
                 '냉장고',
-                '2wvW7agElYIU0oe5YCiM',
+                fridgeId,
                 '메모',
                 id
             );
@@ -149,15 +157,14 @@ export default function MemoList() {
     };
 
     useEffect(() => {
-        fetchMemos();
-    }, []);
+        if (fridgeId) {
+            fetchMemos();
+        }
+    }, [fridgeId]);
 
     return (
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <Pressable onPress={Keyboard.dismiss}>
                 <View style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={styles.container}>
                         <View style={styles.header}>
@@ -171,10 +178,7 @@ export default function MemoList() {
                         </View>
 
                         {memos.map((memo) => (
-                            <View
-                                key={memo.id}
-                                style={[styles.memoCard, { backgroundColor: memo.color || '#FFFCED' }]}
-                            >
+                            <View key={memo.id} style={[styles.memoCard, { backgroundColor: memo.color || '#FFFCED' }]}>
                                 <TextInput
                                     style={styles.memoTitle}
                                     value={selectedMemo?.id === memo.id ? titleInput : memo.title}
@@ -195,9 +199,7 @@ export default function MemoList() {
                                 />
                                 <TextInput
                                     style={styles.memoContent}
-                                    value={
-                                        selectedMemo?.id === memo.id ? contentInput : memo.content
-                                    }
+                                    value={selectedMemo?.id === memo.id ? contentInput : memo.content}
                                     onFocus={() => {
                                         setSelectedMemo(memo);
                                         setTitleInput(memo.title);
@@ -229,54 +231,28 @@ export default function MemoList() {
 
                         {showOptions && (
                             <Modal transparent={true} animationType="fade">
-                                <TouchableWithoutFeedback onPress={() => setShowOptions(false)}>
-                                    <View style={styles.modalOverlay} />
-                                </TouchableWithoutFeedback>
+                                <Pressable onPress={() => setShowOptions(false)} style={styles.modalOverlay} />
                                 <View style={styles.optionsMenu}>
-                                    <TouchableOpacity
-                                        onPress={() => setShowOptions(false)}
-                                        style={styles.closeButton}
-                                    >
+                                    <Pressable onPress={() => setShowOptions(false)} style={styles.closeButton}>
                                         <Ionicons name="close" size={24} color="black" />
-                                    </TouchableOpacity>
+                                    </Pressable>
                                     <View style={styles.colorGrid}>
-                                        <TouchableOpacity
-                                            onPress={() => updateMemoColor('#FFFCED')}
-                                            style={[styles.colorOption, { backgroundColor: '#FFFCED' }]}
-                                        />
-                                        <TouchableOpacity
-                                            onPress={() => updateMemoColor('#CFFFD0')}
-                                            style={[styles.colorOption, { backgroundColor: '#CFFFD0' }]}
-                                        />
-                                        <TouchableOpacity
-                                            onPress={() => updateMemoColor('#FFD9C8')}
-                                            style={[styles.colorOption, { backgroundColor: '#FFD9C8' }]}
-                                        />
-                                        <TouchableOpacity
-                                            onPress={() => updateMemoColor('#D6CFFF')}
-                                            style={[styles.colorOption, { backgroundColor: '#D6CFFF' }]}
-                                        />
-                                        <TouchableOpacity
-                                            onPress={() => updateMemoColor('#E0F7FA')}
-                                            style={[styles.colorOption, { backgroundColor: '#E0F7FA' }]}
-                                        />
-                                        <TouchableOpacity
-                                            onPress={() => updateMemoColor('#FFF3E0')}
-                                            style={[styles.colorOption, { backgroundColor: '#FFF3E0' }]}
-                                        />
+                                        <Pressable onPress={() => updateMemoColor('#FFFCED')} style={[styles.colorOption, { backgroundColor: '#FFFCED' }]} />
+                                        <Pressable onPress={() => updateMemoColor('#CFFFD0')} style={[styles.colorOption, { backgroundColor: '#CFFFD0' }]} />
+                                        <Pressable onPress={() => updateMemoColor('#FFD9C8')} style={[styles.colorOption, { backgroundColor: '#FFD9C8' }]} />
+                                        <Pressable onPress={() => updateMemoColor('#D6CFFF')} style={[styles.colorOption, { backgroundColor: '#D6CFFF' }]} />
+                                        <Pressable onPress={() => updateMemoColor('#E0F7FA')} style={[styles.colorOption, { backgroundColor: '#E0F7FA' }]} />
+                                        <Pressable onPress={() => updateMemoColor('#FFF3E0')} style={[styles.colorOption, { backgroundColor: '#FFF3E0' }]} />
                                     </View>
-                                    <TouchableOpacity
-                                        style={styles.deleteOption}
-                                        onPress={() => deleteMemo(selectedMemo.id)}
-                                    >
+                                    <Pressable style={styles.deleteOption} onPress={() => deleteMemo(selectedMemo.id)}>
                                         <Text style={{ color: 'red' }}>삭제</Text>
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 </View>
                             </Modal>
                         )}
                     </ScrollView>
                 </View>
-            </TouchableWithoutFeedback>
+            </Pressable>
         </KeyboardAvoidingView>
     );
 }

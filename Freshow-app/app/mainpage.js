@@ -18,13 +18,11 @@ import {
     collection,
     addDoc,
     getDocs,
-    query,
-    where,
     serverTimestamp,
 } from 'firebase/firestore';
 
-export default function FridgeApp() {
-    const { fridgeId } = useLocalSearchParams(); // fridgeId를 받아옴
+export default function MainPage() {
+    const { fridgeId } = useLocalSearchParams(); // fridgeId를 받아옵니다
     const [memo, setMemo] = useState('');
     const [title, setTitle] = useState('');
     const [memos, setMemos] = useState([]);
@@ -34,19 +32,19 @@ export default function FridgeApp() {
     // Firestore에서 메모 가져오기
     const fetchMemos = async () => {
         const currentUser = auth.currentUser;
-
-        if (!currentUser) {
+        if (!currentUser || !fridgeId) {
             Alert.alert('로그인 필요', '메모를 불러오려면 로그인이 필요합니다.');
             return;
         }
 
         try {
+            // 현재 fridgeId에 맞춰 메모 가져오기
             const memosCollection = collection(
                 db,
                 '계정',
                 currentUser.uid,
                 '냉장고',
-                fridgeId,
+                fridgeId, // 이 부분이 냉장고 ID를 받아서 해당 냉장고의 메모를 불러옵니다
                 '메모'
             );
             const querySnapshot = await getDocs(memosCollection);
@@ -64,7 +62,7 @@ export default function FridgeApp() {
     const fetchIngredients = async () => {
         const currentUser = auth.currentUser;
 
-        if (!currentUser) {
+        if (!currentUser || !fridgeId) {
             Alert.alert('로그인 필요', '재료 데이터를 불러오려면 로그인이 필요합니다.');
             return;
         }
@@ -123,7 +121,7 @@ export default function FridgeApp() {
     const handleMemoSave = async () => {
         const currentUser = auth.currentUser;
 
-        if (!currentUser) {
+        if (!currentUser || !fridgeId) {
             Alert.alert('로그인 필요', '메모를 저장하려면 로그인이 필요합니다.');
             return;
         }
@@ -162,7 +160,7 @@ export default function FridgeApp() {
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </Link>
                 <Text style={styles.title}>냉장고 이름</Text>
-                <View style={{ width: 24 }} />
+                <View style={{ width: 24 }} /> {/* 빈 공간 유지 */}
             </View>
 
             <View style={styles.topIcons}>
@@ -177,7 +175,7 @@ export default function FridgeApp() {
                 </Link>
             </View>
 
-            {/* 메모 및 제목, 햄버거 버튼 영역 */}
+            {/* 메모 영역 */}
             <View style={styles.memoSection}>
                 <View style={styles.memoHeader}>
                     <TextInput
@@ -188,7 +186,7 @@ export default function FridgeApp() {
                         onBlur={handleMemoSave}
                     />
                     <Link href="/components/MemoList" style={styles.menuIcon}>
-                        <Ionicons name="menu" size={24} color="black" />
+                        <Ionicons name="menu" size={24} color="black" /> {/* MemoList로 넘어가는 햄버거 메뉴 아이콘 */}
                     </Link>
                 </View>
                 <TextInput
