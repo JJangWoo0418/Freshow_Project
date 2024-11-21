@@ -4,7 +4,7 @@ import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../app/components/css/style';
 
-import { db } from '../app/firebase';
+import { db } from '../app/firebaseauth';
 import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
 
 export default function FridgeApp() {

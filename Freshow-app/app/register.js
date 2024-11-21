@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, TouchableOpacity, TextInput, StatusBar, Image
 import { Stack, useRouter } from 'expo-router';
 import styles from './components/css/registerstyle';
 import { COLORS } from "../constants";
-import { signup } from './firebase'; // firebaseconfig에서 signup 함수 임포트
+import { signup } from './firebaseauth'; // firebaseconfig에서 signup 함수 임포트
 import { db } from './firebaseconfig'; // Firestore 인스턴스 가져오기
 import { collection, addDoc } from 'firebase/firestore';
 
