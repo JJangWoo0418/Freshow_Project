@@ -94,7 +94,7 @@ export default function FridgeApp() {
             </View>
 
             <View style={styles.topIcons}>
-                <Link href="/recipe-recommendation" style={styles.iconWrapper}>
+                <Link href="/recipepage" style={styles.iconWrapper}>
                     <Image source={require('../assets/레시피북.png')} style={styles.icon} />
                     <Text style={styles.iconText}>레시피 추천</Text>
                 </Link>

@@ -15,7 +15,7 @@
             ],
             "newArchEnabled": true
           },
-          "ios":{
+          "ios": {
             "newArchEnabled": true
           }
         }
@@ -31,7 +31,8 @@
             "handleKakaoOpenUrl": true
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "name": "Freshow-App",
     "slug": "Freshow-App",
