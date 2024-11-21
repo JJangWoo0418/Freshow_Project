@@ -16,7 +16,6 @@ const Login = () => {
         iosClientId: "",
         webClientId: "",
         scopes: ["profile", "email"],
-        // redirectUri: "https://auth.expo.io/@shim010418/Freshow-App"
     });
 
     React.useEffect(() => {
@@ -25,7 +24,21 @@ const Login = () => {
             const credential = firebase.auth.GoogleAuthProvider.credential(authentication.idToken);
             
             firebase.auth().signInWithCredential(credential)
-                .then(() => {
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    // 계정 DB 구조 확인 및 초기화
+                    const userRef = firebase.firestore().collection('계정').doc(user.uid);
+                    userRef.get().then((docSnapshot) => {
+                        if (!docSnapshot.exists) {
+                            userRef.set({
+                                username: user.displayName || 'Unknown',
+                                email: user.email,
+                                createdAt: new Date(),
+                            });
+                        }
+                    });
+
                     Alert.alert("로그인 성공", "Google 로그인에 성공했습니다.");
                     router.push('Main');
                 })
@@ -42,7 +55,7 @@ const Login = () => {
             <Stack.Screen
                 options={{
                     headerTitle: "프래시오",
-                    headerStyle: { backgroundColor: COLORS.lightWhite},
+                    headerStyle: { backgroundColor: COLORS.lightWhite },
                     headerShadowVisible: false,
                 }}
             />

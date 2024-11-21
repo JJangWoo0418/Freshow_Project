@@ -1,54 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Alert, Image, ScrollView, StatusBar} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { View, Text, TouchableOpacity, FlatList, Alert, Image, ScrollView, StatusBar } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import { db } from './firebaseconfig';
-import { collection, getDocs, doc, deleteDoc, setDoc } from "firebase/firestore";
+import { auth, db } from './firebaseconfig';
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import styles from './components/css/fridgeselectstyle';
 
 const FridgeSelect = () => {
     const router = useRouter();
-    const { newFridge } = useLocalSearchParams();
     const [fridges, setFridges] = useState([]);
 
-    // Firestore에서 냉장고 데이터 가져오기
     const fetchFridges = async () => {
-        const fridgeCollection = collection(db, "fridges");
-        const fridgeSnapshot = await getDocs(fridgeCollection);
-        const fridgesData = fridgeSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setFridges(fridgesData);
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+            Alert.alert("로그인 필요", "냉장고 데이터를 불러오려면 로그인이 필요합니다.");
+            router.push('/login'); // 로그인 페이지로 리다이렉트
+            return;
+        }
+
+        try {
+            const fridgeCollection = collection(db, "계정", currentUser.uid, "냉장고");
+            const fridgeSnapshot = await getDocs(fridgeCollection);
+
+            const fetchedFridges = fridgeSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setFridges(fetchedFridges);
+        } catch (error) {
+            console.error("냉장고 데이터 가져오기 오류:", error);
+        }
     };
 
-    // 새로운 냉장고 추가 (순차적 ID 생성)
-    const addFridge = async (fridgeData) => {
-        const fridgeCollection = collection(db, "fridges");
-
-        const fridgeSnapshot = await getDocs(fridgeCollection);
-        const fridgeIds = fridgeSnapshot.docs.map(doc => doc.id);
-
-        const maxId = fridgeIds.reduce((max, id) => {
-            const num = parseInt(id.replace('fridge', ''));
-            return num > max ? num : max;
-        }, 0);
-
-        const newId = `fridge${maxId + 1}`;
-        const fridgeDoc = doc(fridgeCollection, newId);
-        await setDoc(fridgeDoc, fridgeData);
-
-        // 추가 후 즉시 최신 데이터를 불러옴
-        fetchFridges();
-    };
-
-    // 냉장고 삭제
     const deleteFridge = async (id) => {
-        const fridgeDoc = doc(db, "fridges", id);
-        await deleteDoc(fridgeDoc);
-        fetchFridges(); 
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) return;
+
+        try {
+            const fridgeDoc = doc(db, "계정", currentUser.uid, "냉장고", id);
+            await deleteDoc(fridgeDoc);
+            fetchFridges(); // 삭제 후 데이터 재로드
+        } catch (error) {
+            console.error("냉장고 삭제 오류:", error);
+        }
     };
 
-    // 삭제 확인 알림
     const confirmDelete = (id) => {
         Alert.alert(
             '삭제 확인',
@@ -65,17 +66,9 @@ const FridgeSelect = () => {
         fetchFridges();
     }, []);
 
-    useEffect(() => {
-        if (newFridge) {
-            const parsedFridge = JSON.parse(newFridge);
-            addFridge(parsedFridge);
-        }
-    }, [newFridge]);
-
     return (
         <View style={{ flex: 1 }}>
-            <StatusBar barStyle="dark-content"/>
-            {/* Header를 ScrollView와 FlatList 외부에 배치 */}
+            <StatusBar barStyle="dark-content" />
             <View style={styles.header}>
                 <Image
                     source={require('../assets/Freshow.png')}
@@ -89,15 +82,10 @@ const FridgeSelect = () => {
                 </TouchableOpacity>
             </View>
 
-            {/* Scrollable content */}
             <ScrollView>
                 <FlatList
                     data={fridges}
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            <Text style={styles.emptyText}>냉장고가 없습니다. + 버튼을 눌러 추가하세요.</Text>
-                        </View>
-                    }
+                    keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <Swipeable
                             renderLeftActions={() => (
@@ -108,7 +96,7 @@ const FridgeSelect = () => {
                             renderRightActions={() => (
                                 <TouchableOpacity
                                     style={styles.editButton}
-                                    onPress={() => router.push('/fridgeedit', { fridge: JSON.stringify(item) })}
+                                    onPress={() => router.push('/fridgeedit', { fridgeId: item.id })}
                                 >
                                     <Text style={styles.actionText}>수정</Text>
                                 </TouchableOpacity>
@@ -117,7 +105,10 @@ const FridgeSelect = () => {
                             <Card>
                                 <Card.Title>{item.name}</Card.Title>
                                 <Card.Divider />
-                                <Card.Image source={item.image} style={styles.fridgeImage} />
+                                <Card.Image
+                                    source={item.image ? { uri: item.image.uri } : null}
+                                    style={styles.fridgeImage}
+                                />
                                 <Text style={{ marginBottom: 10 }}>{item.description}</Text>
                                 <Button
                                     icon={
@@ -134,15 +125,17 @@ const FridgeSelect = () => {
                                         marginRight: 0,
                                         marginBottom: 0,
                                     }}
-                                    title="냉장고 보러가기"
-                                    onPress={() => router.push('/mainpage')}
+                                    title="냉장고 선택"
+                                    onPress={() => router.push(`/mainpage?fridgeId=${item.id}`)}
                                 />
-                                <Text style={styles.infoText}>좌우로 스와이프하여 설정해보세요!</Text>
                             </Card>
                         </Swipeable>
                     )}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={styles.container}
+                    ListEmptyComponent={
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyText}>냉장고가 없습니다. + 버튼을 눌러 추가하세요.</Text>
+                        </View>
+                    }
                 />
             </ScrollView>
         </View>

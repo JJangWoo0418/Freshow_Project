@@ -14,38 +14,55 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { styles } from '../components/css/MemoListStyle';
-import { db } from '../firebaseconfig';
-import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '../firebaseconfig';
+import {
+    collection,
+    getDocs,
+    addDoc,
+    doc,
+    updateDoc,
+    deleteDoc,
+    serverTimestamp,
+} from 'firebase/firestore';
 
 export default function MemoList() {
     const [memos, setMemos] = useState([]);
-    const [showOptions, setShowOptions] = useState(false);
     const [selectedMemo, setSelectedMemo] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [titleInput, setTitleInput] = useState('');
     const [contentInput, setContentInput] = useState('');
+    const [showOptions, setShowOptions] = useState(false);
 
+    // DB 경로 설정
+    const getMemoCollection = () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error('사용자가 로그인되어 있지 않습니다.');
+        return collection(
+            db,
+            '계정',
+            currentUser.uid,
+            '냉장고',
+            '2wvW7agElYIU0oe5YCiM',
+            '메모'
+        );
+    };
+
+    // 메모 가져오기
     const fetchMemos = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, 'memos'));
+            const querySnapshot = await getDocs(getMemoCollection());
             const fetchedMemos = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
-
-            // 수정된 시간 기준으로 내림차순 정렬
-            fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds);
-
+            fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds); // 수정된 시간 기준 정렬
             setMemos(fetchedMemos);
         } catch (error) {
-            console.error('Error fetching memos:', error);
+            console.error('메모 불러오기 오류:', error);
         }
     };
 
-    useEffect(() => {
-        fetchMemos();
-    }, []);
-
+    // 메모 생성
     const createMemo = async () => {
         try {
             const newMemo = {
@@ -55,62 +72,61 @@ export default function MemoList() {
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             };
-            const docRef = await addDoc(collection(db, 'memos'), newMemo);
-            setMemos([...memos, { id: docRef.id, ...newMemo }]);
+            const docRef = await addDoc(getMemoCollection(), newMemo);
+            setMemos((prevMemos) => [{ id: docRef.id, ...newMemo }, ...prevMemos]);
         } catch (error) {
-            console.error('Error creating memo:', error);
+            console.error('메모 생성 오류:', error);
         }
     };
 
+    // 메모 수정
+    const updateMemoContent = async (field, value) => {
+        try {
+            if (!selectedMemo) return;
+            const memoDoc = doc(
+                db,
+                '계정',
+                auth.currentUser.uid,
+                '냉장고',
+                '2wvW7agElYIU0oe5YCiM',
+                '메모',
+                selectedMemo.id
+            );
+            await updateDoc(memoDoc, {
+                [field]: value,
+                updatedAt: serverTimestamp(),
+            });
+            setMemos((prevMemos) =>
+                prevMemos.map((memo) =>
+                    memo.id === selectedMemo.id ? { ...memo, [field]: value } : memo
+                )
+            );
+        } catch (error) {
+            console.error('메모 수정 오류:', error);
+        }
+    };
+
+    // 메모 삭제
     const deleteMemo = async (id) => {
         try {
-            await deleteDoc(doc(db, 'memos', id));
-            fetchMemos();
-            setShowOptions(false); // 삭제 후 팝업 닫기
+            const memoDoc = doc(
+                db,
+                '계정',
+                auth.currentUser.uid,
+                '냉장고',
+                '2wvW7agElYIU0oe5YCiM',
+                '메모',
+                id
+            );
+            await deleteDoc(memoDoc);
+            setMemos((prevMemos) => prevMemos.filter((memo) => memo.id !== id));
+            setShowOptions(false);
         } catch (error) {
-            console.error('Error deleting memo:', error);
+            console.error('메모 삭제 오류:', error);
         }
     };
 
-    const toggleOptions = (memo) => {
-        setSelectedMemo(memo);
-        setShowOptions(!showOptions);
-    };
-
-    const updateMemoColor = async (color) => {
-        if (selectedMemo) {
-            try {
-                await updateDoc(doc(db, 'memos', selectedMemo.id), { color });
-                fetchMemos();
-                setShowOptions(false);
-            } catch (error) {
-                console.error('Error updating memo color:', error);
-            }
-        }
-    };
-
-    const toggleEditing = (memo) => {
-        setSelectedMemo(memo);
-        setTitleInput(memo.title);
-        setContentInput(memo.content);
-        setIsEditing(!isEditing);
-    };
-
-    const updateMemoContent = async (field, value) => {
-        if (selectedMemo) {
-            try {
-                await updateDoc(doc(db, 'memos', selectedMemo.id), {
-                    [field]: value,
-                    updatedAt: serverTimestamp(), // 수정 시간 업데이트
-                });
-                fetchMemos();
-            } catch (error) {
-                console.error('Error updating memo content:', error);
-            }
-        }
-    };
-
-    // 시간 차이를 "n시간 전" 또는 "몇분 전" 형식으로 표시하는 함수
+    // 마지막 수정 시간 표시
     const getTimeAgo = (timestamp) => {
         if (!timestamp) return '';
         const now = new Date();
@@ -132,11 +148,14 @@ export default function MemoList() {
         return `${diffInDays}일 전`;
     };
 
+    useEffect(() => {
+        fetchMemos();
+    }, []);
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // iOS와 Android의 동작 차이를 반영
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} // 키보드 높이에 맞춰 화면 조정
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={{ flex: 1 }}>
@@ -156,52 +175,55 @@ export default function MemoList() {
                                 key={memo.id}
                                 style={[styles.memoCard, { backgroundColor: memo.color || '#FFFCED' }]}
                             >
-                                <View style={styles.memoCardTouchable}>
-                                    <View style={styles.memoHeader}>
-                                        {isEditing && selectedMemo?.id === memo.id ? (
-                                            <TextInput
-                                                style={styles.memoTitle}
-                                                value={titleInput}
-                                                onChangeText={(text) => setTitleInput(text)}
-                                                onBlur={() => updateMemoContent('title', titleInput)}
-                                                placeholder="제목을 입력하세요"
-                                                autoFocus
-                                            />
-                                        ) : (
-                                            <TouchableOpacity onPress={() => toggleEditing(memo)}>
-                                                <Text style={styles.memoTitle}>
-                                                    {memo.title || '제목 없음'}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        )}
-                                    </View>
-                                    {isEditing && selectedMemo?.id === memo.id ? (
-                                        <TextInput
-                                            style={styles.memoContent}
-                                            value={contentInput}
-                                            onChangeText={(text) => setContentInput(text)}
-                                            onBlur={() => updateMemoContent('content', contentInput)}
-                                            placeholder="메모 내용을 입력하세요"
-                                            multiline
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        <TouchableOpacity onPress={() => toggleEditing(memo)}>
-                                            <Text style={styles.memoContent}>
-                                                {memo.content || '내용 없음'}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
+                                <TextInput
+                                    style={styles.memoTitle}
+                                    value={selectedMemo?.id === memo.id ? titleInput : memo.title}
+                                    onFocus={() => {
+                                        setSelectedMemo(memo);
+                                        setTitleInput(memo.title);
+                                        setContentInput(memo.content);
+                                        setIsEditing(true); // 제목 수정할 때만 활성화
+                                    }}
+                                    onChangeText={(text) => setTitleInput(text)}
+                                    onBlur={() => {
+                                        if (titleInput !== memo.title) {
+                                            updateMemoContent('title', titleInput);
+                                        }
+                                        setIsEditing(false);
+                                    }}
+                                    placeholder="제목을 입력하세요"
+                                />
+                                <TextInput
+                                    style={styles.memoContent}
+                                    value={
+                                        selectedMemo?.id === memo.id ? contentInput : memo.content
+                                    }
+                                    onFocus={() => {
+                                        setSelectedMemo(memo);
+                                        setTitleInput(memo.title);
+                                        setContentInput(memo.content);
+                                        setIsEditing(true); // 내용 수정할 때만 활성화
+                                    }}
+                                    onChangeText={(text) => setContentInput(text)}
+                                    onBlur={() => {
+                                        if (contentInput !== memo.content) {
+                                            updateMemoContent('content', contentInput);
+                                        }
+                                        setIsEditing(false);
+                                    }}
+                                    placeholder="메모 내용을 입력하세요"
+                                    multiline
+                                />
+                                <Text style={styles.timeAgo}>{getTimeAgo(memo.updatedAt)}</Text>
                                 <TouchableOpacity
-                                    onPress={() => toggleOptions(memo)}
+                                    onPress={() => {
+                                        setSelectedMemo(memo);
+                                        setShowOptions(true);
+                                    }}
                                     style={styles.menuButton}
                                 >
                                     <Ionicons name="ellipsis-vertical" size={20} color="black" />
                                 </TouchableOpacity>
-
-                                {/* 수정된 시간 표시 */}
-                                <Text style={styles.timeAgo}>{getTimeAgo(memo.updatedAt)}</Text>
                             </View>
                         ))}
 
@@ -211,10 +233,9 @@ export default function MemoList() {
                                     <View style={styles.modalOverlay} />
                                 </TouchableWithoutFeedback>
                                 <View style={styles.optionsMenu}>
-                                    {/* X 버튼을 close 버튼으로 변경 */}
                                     <TouchableOpacity
-                                        style={styles.closeButton} // 수정된 스타일
                                         onPress={() => setShowOptions(false)}
+                                        style={styles.closeButton}
                                     >
                                         <Ionicons name="close" size={24} color="black" />
                                     </TouchableOpacity>
