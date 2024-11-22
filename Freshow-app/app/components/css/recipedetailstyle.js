@@ -1,70 +1,94 @@
 import { StyleSheet } from 'react-native';
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#FFF',
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    recipeImage: {
+        width: '100%',
+        height: 200,
+        borderRadius: 10,
+        marginBottom: 10,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#e74c3c',
-        marginBottom: 8,
+        color: '#FF6347',
+        marginBottom: 5,
     },
-    subtitle: {
+    subTitle: {
         fontSize: 16,
         color: '#555',
-        marginBottom: 16,
     },
-    image: {
-        width: '100%',
-        height: 200,
-        borderRadius: 8,
-        marginBottom: 16,
+    stepsContainer: {
+        marginVertical: 20,
     },
     stepCard: {
-        padding: 12,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#F9F9F9',
+        padding: 10,
+        marginBottom: 10,
         borderRadius: 8,
-        marginBottom: 12,
+        borderColor: '#DDD',
+        borderWidth: 1,
     },
     stepNumber: {
-        fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 4,
+        fontSize: 18,
+        marginBottom: 5,
     },
     stepText: {
-        fontSize: 14,
-        color: '#555',
+        fontSize: 16,
+        color: '#333',
     },
-    buttonContainer: {
+    footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 16,
+        marginTop: 20,
     },
     backButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 10,
-        backgroundColor: '#e74c3c',
+        backgroundColor: '#EEE',
         borderRadius: 8,
-        flex: 1,
-        marginRight: 8,
+    },
+    backIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
     },
     backButtonText: {
-        color: '#fff',
-        textAlign: 'center',
         fontSize: 16,
+        color: '#555',
     },
-    mainButton: {
+    homeButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 10,
-        backgroundColor: '#3498db',
+        backgroundColor: '#EEE',
         borderRadius: 8,
-        flex: 1,
-        marginLeft: 8,
     },
-    mainButtonText: {
-        color: '#fff',
-        textAlign: 'center',
+    homeIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
+    homeButtonText: {
         fontSize: 16,
+        color: '#555',
+    },
+    errorText: {
+        fontSize: 18,
+        color: '#FF0000',
+        textAlign: 'center',
+        marginTop: 20,
     },
 });
+
+export default styles;
