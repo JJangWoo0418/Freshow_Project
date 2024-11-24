@@ -16,3 +16,5 @@ web-build/
 # Firebase configuration file
 firebaseconfig.js
 
+# GPT API 
+apikey.js
