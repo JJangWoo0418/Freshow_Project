@@ -36,27 +36,42 @@ const RecipePage = () => {
             });
 
             // GPT-4 응답에서 레시피 추천 목록 추출
-            const recommendedRecipes = completion.choices[0].message.content.trim().split('\n');
+            const recommendedRecipes = completion.choices[0].message.content.trim().split('\n').filter(recipe => recipe);
 
             // 각 레시피에 대해 DALL-E API 호출하여 이미지 생성
-            const recipesWithImages = await Promise.all(recommendedRecipes.map(async (recipe, index) => {
-                const imageGeneration = await openai.images.generate({
-                    prompt: `${recipe} Korean dish, professional food photography`,
-                    n: 1,
-                    size: '1024x1024',
-                });
+            const recipesWithImages = [];
+            for (let i = 0; i < recommendedRecipes.length; i++) {
+                try {
+                    // 일정 간격(2초)으로 요청
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
-                return {
-                    id: index.toString(),
-                    name: recipe,
-                    image: imageGeneration.data[0].url,
-                };
-            }));
+                    const imageGeneration = await openai.images.generate({
+                        prompt: `${recommendedRecipes[i]} Korean dish, professional food photography`,
+                        n: 1,
+                        size: '1024x1024',
+                    });
+
+                    recipesWithImages.push({
+                        id: i.toString(),
+                        name: recommendedRecipes[i],
+                        image: imageGeneration.data[0].url,
+                    });
+                } catch (error) {
+                    console.error(`Error generating image for recipe "${recommendedRecipes[i]}":`, error);
+                    // 이미지 생성 실패 시 기본 이미지 추가
+                    recipesWithImages.push({
+                        id: i.toString(),
+                        name: recommendedRecipes[i],
+                        image: 'https://via.placeholder.com/1024', // 기본 이미지 URL
+                    });
+                }
+            }
 
             setRecipes(recipesWithImages);
         } catch (error) {
             if (error.status === 429 && retryCount < 3) {
                 // 429 오류 발생 시 일정 시간 후 재시도
+                console.log('429 Too Many Requests. Retrying...');
                 setTimeout(() => fetchRecipes(retryCount + 1), 3000);
             } else {
                 console.error('Error fetching recipes:', error);
