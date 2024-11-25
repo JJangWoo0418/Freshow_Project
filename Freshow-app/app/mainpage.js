@@ -16,8 +16,10 @@ import styles from '../app/components/css/style';
 import { auth, db } from '../app/firebaseconfig';
 import {
     collection,
-    addDoc,
+    doc,
+    getDoc,
     getDocs,
+    addDoc,
     serverTimestamp,
 } from 'firebase/firestore';
 
@@ -29,6 +31,24 @@ export default function MainPage() {
     const [memos, setMemos] = useState([]);
     const [ingredients, setIngredients] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
+    const [fridgeName, setFridgeName] = useState('냉장고 이름');
+
+    // Firestore에서 냉장고 이름 가져오기
+    const fetchFridgeName = async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser || !fridgeId) return;
+
+        try {
+            const fridgeDocRef = doc(db, '계정', currentUser.uid, '냉장고', fridgeId);
+            const fridgeDoc = await getDoc(fridgeDocRef);
+
+            if (fridgeDoc.exists()) {
+                setFridgeName(fridgeDoc.data().name || '냉장고 이름');
+            }
+        } catch (error) {
+            console.error('냉장고 이름 가져오기 오류:', error);
+        }
+    };
 
     // Firestore에서 메모 가져오기
     const fetchMemos = async () => {
@@ -95,6 +115,7 @@ export default function MainPage() {
     };
 
     useEffect(() => {
+        fetchFridgeName();
         fetchMemos();
         fetchIngredients();
     }, [fridgeId]);
@@ -164,7 +185,7 @@ export default function MainPage() {
                 <Link href="../" style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </Link>
-                <Text style={styles.title}>냉장고 이름</Text>
+                <Text style={styles.title}>{fridgeName}</Text>
                 <View style={{ width: 24 }} />
             </View>
 

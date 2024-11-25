@@ -1,3 +1,5 @@
+// 업데이트된 MemoList.js
+
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -6,7 +8,7 @@ import {
     TouchableOpacity,
     Modal,
     TextInput,
-    Pressable, // Pressable로 변경
+    Pressable,
     KeyboardAvoidingView,
     Keyboard,
     Platform,
@@ -25,7 +27,6 @@ import {
     serverTimestamp,
 } from 'firebase/firestore';
 
-// expo-router를 사용하는 경우
 import { useLocalSearchParams } from 'expo-router';
 
 export default function MemoList() {
@@ -37,41 +38,35 @@ export default function MemoList() {
     const [contentInput, setContentInput] = useState('');
     const [showOptions, setShowOptions] = useState(false);
 
-    // DB 경로 설정
-    // Firestore에서 올바른 경로로 메모 가져오기
-const getMemoCollection = () => {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-        console.error('사용자가 로그인되어 있지 않습니다.');
-        return null;
-    }
-    if (!fridgeId) {
-        console.error('냉장고 ID가 필요합니다.');
-        return null;
-    }
+    const getMemoCollection = () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            console.error('사용자가 로그인되어 있지 않습니다.');
+            return null;
+        }
+        if (!fridgeId) {
+            console.error('냉장고 ID가 필요합니다.');
+            return null;
+        }
+        return collection(db, '계정', currentUser.uid, '냉장고', fridgeId, '메모');
+    };
 
-    // 냉장고 ID 경로에 맞게 Firestore 컬렉션 반환
-    return collection(db, '계정', currentUser.uid, '냉장고', fridgeId, '메모');
-};
+    const fetchMemos = async () => {
+        const memoCollection = getMemoCollection();
+        if (!memoCollection) return;
 
-// 메모 가져오기 함수
-const fetchMemos = async () => {
-    const memoCollection = getMemoCollection();
-    if (!memoCollection) return;
+        try {
+            const querySnapshot = await getDocs(memoCollection);
+            const fetchedMemos = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setMemos(fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds)); // 최신순 정렬
+        } catch (error) {
+            console.error('메모 불러오기 오류:', error);
+        }
+    };
 
-    try {
-        const querySnapshot = await getDocs(memoCollection);
-        const fetchedMemos = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-        setMemos(fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds)); // 최신순 정렬
-    } catch (error) {
-        console.error('메모 불러오기 오류:', error);
-    }
-};
-
-    // 새 메모 생성
     const createMemo = async () => {
         try {
             const newMemo = {
@@ -88,7 +83,6 @@ const fetchMemos = async () => {
         }
     };
 
-    // 메모 수정
     const updateMemoContent = async (field, value) => {
         try {
             if (!selectedMemo) return;
@@ -115,7 +109,33 @@ const fetchMemos = async () => {
         }
     };
 
-    // 메모 삭제
+    const updateMemoColor = async (color) => {
+        try {
+            if (!selectedMemo) return;
+            const memoDoc = doc(
+                db,
+                '계정',
+                auth.currentUser.uid,
+                '냉장고',
+                fridgeId,
+                '메모',
+                selectedMemo.id
+            );
+            await updateDoc(memoDoc, {
+                color: color,
+                updatedAt: serverTimestamp(),
+            });
+            setMemos((prevMemos) =>
+                prevMemos.map((memo) =>
+                    memo.id === selectedMemo.id ? { ...memo, color: color } : memo
+                )
+            );
+            setShowOptions(false); // 색상 선택 메뉴 닫기
+        } catch (error) {
+            console.error('메모 색상 변경 오류:', error);
+        }
+    };
+
     const deleteMemo = async (id) => {
         try {
             const memoDoc = doc(
@@ -135,11 +155,10 @@ const fetchMemos = async () => {
         }
     };
 
-    // 마지막 수정 시간 표시
     const getTimeAgo = (timestamp) => {
         if (!timestamp) return '';
         const now = new Date();
-        const updatedAt = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp.seconds * 1000); // Firebase timestamp 처리
+        const updatedAt = timestamp?.toDate ? timestamp.toDate() : new Date(timestamp.seconds * 1000);
         const diffInSeconds = Math.floor((now - updatedAt) / 1000);
 
         if (diffInSeconds < 60) {
@@ -164,96 +183,158 @@ const fetchMemos = async () => {
     }, [fridgeId]);
 
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <Pressable onPress={Keyboard.dismiss}>
-                <View style={{ flex: 1 }}>
-                    <ScrollView contentContainerStyle={styles.container}>
-                        <View style={styles.header}>
-                            <Link href="/home">
-                                <Ionicons name="arrow-back" size={24} color="black" />
-                            </Link>
-                            <Text style={styles.headerTitle}>MEMO</Text>
-                            <TouchableOpacity onPress={createMemo}>
-                                <Ionicons name="add" size={24} color="black" />
-                            </TouchableOpacity>
-                        </View>
-
-                        {memos.map((memo) => (
-                            <View key={memo.id} style={[styles.memoCard, { backgroundColor: memo.color || '#FFFCED' }]}>
-                                <TextInput
-                                    style={styles.memoTitle}
-                                    value={selectedMemo?.id === memo.id ? titleInput : memo.title}
-                                    onFocus={() => {
-                                        setSelectedMemo(memo);
-                                        setTitleInput(memo.title);
-                                        setContentInput(memo.content);
-                                        setIsEditing(true); // 제목 수정할 때만 활성화
-                                    }}
-                                    onChangeText={(text) => setTitleInput(text)}
-                                    onBlur={() => {
-                                        if (titleInput !== memo.title) {
-                                            updateMemoContent('title', titleInput);
-                                        }
-                                        setIsEditing(false);
-                                    }}
-                                    placeholder="제목을 입력하세요"
-                                />
-                                <TextInput
-                                    style={styles.memoContent}
-                                    value={selectedMemo?.id === memo.id ? contentInput : memo.content}
-                                    onFocus={() => {
-                                        setSelectedMemo(memo);
-                                        setTitleInput(memo.title);
-                                        setContentInput(memo.content);
-                                        setIsEditing(true); // 내용 수정할 때만 활성화
-                                    }}
-                                    onChangeText={(text) => setContentInput(text)}
-                                    onBlur={() => {
-                                        if (contentInput !== memo.content) {
-                                            updateMemoContent('content', contentInput);
-                                        }
-                                        setIsEditing(false);
-                                    }}
-                                    placeholder="메모 내용을 입력하세요"
-                                    multiline
-                                />
-                                <Text style={styles.timeAgo}>{getTimeAgo(memo.updatedAt)}</Text>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        setSelectedMemo(memo);
-                                        setShowOptions(true);
-                                    }}
-                                    style={styles.menuButton}
-                                >
-                                    <Ionicons name="ellipsis-vertical" size={20} color="black" />
+        <ScrollView>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+                <Pressable onPress={Keyboard.dismiss}>
+                    <View style={{ flex: 1 }}>
+                        <ScrollView contentContainerStyle={styles.container}>
+                            <View style={styles.header}>
+                                <Link href="/home">
+                                    <Ionicons name="arrow-back" size={24} color="black" />
+                                </Link>
+                                <Text style={styles.headerTitle}>MEMO</Text>
+                                <TouchableOpacity onPress={createMemo}>
+                                    <Ionicons name="add" size={24} color="black" />
                                 </TouchableOpacity>
                             </View>
-                        ))}
 
-                        {showOptions && (
-                            <Modal transparent={true} animationType="fade">
-                                <Pressable onPress={() => setShowOptions(false)} style={styles.modalOverlay} />
-                                <View style={styles.optionsMenu}>
-                                    <Pressable onPress={() => setShowOptions(false)} style={styles.closeButton}>
-                                        <Ionicons name="close" size={24} color="black" />
-                                    </Pressable>
-                                    <View style={styles.colorGrid}>
-                                        <Pressable onPress={() => updateMemoColor('#FFFCED')} style={[styles.colorOption, { backgroundColor: '#FFFCED' }]} />
-                                        <Pressable onPress={() => updateMemoColor('#CFFFD0')} style={[styles.colorOption, { backgroundColor: '#CFFFD0' }]} />
-                                        <Pressable onPress={() => updateMemoColor('#FFD9C8')} style={[styles.colorOption, { backgroundColor: '#FFD9C8' }]} />
-                                        <Pressable onPress={() => updateMemoColor('#D6CFFF')} style={[styles.colorOption, { backgroundColor: '#D6CFFF' }]} />
-                                        <Pressable onPress={() => updateMemoColor('#E0F7FA')} style={[styles.colorOption, { backgroundColor: '#E0F7FA' }]} />
-                                        <Pressable onPress={() => updateMemoColor('#FFF3E0')} style={[styles.colorOption, { backgroundColor: '#FFF3E0' }]} />
-                                    </View>
-                                    <Pressable style={styles.deleteOption} onPress={() => deleteMemo(selectedMemo.id)}>
-                                        <Text style={{ color: 'red' }}>삭제</Text>
-                                    </Pressable>
+                            {memos.map((memo) => (
+                                <View
+                                    key={memo.id}
+                                    style={[
+                                        styles.memoCard,
+                                        { backgroundColor: memo.color || '#FFFCED' },
+                                    ]}
+                                >
+                                    <TextInput
+                                        style={styles.memoTitle}
+                                        value={selectedMemo?.id === memo.id ? titleInput : memo.title}
+                                        onFocus={() => {
+                                            setSelectedMemo(memo);
+                                            setTitleInput(memo.title);
+                                            setContentInput(memo.content);
+                                            setIsEditing(true);
+                                        }}
+                                        onChangeText={(text) => setTitleInput(text)}
+                                        onBlur={() => {
+                                            if (titleInput !== memo.title) {
+                                                updateMemoContent('title', titleInput);
+                                            }
+                                            setIsEditing(false);
+                                        }}
+                                        placeholder="제목을 입력하세요"
+                                    />
+                                    <TextInput
+                                        style={styles.memoContent}
+                                        value={
+                                            selectedMemo?.id === memo.id ? contentInput : memo.content
+                                        }
+                                        onFocus={() => {
+                                            setSelectedMemo(memo);
+                                            setTitleInput(memo.title);
+                                            setContentInput(memo.content);
+                                            setIsEditing(true);
+                                        }}
+                                        onChangeText={(text) => setContentInput(text)}
+                                        onBlur={() => {
+                                            if (contentInput !== memo.content) {
+                                                updateMemoContent('content', contentInput);
+                                            }
+                                            setIsEditing(false);
+                                        }}
+                                        placeholder="메모 내용을 입력하세요"
+                                        multiline
+                                    />
+                                    <Text style={styles.timeAgo}>{getTimeAgo(memo.updatedAt)}</Text>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            setSelectedMemo(memo);
+                                            setShowOptions(true);
+                                        }}
+                                        style={styles.menuButton}
+                                    >
+                                        <Ionicons
+                                            name="ellipsis-vertical"
+                                            size={20}
+                                            color="black"
+                                        />
+                                    </TouchableOpacity>
                                 </View>
-                            </Modal>
-                        )}
-                    </ScrollView>
-                </View>
-            </Pressable>
-        </KeyboardAvoidingView>
+                            ))}
+
+                            {showOptions && (
+                                <Modal transparent={true} animationType="fade">
+                                    <Pressable
+                                        onPress={() => setShowOptions(false)}
+                                        style={styles.modalOverlay}
+                                    />
+                                    <View style={styles.optionsMenu}>
+                                        <Pressable
+                                            onPress={() => setShowOptions(false)}
+                                            style={styles.closeButton}
+                                        >
+                                            <Ionicons name="close" size={24} color="black" />
+                                        </Pressable>
+                                        <View style={styles.colorGrid}>
+                                            <Pressable
+                                                onPress={() => updateMemoColor('#FFFCED')}
+                                                style={[
+                                                    styles.colorOption,
+                                                    { backgroundColor: '#FFFCED' },
+                                                ]}
+                                            />
+                                            <Pressable
+                                                onPress={() => updateMemoColor('#CFFFD0')}
+                                                style={[
+                                                    styles.colorOption,
+                                                    { backgroundColor: '#CFFFD0' },
+                                                ]}
+                                            />
+                                            <Pressable
+                                                onPress={() => updateMemoColor('#FFD9C8')}
+                                                style={[
+                                                    styles.colorOption,
+                                                    { backgroundColor: '#FFD9C8' },
+                                                ]}
+                                            />
+                                            <Pressable
+                                                onPress={() => updateMemoColor('#D6CFFF')}
+                                                style={[
+                                                    styles.colorOption,
+                                                    { backgroundColor: '#D6CFFF' },
+                                                ]}
+                                            />
+                                            <Pressable
+                                                onPress={() => updateMemoColor('#E0F7FA')}
+                                                style={[
+                                                    styles.colorOption,
+                                                    { backgroundColor: '#E0F7FA' },
+                                                ]}
+                                            />
+                                            <Pressable
+                                                onPress={() => updateMemoColor('#FFF3E0')}
+                                                style={[
+                                                    styles.colorOption,
+                                                    { backgroundColor: '#FFF3E0' },
+                                                ]}
+                                            />
+                                        </View>
+                                        <Pressable
+                                            style={styles.deleteOption}
+                                            onPress={() => deleteMemo(selectedMemo.id)}
+                                        >
+                                            <Text style={{ color: 'red' }}>삭제</Text>
+                                        </Pressable>
+                                    </View>
+                                </Modal>
+                            )}
+                        </ScrollView>
+                    </View>
+                </Pressable>
+            </KeyboardAvoidingView>
+        </ScrollView>
     );
 }

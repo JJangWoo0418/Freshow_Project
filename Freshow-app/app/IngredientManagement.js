@@ -6,14 +6,17 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router'; // fridgeId 가져오기
+import { useLocalSearchParams, useRouter } from 'expo-router'; // fridgeId 가져오기
 import { auth, db } from './firebaseconfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
+import { Ionicons } from '@expo/vector-icons'; // 뒤로가기 버튼 아이콘
 import styles from './components/css/IngredientManagementStyle';
 
 const IngredientManagement = () => {
     const { fridgeId } = useLocalSearchParams(); // MainPage에서 전달받은 fridgeId
+    const router = useRouter(); // 화면 이동을 위한 router 추가
     const [categories, setCategories] = useState([]);
+    const [fridgeName, setFridgeName] = useState(''); // 냉장고 이름 상태 추가
 
     // 유통기한 퍼센트 계산 함수
     const calculateExpiryPercentage = (expiryDate) => {
@@ -70,19 +73,42 @@ const IngredientManagement = () => {
         }
     };
 
+    const fetchFridgeName = async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser || !fridgeId) return;
+
+        try {
+            const fridgeDoc = doc(db, '계정', currentUser.uid, '냉장고', fridgeId);
+            const fridgeData = await getDoc(fridgeDoc);
+            if (fridgeData.exists()) {
+                setFridgeName(fridgeData.data().name || '냉장고');
+            }
+        } catch (error) {
+            console.error('냉장고 이름 가져오기 오류:', error);
+        }
+    };
+
     useEffect(() => {
         fetchIngredients();
+        fetchFridgeName();
     }, [fridgeId]);
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            {/* 헤더 영역 */}
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
+                <Text style={styles.title}>{fridgeName}</Text>
+                <View style={{ width: 24 }} /> {/* 오른쪽 공간 확보 */}
+            </View>
+
+            {/* 재료 관리 영역 */}
             {categories.map((category, index) => (
                 <View key={index} style={styles.categoryContainer}>
                     <View style={styles.categoryHeader}>
                         <Text style={styles.categoryTitle}>{category.title}</Text>
-                        <TouchableOpacity>
-                            <Text style={styles.addButton}>+</Text>
-                        </TouchableOpacity>
                     </View>
                     {category.items.map((ingredient, index) => (
                         <View key={index} style={styles.ingredientRow}>
