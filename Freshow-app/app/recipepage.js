@@ -7,10 +7,10 @@ import { OPENAI_API_KEY } from './components/apikey';
 
 // OpenAI 클라이언트 설정
 const openai = new OpenAI({
-    apiKey: OPENAI_API_KEY, 
-    dangerouslyAllowBrowser: true, 
-    organization: "org-CfP6ktdew70Z93iYGcQFwgVf", 
-    project: "proj_Xbs47CHaP3DioAdxXxrI91f0", 
+    apiKey: OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true,
+    organization: "org-CfP6ktdew70Z93iYGcQFwgVf",
+    project: "proj_Xbs47CHaP3DioAdxXxrI91f0",
 });
 
 // RecipePage 컴포넌트 정의
@@ -20,7 +20,7 @@ const RecipePage = () => {
     const [loading, setLoading] = useState(false); // 로딩 상태 관리
 
     // 사용자가 가진 재료 목록 (여기서는 예시로 사용)
-    const ingredients = ['Egg', 'Rice', 'Cheese', 'Noodle' , 'Garlic' , 'Tomato' , 'kimchi', 'Meet', 'Onion'];
+    const ingredients = ['계란', '밥', '치즈', '면' , '마늘' , '토마토' , '김치', '돼지고기', '양파', '소고기', '김', '된장', '당근', '소시지', '고추장', '참기름', '가래떡'];
 
     // OpenAI API를 호출하여 레시피를 가져오는 함수
     const fetchRecipes = async (retryCount = 0) => {
@@ -31,51 +31,45 @@ const RecipePage = () => {
                 model: "gpt-3.5-turbo", // 사용 모델
                 messages: [
                     { role: "system", content: "You are a helpful assistant that suggests dishes." }, // 시스템 역할 정의
-                    { role: "user", content: `Using the following ingredients: ${ingredients.join(", ")}, recommend three dishes that can be made using only these ingredients in a JSON format like [{\"title\": \"Dish 1\"}, {\"title\": \"Dish 2\"}, {\"title\": \"Dish 3\"}] and respond in Korean.` } // 사용자 요청 메시지
+                    { role: "user", content: `Using the following ingredients: ${ingredients.join(", ")}, Recommend three dishes that can be made using only these ingredients, with the titles only, and respond in Korean.` } // 사용자 요청 메시지
                 ],
-                max_tokens: 150, // 응답 최대 토큰 수
+                max_tokens: 100, // 응답 최대 토큰 수
                 temperature: 0.7, // 출력의 다양성을 조절하는 값
             });
 
             // GPT-4 응답에서 레시피 목록 추출
-            const recommendedRecipes = JSON.parse(completion.choices[0].message.content);
+            const recommendedRecipes = completion.choices[0].message.content
+                .trim() // 공백 제거
+                .split('\n') // 줄바꿈을 기준으로 레시피를 나눔
+                .filter(recipe => recipe); // 빈 값 제거
 
-            // 각 레시피에 대해 DALL-E API로 이미지 생성 요청
+            // 각 레시피에 대해 DALL-E 3 API로 이미지 생성 요청
             const recipesWithImages = [];
             for (let i = 0; i < recommendedRecipes.length; i++) {
-                let success = false;
-                let attempts = 0;
+                try {
+                    // 요청 간격을 두기 위해 2초 대기
+                    await new Promise(resolve => setTimeout(resolve, 2000));
 
-                while (!success && attempts < 3) {
-                    try {
-                        // 요청 간격을 두기 위해 2초 대기
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    // DALL-E 3 API로 이미지 생성
+                    const imageGeneration = await openai.images.generate({
+                        model: "dall-e-3", // DALL-E 3 모델 사용
+                        prompt: `${recommendedRecipes[i].title} dish, professional food photography `, // 이미지 생성 설명
+                        n: 1, // 생성할 이미지 개수
+                        size: '1024x1024', // 이미지 크기
+                    });
 
-                        // DALL-E API로 이미지 생성
-                        const imageGeneration = await openai.images.generate({
-                            prompt: `${recommendedRecipes[i].title} dish, professional food photography in a studio setting.`, // 이미지 생성 설명
-                            n: 1, // 생성할 이미지 개수
-                            size: '1024x1024', // 이미지 크기
-                        });
-
-                        // 레시피 이름과 생성된 이미지 URL 저장
-                        recipesWithImages.push({
-                            id: i.toString(), // 고유 ID
-                            name: recommendedRecipes[i].title, // 레시피 이름
-                            image: imageGeneration.data[0].url, // 이미지 URL
-                        });
-                        success = true;
-                    } catch (error) {
-                        attempts++;
-                        console.error(`Attempt ${attempts} failed for recipe "${recommendedRecipes[i].title}"`, error);
-                    }
-                }
-
-                // 재시도 후에도 실패한 경우 기본 이미지 추가
-                if (!success) {
+                    // 레시피 이름과 생성된 이미지 URL 저장
+                    recipesWithImages.push({
+                        id: i.toString(), // 고유 ID
+                        name: recommendedRecipes[i], // 레시피 이름
+                        image: imageGeneration.data[0].url, // 이미지 URL
+                    });
+                } catch (error) {
+                    console.error(`Error generating image for recipe "${recommendedRecipes[i]}":`, error);
+                    // 이미지 생성 실패 시 기본 이미지 사용
                     recipesWithImages.push({
                         id: i.toString(),
-                        name: recommendedRecipes[i].title,
+                        name: recommendedRecipes[i],
                         image: 'https://via.placeholder.com/1024', // 기본 이미지 URL
                     });
                 }
