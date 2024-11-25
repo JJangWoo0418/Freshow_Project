@@ -53,7 +53,7 @@ const RecipePage = () => {
                     // DALL-E 3 API로 이미지 생성
                     const imageGeneration = await openai.images.generate({
                         model: "dall-e-3", // DALL-E 3 모델 사용
-                        prompt: `${recommendedRecipes[i].title} dish, professional food photography `, // 이미지 생성 설명
+                        prompt: `${recommendedRecipes[i]} dish, professional food image`, // 이미지 생성 설명
                         n: 1, // 생성할 이미지 개수
                         size: '1024x1024', // 이미지 크기
                     });
