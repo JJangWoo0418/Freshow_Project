@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     backButtonIcon: {
         width: 100,
         height: 100,
-        marginRight: 10,
+        marginRight: 5,
         resizeMode: 'contain',
         marginBottom: 55,
         alignItems: 'center',
@@ -67,6 +67,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333333',
     },
+    searchIcon: {
+        width: 50,
+        height: 50,
+        marginLeft: 155,
+        resizeMode: 'contain',
+    }
 });
 
 export default styles;
