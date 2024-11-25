@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { styles } from '../components/css/MemoListStyle';
-import { db, auth } from '../firebaseconfig';
+import { styles } from '../app/components/css/MemoListStyle';
+import { db, auth } from './firebaseconfig';
 import {
     collection,
     getDocs,
@@ -29,7 +29,7 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 
 export default function MemoList() {
-    const { fridgeId } = useLocalSearchParams();  // fridgeId를 받아옵니다.
+    const { fridgeId } = useLocalSearchParams(); // fridgeId 받아오기
     const [memos, setMemos] = useState([]);
     const [selectedMemo, setSelectedMemo] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -38,37 +38,38 @@ export default function MemoList() {
     const [showOptions, setShowOptions] = useState(false);
 
     // DB 경로 설정
-    const getMemoCollection = () => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error('사용자가 로그인되어 있지 않습니다.');
-        if (!fridgeId) {
-            throw new Error('냉장고 선택이 필요합니다.');  // fridgeId가 없을 때 경고 메시지 출력
-        }
+    // Firestore에서 올바른 경로로 메모 가져오기
+const getMemoCollection = () => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+        console.error('사용자가 로그인되어 있지 않습니다.');
+        return null;
+    }
+    if (!fridgeId) {
+        console.error('냉장고 ID가 필요합니다.');
+        return null;
+    }
 
-        let memoPath;
-        if (fridgeId) {
-            memoPath = `/계정/${currentUser.uid}/냉장고/${fridgeId}/메모`;  // 해당 냉장고에 맞는 경로로 설정
-        } else {
-            throw new Error('유효하지 않은 냉장고 ID');
-        }
+    // 냉장고 ID 경로에 맞게 Firestore 컬렉션 반환
+    return collection(db, '계정', currentUser.uid, '냉장고', fridgeId, '메모');
+};
 
-        return collection(db, memoPath);
-    };
+// 메모 가져오기 함수
+const fetchMemos = async () => {
+    const memoCollection = getMemoCollection();
+    if (!memoCollection) return;
 
-    // 메모 가져오기
-    const fetchMemos = async () => {
-        try {
-            const querySnapshot = await getDocs(getMemoCollection());
-            const fetchedMemos = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds); // 수정된 시간 기준 정렬
-            setMemos(fetchedMemos);
-        } catch (error) {
-            console.error('메모 불러오기 오류:', error);
-        }
-    };
+    try {
+        const querySnapshot = await getDocs(memoCollection);
+        const fetchedMemos = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        setMemos(fetchedMemos.sort((a, b) => b.updatedAt?.seconds - a.updatedAt?.seconds)); // 최신순 정렬
+    } catch (error) {
+        console.error('메모 불러오기 오류:', error);
+    }
+};
 
     // 새 메모 생성
     const createMemo = async () => {

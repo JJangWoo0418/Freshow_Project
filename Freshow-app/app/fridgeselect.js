@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, FlatList, Alert, Image, ScrollView, Statu
 import { useRouter } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';
 import { auth, db } from './firebaseconfig';
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import styles from './components/css/fridgeselectstyle';
@@ -65,6 +66,21 @@ const FridgeSelect = () => {
         fetchFridges();
     }, []);
 
+    const renderLeftActions = (id) => (
+        <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(id)}>
+            <Text style={styles.actionText}>삭제</Text>
+        </TouchableOpacity>
+    );
+
+    const renderRightActions = (item) => (
+        <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => router.push('/fridgeedit', { fridge: JSON.stringify(item) })}
+        >
+            <Text style={styles.actionText}>수정</Text>
+        </TouchableOpacity>
+    );
+
     return (
         <View style={{ flex: 1 }}>
             <StatusBar barStyle="dark-content" />
@@ -86,33 +102,38 @@ const FridgeSelect = () => {
                     data={fridges}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-                        <Card>
-                            <Card.Title>{item.name}</Card.Title>
-                            <Card.Divider />
-                            <Card.Image
-                                source={item.image ? { uri: item.image.uri } : null}
-                                style={styles.fridgeImage}
-                            />
-                            <Text style={{ marginBottom: 10 }}>{item.description}</Text>
-                            <Button
-                                icon={
-                                    <MaterialCommunityIcons
-                                        name="fridge"
-                                        size={20}
-                                        color="#ffffff"
-                                        style={{ marginRight: 10 }}
-                                    />
-                                }
-                                buttonStyle={{
-                                    borderRadius: 10,
-                                    marginLeft: 0,
-                                    marginRight: 0,
-                                    marginBottom: 0,
-                                }}
-                                title="냉장고 선택"
-                                onPress={() => router.push(`/mainpage?fridgeId=${item.id}`)} // fridgeId를 URL로 전달
-                            />
-                        </Card>
+                        <Swipeable
+                            renderLeftActions={() => renderLeftActions(item.id)}
+                            renderRightActions={() => renderRightActions(item)}
+                        >
+                            <Card>
+                                <Card.Title>{item.name}</Card.Title>
+                                <Card.Divider />
+                                <Card.Image
+                                    source={item.image ? { uri: item.image.uri } : null}
+                                    style={styles.fridgeImage}
+                                />
+                                <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+                                <Button
+                                    icon={
+                                        <MaterialCommunityIcons
+                                            name="fridge"
+                                            size={20}
+                                            color="#ffffff"
+                                            style={{ marginRight: 10 }}
+                                        />
+                                    }
+                                    buttonStyle={{
+                                        borderRadius: 10,
+                                        marginLeft: 0,
+                                        marginRight: 0,
+                                        marginBottom: 0,
+                                    }}
+                                    title="냉장고 선택"
+                                    onPress={() => router.push(`/mainpage?fridgeId=${item.id}`)} // fridgeId를 URL로 전달
+                                />
+                            </Card>
+                        </Swipeable>
                     )}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>

@@ -9,7 +9,7 @@ import {
     Modal,
     Alert,
 } from 'react-native';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../app/components/css/style';
 
@@ -23,6 +23,7 @@ import {
 
 export default function MainPage() {
     const { fridgeId } = useLocalSearchParams(); // fridgeId를 받아옵니다
+    const router = useRouter(); // 화면 이동을 위한 router 추가
     const [memo, setMemo] = useState('');
     const [title, setTitle] = useState('');
     const [memos, setMemos] = useState([]);
@@ -38,13 +39,12 @@ export default function MainPage() {
         }
 
         try {
-            // 현재 fridgeId에 맞춰 메모 가져오기
             const memosCollection = collection(
                 db,
                 '계정',
                 currentUser.uid,
                 '냉장고',
-                fridgeId, // 이 부분이 냉장고 ID를 받아서 해당 냉장고의 메모를 불러옵니다
+                fridgeId,
                 '메모'
             );
             const querySnapshot = await getDocs(memosCollection);
@@ -82,7 +82,7 @@ export default function MainPage() {
                 return Object.keys(data).map((key) => ({
                     name: key,
                     expiryDate: String(data[key]),
-                    expiryPercentage: calculateExpiryPercentage(String(data[key])),
+                    expiryPercentage: calculateExpiryPercentage(data[key]),
                     image: require('../assets/삼겹살.jpg'), // 예제 이미지
                 }));
             }).flat();
@@ -101,18 +101,23 @@ export default function MainPage() {
 
     // 유통기한을 퍼센트로 계산하는 함수
     const calculateExpiryPercentage = (expiryDate) => {
-        if (typeof expiryDate === 'string' && expiryDate.length === 8) {
-            const expiry = new Date(
-                `${expiryDate.substring(0, 4)}-${expiryDate.substring(4, 6)}-${expiryDate.substring(6, 8)}`
-            );
-            const today = new Date();
-            const totalDays = (expiry - today) / (1000 * 60 * 60 * 24);
-            const maxShelfLife = 10;
-            const percentage = Math.max(
-                0,
-                Math.min(100, Math.round((totalDays / maxShelfLife) * 100))
-            );
-            return percentage;
+        try {
+            if (typeof expiryDate === 'number') {
+                expiryDate = expiryDate.toString();
+            }
+
+            if (typeof expiryDate === 'string' && expiryDate.length === 8) {
+                const expiry = new Date(
+                    `${expiryDate.substring(0, 4)}-${expiryDate.substring(4, 6)}-${expiryDate.substring(6, 8)}`
+                );
+                const today = new Date();
+                const totalDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                const maxShelfLife = 10; // 최대 유통기한 일수
+                const percentage = Math.max(0, Math.min(100, Math.round((totalDays / maxShelfLife) * 100)));
+                return percentage;
+            }
+        } catch (error) {
+            console.error('유통기한 계산 오류:', error);
         }
         return 0;
     };
@@ -160,7 +165,7 @@ export default function MainPage() {
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </Link>
                 <Text style={styles.title}>냉장고 이름</Text>
-                <View style={{ width: 24 }} /> {/* 빈 공간 유지 */}
+                <View style={{ width: 24 }} />
             </View>
 
             <View style={styles.topIcons}>
@@ -185,8 +190,8 @@ export default function MainPage() {
                         placeholder="메모 제목..."
                         onBlur={handleMemoSave}
                     />
-                    <Link href="/components/MemoList" style={styles.menuIcon}>
-                        <Ionicons name="menu" size={24} color="black" /> {/* MemoList로 넘어가는 햄버거 메뉴 아이콘 */}
+                    <Link href={`/MemoList?fridgeId=${fridgeId}`} style={styles.menuIcon}>
+                        <Ionicons name="menu" size={24} color="black" />
                     </Link>
                 </View>
                 <TextInput
@@ -221,8 +226,11 @@ export default function MainPage() {
                 </Modal>
             )}
 
-            {/* 재료 관리 영역 */}
-            <View style={styles.ingredientSection}>
+            {/* 재료 관리 버튼 */}
+            <TouchableOpacity
+                style={styles.ingredientSection}
+                onPress={() => router.push(`/IngredientManagement?fridgeId=${fridgeId}`)}
+            >
                 <Text style={styles.sectionTitle}>재료관리</Text>
                 {ingredients.map((ingredient, index) => (
                     <View key={index} style={styles.ingredientItem}>
@@ -245,7 +253,7 @@ export default function MainPage() {
                         <Text>{ingredient.expiryPercentage}%</Text>
                     </View>
                 ))}
-            </View>
+            </TouchableOpacity>
         </ScrollView>
     );
 }
