@@ -92,12 +92,16 @@ const RecipePage = () => {
 
     // 레시피 항목 렌더링 함수
     const renderRecipeItem = ({ item }) => (
-        <TouchableOpacity style={styles.recipeItem} onPress={() => router.push(`/recipeDetail?id=${item.id}`)}> {/* 상세 페이지로 이동 */}
+        <TouchableOpacity
+            style={styles.recipeItem}
+            onPress={() => router.push({ pathname: '/recipemakepage', params: { id: item.id, name: item.name } })}
+        >
             <Image source={{ uri: item.image }} style={styles.recipeImage} /> {/* 레시피 이미지 */}
             <Text style={styles.recipeName}>{item.name}</Text> {/* 레시피 이름 */}
             <Image source={require('../assets/ArrowRightBtn.png')} style={styles.arrowIcon} /> {/* 화살표 아이콘 */}
         </TouchableOpacity>
     );
+    
 
     // 메인 UI 구성
     return (
