@@ -91,17 +91,22 @@ const RecipePage = () => {
     };
 
     // 레시피 항목 렌더링 함수
-    const renderRecipeItem = ({ item }) => (
-        <TouchableOpacity
-            style={styles.recipeItem}
-            onPress={() => router.push({ pathname: '/recipemakepage', params: { id: item.id, name: item.name } })}
-        >
-            <Image source={{ uri: item.image }} style={styles.recipeImage} /> {/* 레시피 이미지 */}
-            <Text style={styles.recipeName}>{item.name}</Text> {/* 레시피 이름 */}
-            <Image source={require('../assets/ArrowRightBtn.png')} style={styles.arrowIcon} /> {/* 화살표 아이콘 */}
-        </TouchableOpacity>
-    );
-    
+    const renderRecipeItem = ({ item }) => {
+        console.log('Navigating to recipemakepage with:', { id: item.id, name: item.name });
+        return (
+            <TouchableOpacity
+                style={styles.recipeItem}
+                onPress={() => {
+                    console.log('Pushing to recipemakepage:', { id: item.id, name: item.name });
+                    router.push({ pathname: '/recipemakepage', query: { id: item.id, name: item.name } });
+                }}
+            >
+                <Image source={{ uri: item.image }} style={styles.recipeImage} />
+                <Text style={styles.recipeName}>{item.name}</Text>
+                <Image source={require('../assets/ArrowRightBtn.png')} style={styles.arrowIcon} />
+            </TouchableOpacity>
+        );
+    };
 
     // 메인 UI 구성
     return (
@@ -125,10 +130,22 @@ const RecipePage = () => {
                 />
             )}
 
+            <TouchableOpacity
+                onPress={() => {
+                    console.log('Navigating to recipemakepage with:', { id: '1', name: '가래떡 떡볶이' });
+                    router.push({ pathname: '/recipemakepage', query: { id: '1', name: '가래떡 떡볶이' } });
+                }}
+                style={{ backgroundColor: 'blue', padding: 10, margin: 10 }}
+            >
+                <Text style={{ color: 'white' }}>Test Navigation</Text>
+            </TouchableOpacity>
+
             {/* 뒤로가기 버튼 */}
             <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                 <Image source={require('../assets/BackBtn.png')} style={styles.backButtonIcon} />
             </TouchableOpacity>
+
+
         </View>
     );
 };
