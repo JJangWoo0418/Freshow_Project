@@ -13,37 +13,41 @@ const openai = new OpenAI({
 
 const RecipeMakePage = () => {
     const router = useRouter();
-    const { id, name, image } = useLocalSearchParams(); // 매개변수 가져오기
-    const [recipeSteps, setRecipeSteps] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { id, name, image } = useLocalSearchParams(); // 라우팅 데이터 가져오기
+    const [recipeSteps, setRecipeSteps] = useState([]); // 레시피 단계
+    const [loading, setLoading] = useState(true); // 로딩 상태 관리
 
     useEffect(() => {
         // GPT API 호출하여 레시피 단계 가져오기
         const fetchRecipeDetails = async () => {
+            if (!name) {
+                alert("음식 이름 데이터가 없습니다.");
+                return;
+            }
             setLoading(true);
             try {
                 const completion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "You are a professional chef assistant." },
+                        { role: "system", content: "You are a professional chef assistant who provides recipes in Korean." },
                         {
                             role: "user",
-                            content: `Give me a step-by-step recipe in Korean for making ${name}. Each step should be concise and numbered.`
-                        }
+                            content: `Provide a step-by-step recipe for ${name} in Korean. Each step should be numbered and concise.`
+                        },
                     ],
                     max_tokens: 300,
                     temperature: 0.7,
                 });
 
-                // GPT 응답을 받아 단계별 레시피로 분리
+                // GPT 응답 처리
                 const steps = completion.choices[0].message.content
                     .trim()
-                    .split('\n')
-                    .filter(step => step); // 빈 값 제거
+                    .split('\n') // 줄바꿈 기준으로 단계 분리
+                    .filter(step => step); // 빈 줄 제거
                 setRecipeSteps(steps);
             } catch (error) {
                 console.error("Error fetching recipe details:", error);
-                alert("레시피를 불러오는 중 문제가 발생했습니다.");
+                alert("레시피를 불러오는 중 오류가 발생했습니다.");
             } finally {
                 setLoading(false);
             }
@@ -54,13 +58,14 @@ const RecipeMakePage = () => {
 
     return (
         <ScrollView style={styles.container}>
+            {/* 헤더 영역 */}
             <View style={styles.header}>
                 <Image source={{ uri: image }} style={styles.recipeImage} />
-                <Text style={styles.recipeTitle}>{name}</Text>
+                <Text style={styles.recipeTitle}>{name || "레시피"}</Text>
                 <Text style={styles.recipeSubtitle}>건강하게 먹어보기</Text>
             </View>
 
-            {/* 로딩 표시 */}
+            {/* 로딩 상태 */}
             {loading ? (
                 <ActivityIndicator size="large" color="#FF6347" style={styles.loader} />
             ) : (
@@ -78,11 +83,9 @@ const RecipeMakePage = () => {
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
                     <Image source={require('../assets/BackBtn.png')} style={styles.footerIcon} />
-                    <Text style={styles.footerText}>돌아가기</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.push('/')}>
                     <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
-                    <Text style={styles.footerText}>메인으로</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
