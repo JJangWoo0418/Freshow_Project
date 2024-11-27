@@ -2,71 +2,80 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         backgroundColor: '#fff',
-        paddingHorizontal: 20,
-        marginTop: 55,
+        marginTop:50
     },
     header: {
         alignItems: 'center',
         marginTop: 20,
     },
     recipeImage: {
-        width: '70%',
-        height: '60%',
+        width: 200,
+        height: 200,
         borderRadius: 10,
     },
     recipeTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#FF6347',
-        marginTop: 30
+        marginTop: 30,
+        marginBottom: 20,
+        color: '#DD4A48',
+    },
+    stickBar: {
+        width: '90%',
+        height: 6,
+        marginVertical: 10,
+        alignSelf: 'center',
+    },
+    loader: {
+        marginTop: 20,
+    },
+    stepsScroll: {
+        flex: 1,
     },
     stepsContainer: {
-        marginTop: 3,
+        paddingVertical: 10,
+        marginTop: 20,
     },
     step: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
         marginBottom: 15,
     },
     stepNumber: {
-        fontSize: 18,
         fontWeight: 'bold',
-        marginRight: 10,
-        color: '#FF6347',
+        marginRight: 5,
+        color: '#DD4A48',
+        fontSize: 20, 
+        lineHeight: 25,
     },
     stepText: {
-        fontSize: 16,
-        color: '#333',
-        lineHeight: 22,
+        flex: 1, // 텍스트가 자동으로 줄바꿈되도록 설정
+        fontSize: 20, // 텍스트 크기
+        lineHeight: 25, // 줄 간격
+        color: '#333', // 텍스트 색상
     },
+    
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginVertical: 20,
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        backgroundColor: '#fff',
+        paddingVertical: 30,
+        borderTopWidth: 0,
+        borderTopColor: '#ddd',
     },
     footerButton: {
-        flexDirection: 'row',
         alignItems: 'center',
     },
     footerIcon: {
-        width: 60,
-        height: 60,
-        marginRight: 5,
+        width: 50,
+        height: 50,
     },
-    footerText: {
-        fontSize: 16,
-        color: '#333',
-    },
-    loader: {
-        marginTop: 50,
-    },
-    stickBar: {
-        width: 360,
-        height: 6,
-        alignItems: 'center',
-        marginBottom: 20,
-    }
 });
+
 
 export default styles;

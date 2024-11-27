@@ -126,7 +126,10 @@ const RecipePage = () => {
             </TouchableOpacity>
 
             {loading ? (
-                <ActivityIndicator size="large" color="#FF6347" />
+                <View style={styles.loadingContainer}>
+                    <Image source={require('../assets/tom-and-jerry-searching.gif')} style={styles.loadingImage}/>
+                    <Image source={require('../assets/RecipeWaitText.png')} style={styles.loadingText}/>
+                </View>
             ) : recipes.length === 0 ? (
                 <Image source={require('../assets/RecipeLogo.png')} style={styles.recipeLogo} />
             ) : (
@@ -137,10 +140,11 @@ const RecipePage = () => {
                     contentContainerStyle={styles.recipeList}
                 />
             )}
-
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Image source={require('../assets/BackBtn.png')} style={styles.backButtonIcon} />
-            </TouchableOpacity>
+            <View style={styles.footer}>
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                    <Image source={require('../assets/BackBtn.png')} style={styles.backButtonIcon} />
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

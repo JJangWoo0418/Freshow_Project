@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     Logo: {
         alignItems: 'center',
         marginTop: 70,
-        marginLeft: 13,
+        marginLeft: 18,
         resizeMode: 'contain'
     },
     recipeList: {
@@ -57,10 +57,11 @@ const styles = StyleSheet.create({
     backButtonIcon: {
         width: 100,
         height: 100,
-        marginRight: 5,
+        marginRight: 2,
         resizeMode: 'contain',
-        marginBottom: 55,
+        marginBottom: 40,
         alignItems: 'center',
+        marginLeft: 30,
     },
     backButtonText: {
         fontSize: 16,
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
         height: 70,
         marginLeft: 155,
         resizeMode: 'contain',
+        marginBottom: 20,
     },
     recipeLogo: {
         width: 300,
@@ -79,7 +81,36 @@ const styles = StyleSheet.create({
         marginTop: 40,
         marginBottom: 20,
         resizeMode: 'contain',
-    }
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        paddingVertical: 3,
+    },
+    loadingContainer:{
+        alignItems: 'center',
+        marginRight: 30,
+        marginTop: 30,
+    },
+    loadingImage: {
+        width: 230,
+        height: 230,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 35
+    },
+    loadingText:{
+        width: 200,
+        height: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 35,
+        resizeMode: 'contain'
+    },
 });
 
 export default styles;

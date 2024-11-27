@@ -29,10 +29,10 @@ const RecipeMakePage = () => {
                 const completion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "You are a professional chef assistant who provides recipes in Korean." },
+                        { role: "system", content: "너는 한국어로 레시피를 제공하는 전문 셰프 어시스턴트입니다." },
                         {
                             role: "user",
-                            content: `Provide a step-by-step recipe for ${name} in Korean. Each step should be numbered and concise.`
+                            content: `Provide a step-by-step recipe for ${name} in Korean. Each step should be concise, not numbered.`
                         },
                     ],
                     max_tokens: 300,
@@ -57,30 +57,29 @@ const RecipeMakePage = () => {
     }, [name]);
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             {/* 헤더 영역 */}
             <View style={styles.header}>
                 <Image source={{ uri: image }} style={styles.recipeImage} />
-                <Text style={styles.recipeTitle}>{name || "레시피"}</Text>             
+                <Text style={styles.recipeTitle}>{name || "레시피"} 레시피</Text>
+                <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
             </View>
 
-            <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
-
-            {/* 로딩 상태 */}
+            {/* 레시피 설명 영역에만 스크롤뷰 적용 */}
             {loading ? (
                 <ActivityIndicator size="large" color="#FF6347" style={styles.loader} />
             ) : (
-                    <View style={styles.stepsContainer}>
-                        {recipeSteps.map((step, index) => (                        
-                            <View key={index} style={styles.step}>
-                                <Text style={styles.stepNumber}>{index + 1}.</Text>
-                                <Text style={styles.stepText}>{step}</Text>
-                            </View>
-                        ))}
-                    </View>
+                <ScrollView style={styles.stepsScroll} contentContainerStyle={styles.stepsContainer}>
+                    {recipeSteps.map((step, index) => (
+                        <View key={index} style={styles.step}>
+                            <Text style={styles.stepNumber}>{index + 1}.</Text>
+                            <Text style={styles.stepText}>{step}</Text>
+                        </View>
+                    ))}
+                </ScrollView>
             )}
 
-            {/* 하단 버튼 */}
+            {/* 하단 버튼 영역 */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
                     <Image source={require('../assets/BackBtn.png')} style={styles.footerIcon} />
@@ -89,7 +88,7 @@ const RecipeMakePage = () => {
                     <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </View>
     );
 };
 
