@@ -2,31 +2,27 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#fff',
         paddingHorizontal: 20,
+        marginTop: 55,
     },
     header: {
         alignItems: 'center',
-        marginVertical: 20,
+        marginTop: 20,
     },
     recipeImage: {
-        width: '100%',
-        height: 200,
+        width: '70%',
+        height: '60%',
         borderRadius: 10,
     },
     recipeTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         color: '#FF6347',
-        marginVertical: 10,
-    },
-    recipeSubtitle: {
-        fontSize: 16,
-        color: '#888',
+        marginTop: 30
     },
     stepsContainer: {
-        marginTop: 20,
+        marginTop: 3,
     },
     step: {
         flexDirection: 'row',
@@ -54,8 +50,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     footerIcon: {
-        width: 24,
-        height: 24,
+        width: 60,
+        height: 60,
         marginRight: 5,
     },
     footerText: {
@@ -65,6 +61,12 @@ const styles = StyleSheet.create({
     loader: {
         marginTop: 50,
     },
+    stickBar: {
+        width: 360,
+        height: 6,
+        alignItems: 'center',
+        marginBottom: 20,
+    }
 });
 
 export default styles;

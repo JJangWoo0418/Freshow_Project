@@ -61,22 +61,23 @@ const RecipeMakePage = () => {
             {/* 헤더 영역 */}
             <View style={styles.header}>
                 <Image source={{ uri: image }} style={styles.recipeImage} />
-                <Text style={styles.recipeTitle}>{name || "레시피"}</Text>
-                <Text style={styles.recipeSubtitle}>건강하게 먹어보기</Text>
+                <Text style={styles.recipeTitle}>{name || "레시피"}</Text>             
             </View>
+
+            <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
 
             {/* 로딩 상태 */}
             {loading ? (
                 <ActivityIndicator size="large" color="#FF6347" style={styles.loader} />
             ) : (
-                <View style={styles.stepsContainer}>
-                    {recipeSteps.map((step, index) => (
-                        <View key={index} style={styles.step}>
-                            <Text style={styles.stepNumber}>{index + 1}.</Text>
-                            <Text style={styles.stepText}>{step}</Text>
-                        </View>
-                    ))}
-                </View>
+                    <View style={styles.stepsContainer}>
+                        {recipeSteps.map((step, index) => (                        
+                            <View key={index} style={styles.step}>
+                                <Text style={styles.stepNumber}>{index + 1}.</Text>
+                                <Text style={styles.stepText}>{step}</Text>
+                            </View>
+                        ))}
+                    </View>
             )}
 
             {/* 하단 버튼 */}
@@ -84,7 +85,7 @@ const RecipeMakePage = () => {
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
                     <Image source={require('../assets/BackBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.footerButton} onPress={() => router.push('/')}>
+                <TouchableOpacity style={styles.footerButton} onPress={() => router.push('mainpage')}>
                     <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>

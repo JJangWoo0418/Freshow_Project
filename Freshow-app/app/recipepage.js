@@ -128,7 +128,7 @@ const RecipePage = () => {
             {loading ? (
                 <ActivityIndicator size="large" color="#FF6347" />
             ) : recipes.length === 0 ? (
-                <Text style={styles.noRecipesText}>추천 레시피가 없습니다. 버튼을 눌러 시작하세요!</Text>
+                <Image source={require('../assets/RecipeLogo.png')} style={styles.recipeLogo} />
             ) : (
                 <FlatList
                     data={recipes}

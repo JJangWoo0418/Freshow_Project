@@ -51,8 +51,7 @@ const styles = StyleSheet.create({
     },
     backButton: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 20,
+        marginTop: 50,
         justifyContent: 'center',
     },
     backButtonIcon: {
@@ -68,9 +67,17 @@ const styles = StyleSheet.create({
         color: '#333333',
     },
     searchIcon: {
-        width: 50,
-        height: 50,
+        width: 70,
+        height: 70,
         marginLeft: 155,
+        resizeMode: 'contain',
+    },
+    recipeLogo: {
+        width: 300,
+        height: 300,
+        marginLeft: 33,
+        marginTop: 40,
+        marginBottom: 20,
         resizeMode: 'contain',
     }
 });
