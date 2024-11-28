@@ -13,7 +13,7 @@ const openai = new OpenAI({
 
 const RecipeMakePage = () => {
     const router = useRouter();
-    const { id, name, image } = useLocalSearchParams(); // 라우팅 데이터 가져오기
+    const { id, name, image = 'https://via.placeholder.com/1024'} = useLocalSearchParams();// 라우팅 데이터 가져오기
     const [recipeSteps, setRecipeSteps] = useState([]); // 레시피 단계
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
     const [imageLoading, setImageLoading] = useState(true); // 이미지 로딩 상태
@@ -30,14 +30,14 @@ const RecipeMakePage = () => {
                 const completion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "You are a professional chef assistant who provides detailed recipes in Korean, Do not use numbers to number your recipes, but use line breaks. Each explanation should be about one sentence. Don't tell me what you're making, explain it right away." },
+                        { role: "system", content: "You are a professional chef assistant who provides detailed recipes in Korean, Do not use numbers to number your recipes, but use line breaks. Each explanation should be about two sentence. Explain in at least 10 steps, Don't write the recipe title" },
                         {
                             role: "user",
-                            content: `Provide a step-by-step recipe for ${name} in Korean. `
+                            content: `Provide a step-by-step recipe for ${name} in Korean. Do not use numbers to number your recipes, but use line breaks. Each explanation should be about two sentence. Explain in at least 10 steps, Don't write the recipe title `
                         },
                     ],
                     max_tokens: 800,
-                    temperature: 0.3,
+                    temperature: 0.5,
                 });
 
                 // GPT 응답 처리

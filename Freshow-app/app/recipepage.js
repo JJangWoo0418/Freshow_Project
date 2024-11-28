@@ -44,7 +44,7 @@ const RecipePage = () => {
                     },
                 ],
                 max_tokens: 100,
-                temperature: 0.7,
+                temperature: 1,
             });
 
             // 추천된 레시피 데이터 추출
@@ -105,7 +105,7 @@ const RecipePage = () => {
                     params: {
                         id: item.id,
                         name: item.name,
-                        image: item.image,
+                        image: item.image || 'https://via.placeholder.com/1024',
                     },
                 })
             }
