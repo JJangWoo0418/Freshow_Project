@@ -51,12 +51,14 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     },
     toggleButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     backgroundColor: "#B3E5FC",
     alignItems: "center",
     justifyContent: "center",
-    flex: 1,
+    borderRadius: 5, // 버튼 테두리를 둥글게 설정
+    width: 100, // 너비를 고정
+    height: 40, // 높이를 고정
     },
     selectedToggleButton: {
     backgroundColor: "#fff",
@@ -76,7 +78,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFB6C1",
     borderWidth: 2,
     borderColor: "#000",
-    marginLeft: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 100, // 너비를 고정
+    height: 43, // 높이를 고정
+    marginLeft: 50,
     },
     tagButtonText: {
     color: "#fff",
@@ -94,7 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,
-    width: 305,
+    width: 355,
     },
     countContainer: {
     flexDirection: "row",
@@ -127,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginLeft: 15,
-    width: 180,
+    width: 228,
     },
     expiryContainer: {
     marginTop: 20,
@@ -136,7 +142,7 @@ const styles = StyleSheet.create({
     expiryButton: {
     backgroundColor: "#FFB6C1",
     paddingVertical: 12,
-    paddingHorizontal: 85,
+    paddingHorizontal: 119,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 10,
