@@ -16,6 +16,7 @@ const RecipeMakePage = () => {
     const { id, name, image } = useLocalSearchParams(); // 라우팅 데이터 가져오기
     const [recipeSteps, setRecipeSteps] = useState([]); // 레시피 단계
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
+    const [imageLoading, setImageLoading] = useState(true); // 이미지 로딩 상태
 
     useEffect(() => {
         // GPT API 호출하여 레시피 단계 가져오기
@@ -60,7 +61,18 @@ const RecipeMakePage = () => {
         <View style={styles.container}>
             {/* 헤더 영역 */}
             <View style={styles.header}>
-                <Image source={{ uri: image }} style={styles.recipeImage} />
+                {imageLoading && (
+                    <ActivityIndicator size="large" color="#FF6347" style={styles.imageLoader} />
+                )}
+                <Image
+                    source={{ uri: image }}
+                    style={styles.recipeImage}
+                    onLoad={() => setImageLoading(false)} // 이미지 로딩 완료 시 상태 업데이트
+                    onError={() => {
+                        setImageLoading(false);
+                        alert("이미지를 불러오는 중 오류가 발생했습니다.");
+                    }}
+                />
                 <Text style={styles.recipeTitle}>{name || "레시피"} 레시피</Text>
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
             </View>

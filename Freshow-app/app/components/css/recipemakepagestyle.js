@@ -75,6 +75,12 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
     },
+    imageLoader: {
+        position: 'absolute',
+        top: '40%',
+        alignSelf: 'center',
+        zIndex: 10,
+    },
 });
 
 
