@@ -30,13 +30,22 @@ const styles = StyleSheet.create({
     },
     imageButton: {
     backgroundColor: "#E0F7FA",
-    paddingVertical: 20,
+    paddingVertical: 80,
     alignItems: "center",
     borderRadius: 8,
     },
     imageButtonText: {
     color: "#333",
     fontSize: 16,
+    },
+    imagePreview: {
+    width: 100, // 원하는 너비
+    height: 100, // 원하는 높이
+    borderRadius: 10, // 테두리 둥글게
+    resizeMode: "cover", // 이미지가 뷰에 맞게 잘림 없이 표시되도록 설정
+    borderWidth: 1, // 테두리 두께
+    borderColor: "#ddd", // 테두리 색상
+    marginTop: 10, // 위쪽 여백
     },
     itemTypeContainer: {
     flexDirection: "row",
