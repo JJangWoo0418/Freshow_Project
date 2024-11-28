@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200,
         borderRadius: 10,
+        
     },
     recipeTitle: {
         fontSize: 24,
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
         color: '#DD4A48',
     },
     stickBar: {
-        width: '90%',
+        width: '120%',
         height: 6,
         marginVertical: 10,
         alignSelf: 'center',
@@ -32,11 +33,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     stepsScroll: {
-        flex: 1,
     },
     stepsContainer: {
         paddingVertical: 10,
-        marginTop: 20,
+        marginTop: 3,
+        paddingBottom: 130
     },
     step: {
         flexDirection: 'row',
@@ -65,8 +66,9 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
         paddingVertical: 30,
-        borderTopWidth: 0,
-        borderTopColor: '#ddd',
+        borderTopWidth: 5,
+        borderTopColor: '#E4E4E4',
+        marginTop: 20,
     },
     footerButton: {
         alignItems: 'center',
@@ -81,6 +83,31 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         zIndex: 10,
     },
+    card: {
+        backgroundColor: '#fff',
+        marginVertical: 10,
+        marginHorizontal: 20,
+        padding: 20,
+        borderRadius: 10,
+        elevation: 3, // 안드로이드 그림자
+        shadowColor: '#000', // iOS 그림자
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+    },
+    cardNumber: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#FF6347',
+        marginBottom: 5,
+        marginLeft: 150,
+    },
+    cardText: {
+        fontSize: 16,
+        lineHeight: 24,
+        color: '#333',
+    },
+    
 });
 
 

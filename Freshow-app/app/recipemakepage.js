@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, ScrollView, StatusBar } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import OpenAI from "openai";
 import { OPENAI_API_KEY } from './components/apikey';
@@ -30,14 +30,14 @@ const RecipeMakePage = () => {
                 const completion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "너는 한국어로 레시피를 제공하는 전문 셰프 어시스턴트입니다." },
+                        { role: "system", content: "You are a professional chef assistant who provides detailed recipes in Korean, Do not use numbers to number your recipes, but use line breaks. Each explanation should be about one sentence. Don't tell me what you're making, explain it right away." },
                         {
                             role: "user",
-                            content: `Provide a step-by-step recipe for ${name} in Korean. Each step should be concise, not numbered.`
+                            content: `Provide a step-by-step recipe for ${name} in Korean. `
                         },
                     ],
-                    max_tokens: 300,
-                    temperature: 0.7,
+                    max_tokens: 800,
+                    temperature: 0.3,
                 });
 
                 // GPT 응답 처리
@@ -59,6 +59,7 @@ const RecipeMakePage = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar barStyle="dark-content"/>
             {/* 헤더 영역 */}
             <View style={styles.header}>
                 {imageLoading && (
@@ -77,15 +78,15 @@ const RecipeMakePage = () => {
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
             </View>
 
-            {/* 레시피 설명 영역에만 스크롤뷰 적용 */}
+            {/* 레시피 설명 영역 */}
             {loading ? (
                 <ActivityIndicator size="large" color="#FF6347" style={styles.loader} />
             ) : (
                 <ScrollView style={styles.stepsScroll} contentContainerStyle={styles.stepsContainer}>
                     {recipeSteps.map((step, index) => (
-                        <View key={index} style={styles.step}>
-                            <Text style={styles.stepNumber}>{index + 1}.</Text>
-                            <Text style={styles.stepText}>{step}</Text>
+                        <View key={index} style={styles.card}>
+                            <Text style={styles.cardNumber}>{index + 1}.</Text>
+                            <Text style={styles.cardText}>{step}</Text>
                         </View>
                     ))}
                 </ScrollView>
