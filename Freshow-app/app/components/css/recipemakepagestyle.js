@@ -107,6 +107,10 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         color: '#333',
     },
+    healtheatbtn: {
+        marginBottom: 15,
+        marginTop: 10,
+    }
     
 });
 

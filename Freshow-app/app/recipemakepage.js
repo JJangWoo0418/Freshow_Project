@@ -75,6 +75,14 @@ const RecipeMakePage = () => {
                     }}
                 />
                 <Text style={styles.recipeTitle}>{name || "레시피"} 레시피</Text>
+                <TouchableOpacity
+                    style={styles.footerButton}
+                    onPress={() => router.push('/healthrecipe?name=' + name)}
+                >
+                    <Image source={require('../assets/HealthEatBtn.png')} style={styles.healtheatbtn} />
+                </TouchableOpacity>
+
+
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
             </View>
 
