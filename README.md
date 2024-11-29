@@ -1,10 +1,5 @@
 # 👋 Refrigerator management software
 
-![IntroPageScreenShot](Freshow-app/assets/IntroPageFigma.png)
+![IntroPageScreenShot](Freshow-app\assets\IntroPageFigma.png)
 
-install list (type in turminal)
-1. npx expo install expo-image-picker
-2. npm install react-native-elements @rneui/themed
-3. npm install react-native-windows
-4. npm install react-native-vector-icons
-5. npm install react-native-gesture-handler
+This app allows users to scan food ingredients with barcodes, place food ingredients on a refrigerator card they create, manage expiration dates, and receive recipe recommendations using only the food ingredients contained within.
