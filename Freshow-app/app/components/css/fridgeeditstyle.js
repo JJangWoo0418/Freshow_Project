@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: 10,
         flex: 1,
         padding: 16,
         backgroundColor: '#fff',
@@ -16,9 +17,10 @@ const styles = StyleSheet.create({
         width: 24,  // 적절한 크기로 설정
         height: 24,
         resizeMode: 'contain',
-        marginTop: 22
+        marginTop: 40
     },
     header: {
+        marginTop: 40,
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
