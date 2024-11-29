@@ -188,7 +188,7 @@ const RecipePage = () => {
             )}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                    <Image source={require('../assets/BackBtn.png')} style={styles.backIcon} />
+                    <Image source={require('../assets/BackBtn.png')} style={styles.backButtonIcon} />
                 </TouchableOpacity>
             </View>
         </View>
