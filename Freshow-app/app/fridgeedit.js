@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from './firebaseconfig';
 import styles from './components/css/fridgeeditstyle';
 
@@ -46,7 +46,7 @@ const FridgeEdit = () => {
             });
 
             Alert.alert("성공", "냉장고가 수정되었습니다.");
-            router.push('/fridgeselect');
+            router.push('/fridgeselect', { refresh: true });
         } catch (error) {
             console.error("냉장고 수정 오류:", error);
         }
@@ -66,8 +66,8 @@ const FridgeEdit = () => {
             </TouchableOpacity>
 
             <Text style={styles.header}>냉장고 편집</Text>
-            {image && image.uri ? (
-                <Image source={{ uri: image.uri }} style={styles.image} />
+            {image ? (
+                <Image source={{ uri: typeof image === 'string' ? image : image.uri }} style={styles.image} />
             ) : (
                 <View style={[styles.image, { backgroundColor: '#E0E0E0' }]} />
             )}

@@ -75,7 +75,7 @@ const FridgeSelect = () => {
     const renderRightActions = (item) => (
         <TouchableOpacity
             style={styles.editButton}
-            onPress={() => router.push('/fridgeedit', { fridge: JSON.stringify(item) })}
+            onPress={() => router.push(`/fridgeedit?fridgeId=${item.id}`)}
         >
             <Text style={styles.actionText}>수정</Text>
         </TouchableOpacity>
@@ -110,7 +110,7 @@ const FridgeSelect = () => {
                                 <Card.Title>{item.name}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image
-                                    source={item.image ? { uri: item.image } : null}
+                                    source={item.image ? { uri: typeof item.image === 'string' ? item.image : item.image.uri } : null}
                                     style={styles.fridgeImage}
                                 />
                                 <Text style={{ marginBottom: 10, marginTop: 10, color: "gray" }}>{item.description}</Text>
