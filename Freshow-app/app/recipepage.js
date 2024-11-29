@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { db } from './firebaseconfig'; // Firestore 인스턴스 가져오기
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc } from 'firebase/firestore';
 import styles from './components/css/recipepagestyle';
 import OpenAI from "openai";
 import { OPENAI_API_KEY } from './components/apikey';
@@ -22,33 +22,46 @@ const RecipePage = () => {
     const [fetching, setFetching] = useState(false); // 중복 요청 방지 상태
     const [ingredients, setIngredients] = useState([]); // Firebase에서 가져온 재료 목록
 
+    // 오늘 날짜 계산 (yyyyMMdd 형식)
+    const getTodayDate = () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = (today.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작
+        const dd = today.getDate().toString().padStart(2, '0');
+        return `${yyyy}${mm}${dd}`;
+    };
+
     // 재료 데이터 Firebase에서 가져오기
     const fetchIngredients = async () => {
         try {
             const userId = "qA1vecXHMyX7wqfRY53UuWa2NvB2"; // 현재 사용자 ID (예시)
             const refrigeratorId = "u7mCQptga2njYSCBgkho"; // 냉장고 ID (예시)
 
-            // 채소, 육류 카테고리 데이터 가져오기 (각각의 문서로 접근)
-            const vegetablesRef = doc(db, '계정', userId, '냉장고', refrigeratorId, '재료', '채소');
-            const meatsRef = doc(db, '계정', userId, '냉장고', refrigeratorId, '재료', '육류');
+            // '재료' 컬렉션에서 모든 카테고리 문서 가져오기
+            const ingredientsRef = collection(db, '계정', userId, '냉장고', refrigeratorId, '재료');
 
-            // 데이터 가져오기
-            const vegetablesSnapshot = await getDoc(vegetablesRef);
-            const meatsSnapshot = await getDoc(meatsRef);
+            // 모든 카테고리 문서 가져오기
+            const snapshot = await getDocs(ingredientsRef);
+            const validIngredients = [];
+            const todayDate = getTodayDate();
 
-            // 각 카테고리에서 재료 목록 추출
-            const vegetables = vegetablesSnapshot.exists() ? Object.keys(vegetablesSnapshot.data()) : [];
-            const meats = meatsSnapshot.exists() ? Object.keys(meatsSnapshot.data()) : [];
+            // 각 카테고리에서 유효한 재료만 추출
+            snapshot.forEach(docSnapshot => {
+                const categoryData = docSnapshot.data();
+                for (let ingredient in categoryData) {
+                    const expiryDate = categoryData[ingredient]; // 유통기한 (yyyyMMdd 형식)
+                    if (expiryDate >= todayDate) {
+                        validIngredients.push(ingredient); // 유통기한이 지나지 않은 재료만 추가
+                    }
+                }
+            });
 
-            // 재료 합치기
-            const allIngredients = [...vegetables, ...meats];
+            setIngredients(validIngredients); // 유효한 재료 상태 업데이트
+            console.log('유효한 냉장고 재료:', validIngredients); // 콘솔에 알림 출력
+            Alert.alert('냉장고 속 재료로 레시피 검색. . .', `포함된 재료 : ${validIngredients.join(', ')}`); //휴대폰에서 알림 표시
 
-            setIngredients(allIngredients); // 재료 상태 업데이트
-            console.log('냉장고의 재료:', allIngredients); // 콘솔에 알림 출력
-            Alert.alert('냉장고 재료 가져오기', `냉장고에서 가져온 재료: ${allIngredients.join(', ')}`);
-
-            // OpenAI에 재료를 전달하여 레시피 추천 받기
-            fetchRecipes(allIngredients);
+            // OpenAI에 유효한 재료를 전달하여 레시피 추천 받기
+            fetchRecipes(validIngredients);
 
         } catch (error) {
             console.error('재료 가져오기 오류:', error);
@@ -148,14 +161,15 @@ const RecipePage = () => {
         </TouchableOpacity>
     );
 
+    // 페이지가 처음 렌더링될 때 fetchIngredients 함수 실행
+    useEffect(() => {
+        fetchIngredients();
+    }, []);
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
             <Image source={require('../assets/RecipeRecommendLogo.png')} style={styles.Logo} />
-
-            <TouchableOpacity style={styles.fetchButton} onPress={fetchIngredients}>
-                <Image source={require('../assets/FoodSearchBtn.png')} style={styles.searchIcon} />
-            </TouchableOpacity>
 
             {loading ? (
                 <View style={styles.loadingContainer}>
@@ -174,7 +188,7 @@ const RecipePage = () => {
             )}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                    <Image source={require('../assets/BackBtn.png')} style={styles.backButtonIcon} />
+                    <Image source={require('../assets/BackBtn.png')} style={styles.backIcon} />
                 </TouchableOpacity>
             </View>
         </View>
