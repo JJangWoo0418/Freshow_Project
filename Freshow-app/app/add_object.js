@@ -23,12 +23,10 @@ export default function App() {
     const [image, setImage] = useState(null);
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
     const [selectedTag, setSelectedTag] = useState("태그 설정");
-    
-    // 추가된 상태들
-    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); // 사용자 지정 태그 모달 상태
-    const [customTags, setCustomTags] = useState([]); // 사용자 지정 태그 목록
-    const [newTagName, setNewTagName] = useState(""); // 새 태그 이름
-    const [newTagContent, setNewTagContent] = useState(""); // 새 태그 내용
+    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); 
+    const [customTags, setCustomTags] = useState([]); 
+    const [newTagName, setNewTagName] = useState(""); 
+    const [newTagContent, setNewTagContent] = useState(""); 
 
     useEffect(() => {
         (async () => {
