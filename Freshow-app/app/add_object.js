@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Image,
     Alert,
+    Modal,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -20,6 +21,14 @@ export default function App() {
     const [expiryDate, setExpiryDate] = useState("");
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [image, setImage] = useState(null);
+    const [isTagModalVisible, setIsTagModalVisible] = useState(false);
+    const [selectedTag, setSelectedTag] = useState("태그 설정");
+    
+    // 추가된 상태들
+    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); // 사용자 지정 태그 모달 상태
+    const [customTags, setCustomTags] = useState([]); // 사용자 지정 태그 목록
+    const [newTagName, setNewTagName] = useState(""); // 새 태그 이름
+    const [newTagContent, setNewTagContent] = useState(""); // 새 태그 내용
 
     useEffect(() => {
         (async () => {
@@ -58,6 +67,51 @@ export default function App() {
     const handleConfirm = (date) => {
         setExpiryDate(format(date, "yyyy. MM. dd"));
         hideDatePicker();
+    };
+
+    const openTagModal = () => {
+        setIsTagModalVisible(true);
+    };
+
+    const closeTagModal = () => {
+        setIsTagModalVisible(false);
+    };
+
+    const selectTag = (tag) => {
+        if (tag === "사용자 지정 태그") {
+            openCustomTagModal();
+        } else {
+            setSelectedTag(tag); // 선택된 태그 업데이트
+            closeTagModal(); // 모달 닫기
+        }
+    };
+
+    // 사용자 지정 태그 모달 열기
+    const openCustomTagModal = () => {
+        setNewTagName("");
+        setNewTagContent("");
+        setIsCustomTagModalVisible(true);
+    };
+    const closeCustomTagModal = () => setIsCustomTagModalVisible(false);
+
+    // 사용자 지정 태그 저장
+    const saveCustomTag = () => {
+        if (!newTagName.trim()) {
+            Alert.alert("오류", "태그 이름을 입력해주세요.");
+            return;
+        }
+
+    const isDuplicate = customTags.some((tag) => tag.label === newTagName);
+        if (isDuplicate) {
+            Alert.alert("오류", "이미 존재하는 태그 이름입니다.");
+            return;
+        }
+
+        // 새로운 태그 추가
+        const newTag = { icon: "🔖", label: newTagName };
+        setCustomTags((prevTags) => [...prevTags, newTag]);
+        setSelectedTag(newTagName); // 선택된 태그 업데이트
+        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
     };
 
     return (
@@ -125,8 +179,10 @@ export default function App() {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity style={styles.tagButton}>
-                        <Text style={styles.tagButtonText}>태그 설정</Text>
+                    <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
+                        <Text style={styles.tagButtonText}>
+                            {selectedTag ? selectedTag : "태그 설정"}
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -180,7 +236,7 @@ export default function App() {
                             value={expiryDate}
                             onChangeText={setExpiryDate}
                         />
-                        <TouchableOpacity style={styles.calendarIcon} onPress={showDatePicker}> 
+                        <TouchableOpacity style={styles.calendarIcon} onPress={showDatePicker}>
                             <Text style={styles.calendarIconText}>📅</Text>
                         </TouchableOpacity>
                     </View>
@@ -192,6 +248,97 @@ export default function App() {
                     onConfirm={handleConfirm}
                     onCancel={hideDatePicker}
                 />
+
+                {/* 태그 설정 모달 */}
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={isTagModalVisible}
+                    onRequestClose={closeTagModal}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalBox}>
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalTitle}>태그 설정하기</Text>
+                                <TouchableOpacity onPress={closeTagModal}>
+                                    <Text style={styles.closeButton}>×</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* 기본 태그 및 사용자 지정 태그 목록 */}
+                            <View style={styles.tagList}>
+                                {/* 기본 태그 */}
+                                {[
+                                    { icon: "🍖", label: "육류" },
+                                    { icon: "🥦", label: "채소류" },
+                                    { icon: "🍼", label: "유제품" },
+                                    { icon: "🥫", label: "소스" },
+                                ].map((tag, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.tagItem}
+                                        onPress={() => selectTag(tag.label)}
+                                    >
+                                        <Text style={styles.tagIcon}>{tag.icon}</Text>
+                                        <Text style={styles.tagLabel}>{tag.label}</Text>
+                                    </TouchableOpacity>
+                                ))}
+
+                                {/* 사용자 지정 태그 */}
+                                {customTags.map((tag, index) => (
+                                    <TouchableOpacity
+                                        key={`custom-${index}`}
+                                        style={styles.tagItem}
+                                        onPress={() => selectTag(tag.label)}
+                                    >
+                                        <Text style={styles.tagIcon}>{tag.icon}</Text>
+                                        <Text style={styles.tagLabel}>{tag.label}</Text>
+                                    </TouchableOpacity>
+                                ))}
+
+                                {/* 사용자 지정 태그 추가 버튼 */}
+                                <TouchableOpacity
+                                    style={styles.customTagButton}
+                                    onPress={openCustomTagModal}
+                                >
+                                    <Text style={styles.customTagText}>+ 사용자 지정 태그</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                {/* 사용자 지정 태그 모달 */}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={isCustomTagModalVisible}
+                    onRequestClose={closeCustomTagModal}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalBox}>
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalTitle}>사용자 지정 태그</Text>
+                                <TouchableOpacity onPress={closeCustomTagModal}>
+                                    <Text style={styles.closeButton}>×</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* 태그 이름 입력 */}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="태그 이름"
+                                value={newTagName}
+                                onChangeText={setNewTagName}
+                            />
+
+                            {/* 저장 버튼 */}
+                            <TouchableOpacity style={styles.submitButton} onPress={saveCustomTag}>
+                                <Text style={styles.submitButtonText}>저장</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </SafeAreaView>
     );

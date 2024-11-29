@@ -76,6 +76,67 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalBox: {
+        width: "80%",
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        padding: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    submitButton: {
+        backgroundColor: "#007BFF",
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 10,
+    },
+    submitButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        textAlign: "center",
+    },
+    modalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    closeButton: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#333",
+    },
+    tagList: {
+        marginTop: 10,
+    },
+    tagItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ddd",
+    },
+    tagIcon: {
+        fontSize: 24,
+        marginRight: 10,
+    },
+    tagLabel: {
+        fontSize: 16,
+    },
     selectedToggleButtonText: {
     color: "#81D4FA",
     fontWeight: "bold",
@@ -95,6 +156,18 @@ const styles = StyleSheet.create({
     },
     tagButtonText: {
     color: "#fff",
+    fontWeight: "bold",
+    },
+    customTagButton: {
+    backgroundColor: "#E8E8E8",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: "center",
+    },
+    customTagText: {
+    color: "#333",
+    fontSize: 16,
     fontWeight: "bold",
     },
     label: {
