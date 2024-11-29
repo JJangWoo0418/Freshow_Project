@@ -196,7 +196,7 @@ export default function MainPage() {
                     <Image source={require('../assets/RecipeSuggestBtn.png')} style={styles.icon} />
                 </Link>
 
-                <Link href="/add-ingredient" style={styles.iconWrapper}>
+                <Link href="/add_object" style={styles.iconWrapper}>
                     <Image source={require('../assets/AddIngredientBtn.png')} style={styles.icon} />
                 </Link>
             </View>

@@ -6,7 +6,7 @@ updateProfile,
 onAuthStateChanged,
 } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
-import config from '../firebase.json'; // firebase 설정 파일
+// import config from '../firebase.json'; // firebase 설정 파일
 
 // Firebase 초기화
 const app = initializeApp(config);
