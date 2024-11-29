@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCO1nny7grAWytLf60b_THVUopwAYtD2Ho",
-    authDomain: "freshow-f9eef.firebaseapp.com",
-    projectId: "freshow-f9eef",
-    storageBucket: "freshow-f9eef.firebasestorage.app",
-    messagingSenderId: "571998176592",
-    appId: "1:571998176592:web:035c93fdd55886980d9855",
-    measurementId: "G-3B76C34WVN"
+    apiKey: "AIzaSyBLFXudLtyxQcQq5MoQPRR_dyrXrhufb9M",
+    authDomain: "freshow-b0caa.firebaseapp.com",
+    projectId: "freshow-b0caa",
+    storageBucket: "freshow-b0caa.firebasestorage.app",
+    messagingSenderId: "994015821961",
+    appId: "1:994015821961:web:41e04dee96031449e40658",
+    measurementId: "G-8E35Z985J1"
 };
 
 // Firebase 초기화

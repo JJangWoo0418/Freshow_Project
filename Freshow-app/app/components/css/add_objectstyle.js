@@ -16,9 +16,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     },
-    headerButton: {
-    fontSize: 16,
-    color: "#333",
+    saveButton: {
+    width: 40, 
+    height: 40, 
+    marginLeft: 10,
+    top: 18,
+    right: 10,
+    fontsize: 30,
+    },
+    saveButtonText: {
+    fontSize: 16, // 텍스트 크기 조정
+    fontWeight: "600",
+    color: "black",
     },
     productInfoContainer: {
     marginBottom: 20,
@@ -29,18 +38,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
     },
     imageButton: {
+    width: 355, // 원하는 너비
+    height: 300, // 원하는 높이
     backgroundColor: "#E0F7FA",
-    paddingVertical: 80,
+    paddingVertical: 120,
+    justifyContent: 'center',
     alignItems: "center",
     borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 20,
     },
     imageButtonText: {
     color: "#333",
     fontSize: 16,
     },
     imagePreview: {
-    width: 100, // 원하는 너비
-    height: 100, // 원하는 높이
+    width: 355, // 원하는 너비
+    height: 310, // 원하는 높이
     borderRadius: 10, // 테두리 둥글게
     resizeMode: "cover", // 이미지가 뷰에 맞게 잘림 없이 표시되도록 설정
     borderWidth: 1, // 테두리 두께
@@ -75,6 +89,17 @@ const styles = StyleSheet.create({
     toggleButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    },
+    title: {
+    fontFamily: "ONE Mobile POP",
+    fontSize: 32,
+    color: '#CDEEFF',
+    textAlign: 'center',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
+    flex: 1,
+    marginBottom: 20,
     },
     modalOverlay: {
         flex: 1,
@@ -116,7 +141,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     closeButton: {
-        fontSize: 18,
+        fontSize: 25,
         fontWeight: "bold",
         color: "#333",
     },
@@ -159,7 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     },
     customTagButton: {
-    backgroundColor: "#E8E8E8",
+    backgroundColor: "#B3E5FC",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
@@ -174,6 +199,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
     marginBottom: 5,
+    fontWeight: "bold",
     },
     input: {
     height: 40,
@@ -183,6 +209,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     width: 355,
+    },
+    taginput: {
+    height: 40,
+    borderColor: "#000",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    width: 280,
     },
     countContainer: {
     flexDirection: "row",
@@ -218,7 +253,6 @@ const styles = StyleSheet.create({
     width: 228,
     },
     expiryContainer: {
-    marginTop: 20,
     alignItems: "flex-start",
     },
     expiryButton: {
@@ -227,7 +261,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 119,
     borderRadius: 10,
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
+    },
+    backButton: {
+    width: 40, // Ionicons와 동일한 너비
+    height: 40, // Ionicons와 동일한 높이
+    marginLeft: 10,
+    top: 18,
+    left: 10,
+    },
+    backButtonText: {
+    fontSize: 20,
+    color: "#000",
     },
     expiryButtonText: {
     color: "#000",
