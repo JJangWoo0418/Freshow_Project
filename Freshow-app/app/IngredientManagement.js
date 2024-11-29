@@ -11,7 +11,7 @@ import { auth, db } from './firebaseconfig';
 import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons'; // 뒤로가기 버튼 아이콘
 import styles from './components/css/IngredientManagementStyle';
-
+//
 const IngredientManagement = () => {
     const { fridgeId } = useLocalSearchParams(); // MainPage에서 전달받은 fridgeId
     const router = useRouter(); // 화면 이동을 위한 router 추가
