@@ -88,7 +88,7 @@ export default function Recipelist() {
             {/* 아래부분 */}
             <View style={styles.footer}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Image source={require('../assets/BackBtn.png')} style={styles.backIcon} />
+                    <Image source={require('../assets/back.png')} style={styles.backIcon} />
                     <Text style={styles.backButtonText}>돌아가기</Text>
                 </TouchableOpacity>
             </View>
