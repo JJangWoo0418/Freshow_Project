@@ -8,11 +8,11 @@ import {
     TouchableOpacity,
     Modal,
     Alert,
+    StatusBar
 } from 'react-native';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './components/css/mainpagestyle';
-import { StatusBar } from 'expo-status-bar';
 
 import { auth, db } from '../app/firebaseconfig';
 import {

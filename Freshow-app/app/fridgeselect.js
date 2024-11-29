@@ -113,7 +113,7 @@ const FridgeSelect = () => {
                                     source={item.image ? { uri: item.image.uri } : null}
                                     style={styles.fridgeImage}
                                 />
-                                <Text style={{ marginBottom: 10 }}>{item.description}</Text>
+                                <Text style={{ marginBottom: 10, marginTop:10, color:"gray" }}>{item.description}</Text>
                                 <Button
                                     icon={
                                         <MaterialCommunityIcons
