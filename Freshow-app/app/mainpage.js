@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, Image, TextInput, ScrollView, TouchableOpacity, Modal, StatusBar } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '../app/components/css/style';
+import styles from './components/css/mainpagestyle';
 
 import { db } from '../app/firebaseauth';
 import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
@@ -85,8 +85,9 @@ export default function FridgeApp() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
+            <StatusBar barStyle="dark-content"/>
             <View style={styles.header}>
-                <Link href="../" style={styles.backButton}>
+                <Link href="/fridgeselect" style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </Link>
                 <Text style={styles.title}>냉장고 이름</Text>
@@ -95,16 +96,14 @@ export default function FridgeApp() {
 
             <View style={styles.topIcons}>
                 <Link href="/recipepage" style={styles.iconWrapper}>
-                    <Image source={require('../assets/레시피북.png')} style={styles.icon} />
-                    <Text style={styles.iconText}>레시피 추천</Text>
+                    <Image source={require('../assets/RecipeSuggestBtn.png')} style={styles.icon} />
                 </Link>
 
                 <Link href="/add-ingredient" style={styles.iconWrapper}>
-                    <Image source={require('../assets/냉장고.png')} style={styles.icon} />
-                    <Text style={styles.iconText}>재료 추가</Text>
+                    <Image source={require('../assets/AddIngredientBtn.png')} style={styles.icon} />
                 </Link>
             </View>
-
+            <Image source={require('../assets/MemoText.png')} style={styles.memotext} />
             {/* 메모 및 제목, 햄버거 버튼 영역 */}
             <View style={styles.memoSection}>
                 <View style={styles.memoHeader}>
@@ -113,6 +112,7 @@ export default function FridgeApp() {
                         value={title}
                         onChangeText={setTitle}
                         placeholder="메모 제목..."
+                        placeholderTextColor={'gray'}
                         onBlur={handleBlur}
                         onSubmitEditing={handleSubmitEditing}
                     />
@@ -125,6 +125,7 @@ export default function FridgeApp() {
                     value={memo}
                     onChangeText={setMemo}
                     placeholder="메모 내용을 입력하세요..."
+                    placeholderTextColor={'gray'}
                     multiline
                     onBlur={handleBlur}
                     onSubmitEditing={handleSubmitEditing}

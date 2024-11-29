@@ -5,12 +5,13 @@ export const styles = StyleSheet.create({
     container: {
         padding: 16,
         backgroundColor: '#FFFFFF',
+        marginTop: 8,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 16,
+        marginBottom: 25,
     },
     headerTitle: {
         fontFamily: 'ONE Mobile POP',
@@ -56,6 +57,7 @@ export const styles = StyleSheet.create({
         color: '#555',
         textAlign: 'left',
         marginBottom: 100,
+        paddingTop: 20,
     },
     modalOverlay: {
         flex: 1,

@@ -4,7 +4,8 @@ export default StyleSheet.create({
     container: {
         flexGrow: 1,
         padding: 16,
-        backgroundColor: '#F9F9F9',
+        backgroundColor: 'white',
+        marginTop: 50,
     },
     header: {
         flexDirection: 'row',
@@ -40,8 +41,9 @@ export default StyleSheet.create({
         marginBottom: 4,
     },
     icon: {
-        width: 80,
-        height: 80,
+        width: 150,
+        height: 150,
+        resizeMode: 'contain',
     },
     memoSection: {
         marginBottom: 20,
@@ -49,13 +51,14 @@ export default StyleSheet.create({
         borderWidth: 1,
         borderColor: '#000',
         backgroundColor: '#FFFCED',
-        padding: 8,
+        padding: 10,
     },
     memoHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 15,
+        marginRight: 35,
     },
     memoDate: {
         fontFamily: "ONE Mobile POP",
@@ -77,9 +80,11 @@ export default StyleSheet.create({
         width: '100%',
         height: 30,
         fontFamily: "ONE Mobile POP",
-        color: '#000',
+        color: 'black', 
         fontSize: 20,
         textAlignVertical: 'top',
+        paddingBottom: 10,
+        marginTop: 10,
     },
     ingredientSection: {
         borderRadius: 12,
@@ -155,5 +160,10 @@ export default StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    memotext:{
+        marginLeft: 4,
+        marginBottom: 20,
+        marginTop: 10
 
+    }
 });

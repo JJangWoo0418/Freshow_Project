@@ -139,10 +139,10 @@ export default function MemoList() {
             keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0} // 키보드 높이에 맞춰 화면 조정
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1 , marginTop:45}}>
                     <ScrollView contentContainerStyle={styles.container}>
                         <View style={styles.header}>
-                            <Link href="/home">
+                            <Link href="/mainpage">
                                 <Ionicons name="arrow-back" size={24} color="black" />
                             </Link>
                             <Text style={styles.headerTitle}>MEMO</Text>
