@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from './firebaseconfig';
 import styles from './components/css/fridgeeditstyle';
 
@@ -32,6 +33,24 @@ const FridgeEdit = () => {
         }
     };
 
+    const pickImage = async () => {
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: 'images', // 소문자 문자열로 사용
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            if (!result.canceled && result.assets?.[0]?.uri) {
+                setImage(result.assets[0].uri); // 새로운 이미지 URI 설정
+            }
+        } catch (error) {
+            console.error("이미지 선택 오류:", error);
+            Alert.alert("오류", "이미지를 선택하는 도중 문제가 발생했습니다.");
+        }
+    };
+
     const handleSave = async () => {
         const currentUser = auth.currentUser;
 
@@ -46,7 +65,7 @@ const FridgeEdit = () => {
             });
 
             Alert.alert("성공", "냉장고가 수정되었습니다.");
-            router.push('/fridgeselect');
+            router.push('/fridgeselect', { refresh: true });
         } catch (error) {
             console.error("냉장고 수정 오류:", error);
         }
@@ -66,11 +85,17 @@ const FridgeEdit = () => {
             </TouchableOpacity>
 
             <Text style={styles.header}>냉장고 편집</Text>
-            {image && image.uri ? (
-                <Image source={{ uri: image.uri }} style={styles.image} />
-            ) : (
-                <View style={[styles.image, { backgroundColor: '#E0E0E0' }]} />
-            )}
+
+            <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+                {image ? (
+                    <Image source={{ uri: typeof image === 'string' ? image : image.uri }} style={styles.image} />
+                ) : (
+                    <View style={[styles.image, { backgroundColor: '#E0E0E0' }]}>
+                        <Text style={styles.placeholderText}>이미지 선택</Text>
+                    </View>
+                )}
+            </TouchableOpacity>
+
             <Text style={styles.label}>이름</Text>
             <TextInput
                 value={name}

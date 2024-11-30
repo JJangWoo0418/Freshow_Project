@@ -17,7 +17,7 @@ const FridgeSelect = () => {
 
         if (!currentUser) {
             Alert.alert("로그인 필요", "냉장고 데이터를 불러오려면 로그인이 필요합니다.");
-            router.push('/login'); // 로그인 페이지로 리다이렉트
+            router.push('/login');
             return;
         }
 
@@ -44,7 +44,7 @@ const FridgeSelect = () => {
         try {
             const fridgeDoc = doc(db, "계정", currentUser.uid, "냉장고", id);
             await deleteDoc(fridgeDoc);
-            fetchFridges(); // 삭제 후 데이터 재로드
+            fetchFridges();
         } catch (error) {
             console.error("냉장고 삭제 오류:", error);
         }
@@ -75,7 +75,7 @@ const FridgeSelect = () => {
     const renderRightActions = (item) => (
         <TouchableOpacity
             style={styles.editButton}
-            onPress={() => router.push('/fridgeedit', { fridge: JSON.stringify(item) })}
+            onPress={() => router.push(`/fridgeedit?fridgeId=${item.id}`)}
         >
             <Text style={styles.actionText}>수정</Text>
         </TouchableOpacity>
@@ -110,10 +110,10 @@ const FridgeSelect = () => {
                                 <Card.Title>{item.name}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image
-                                    source={item.image ? { uri: item.image.uri } : null}
+                                    source={item.image ? { uri: typeof item.image === 'string' ? item.image : item.image.uri } : null}
                                     style={styles.fridgeImage}
                                 />
-                                <Text style={{ marginBottom: 10, marginTop:10, color:"gray" }}>{item.description}</Text>
+                                <Text style={{ marginBottom: 10, marginTop: 10, color: "gray" }}>{item.description}</Text>
                                 <Button
                                     icon={
                                         <MaterialCommunityIcons
@@ -130,7 +130,7 @@ const FridgeSelect = () => {
                                         marginBottom: 0,
                                     }}
                                     title="냉장고 선택"
-                                    onPress={() => router.push(`/mainpage?fridgeId=${item.id}`)} // fridgeId를 URL로 전달
+                                    onPress={() => router.push(`/mainpage?fridgeId=${item.id}`)}
                                 />
                             </Card>
                         </Swipeable>
