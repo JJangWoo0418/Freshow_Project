@@ -30,10 +30,10 @@ const RecipeMakePage = () => {
                 const completion = await openai.chat.completions.create({
                     model: "gpt-3.5-turbo",
                     messages: [
-                        { role: "system", content: "You are a professional chef assistant who provides detailed recipes in Korean, Do not use numbers to number your recipes, but use line breaks. Each explanation should be about two sentence. Explain in at least 10 steps, Don't write the recipe title" },
+                        { role: "system", content: "You are a professional chef assistant who provides detailed recipes in Korean,I would like to use the '-' symbol to break each line. Each explanation should be about two sentence. Explain in at least 10 steps, Don't write the recipe title" },
                         {
                             role: "user",
-                            content: `Provide a step-by-step recipe for ${name} in Korean. Do not use numbers to number your recipes, but use line breaks. Each explanation should be about two sentence. Explain in at least 10 steps, Don't write the recipe title `
+                            content: `Provide a step-by-step recipe for ${name} in Korean. I would like to use the '-' symbol to break each line. Each explanation should be about two sentence. Explain in at least 10 steps, Don't write the recipe title `
                         },
                     ],
                     max_tokens: 800,
