@@ -9,6 +9,7 @@ import {
     Image,
     Alert,
     Modal,
+    StatusBar
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -115,18 +116,19 @@ const add_object = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar barStyle="dark-content"/>
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                            <Ionicons name="arrow-back" size={24} color="black" />
+                            <Ionicons name="arrow-back" size={24} color="black"  />
                         </TouchableOpacity>
                         <Text style={styles.title}>물건 추가</Text>
                     <View style={{ width: 24 }} />
 
                         
                         <TouchableOpacity style={styles.saveButton}>
-                            <Text style={styles.saveButtonText}>저장</Text>
+                            <Text style={styles.saveButtonText}>  저장</Text>
                         </TouchableOpacity>
                 </View>
 

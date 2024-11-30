@@ -19,10 +19,9 @@ const styles = StyleSheet.create({
     saveButton: {
     width: 40, 
     height: 40, 
-    marginLeft: 10,
-    top: 18,
-    right: 10,
+    marginLeft: 1,
     fontsize: 30,
+    marginTop: 12,
     },
     saveButtonText: {
     fontSize: 16, // 텍스트 크기 조정
@@ -100,6 +99,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 1,
     flex: 1,
     marginBottom: 20,
+    marginLeft: 10,
     },
     modalOverlay: {
         flex: 1,
@@ -266,9 +266,11 @@ const styles = StyleSheet.create({
     backButton: {
     width: 40, // Ionicons와 동일한 너비
     height: 40, // Ionicons와 동일한 높이
-    marginLeft: 10,
-    top: 18,
-    left: 10,
+    marginRight: 8,
+    marginTop: 10,
+    marginLeft: 4,
+    },
+    backIcon: {
     },
     backButtonText: {
     fontSize: 20,
