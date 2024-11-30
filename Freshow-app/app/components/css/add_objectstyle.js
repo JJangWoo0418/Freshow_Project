@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 20,
+    borderWidth: 1
     },
     imageButtonText: {
     color: "#333",
