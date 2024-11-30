@@ -3,19 +3,22 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: 'white',
         paddingHorizontal: 16, // 전체 컨테이너 좌우 여백 추가
+        marginTop: 50,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
         marginBottom: 20, // 전체 헤더 아래 여백
         paddingHorizontal: 16,
         paddingTop: 16, // 헤더 상단 여백
+        marginRight: 33, 
+        paddingRight: 40
     },
     backButton: {
-        paddingRight: 10,
+        marginBottom: 17, //
+        marginRight: 20
     },
     title: {
         fontFamily: "ONE Mobile POP",
@@ -27,6 +30,8 @@ const styles = StyleSheet.create({
         textShadowRadius: 1,
         flex: 1,
         marginBottom: 20, // Title 아래 추가 여백
+        marginLeft: 20, // Title 위에 추가 여��
+        paddingLeft: 20
     },
     categoryContainer: {
         marginBottom: 20,

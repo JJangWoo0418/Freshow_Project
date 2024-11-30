@@ -42,6 +42,11 @@ const Home = () => {
         }
     };
 
+    const kakaologin = () => {
+        Alert.alert('😭 서비스 준비 중입니다! 😭');
+        console.log('😭 서비스 준비 중입니다! 😭')
+    }
+
     return (        
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={COLORS.White} />
@@ -92,7 +97,7 @@ const Home = () => {
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
 
                 {/* 소셜 로그인 버튼 (예: 카카오) */}
-                <TouchableOpacity style={styles.kakaoButton}>
+                <TouchableOpacity style={styles.kakaoButton} onPress={kakaologin}>
                     <Image
                         source={require('../assets/KakaoBtn.png')}
                         style={styles.socialIcon}

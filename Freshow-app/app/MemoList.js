@@ -192,7 +192,7 @@ export default function MemoList() {
                     <View style={{ flex: 1 }}>
                         <ScrollView contentContainerStyle={styles.container}>
                             <View style={styles.header}>
-                                <Link href="/home">
+                                <Link href="/mainpage">
                                     <Ionicons name="arrow-back" size={24} color="black" />
                                 </Link>
                                 <Text style={styles.headerTitle}>MEMO</Text>
