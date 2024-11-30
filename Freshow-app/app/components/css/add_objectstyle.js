@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 1,
     flex: 1,
     marginBottom: 20,
-    marginLeft: 10,
+    marginRight: 15,
     },
     modalOverlay: {
         flex: 1,
@@ -306,6 +306,15 @@ const styles = StyleSheet.create({
     calendarIconText: {
     fontSize: 24, // 달력 아이콘 크기
     },
+    unitput:{
+        height: 40,
+        borderColor: "#000",
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        width: 100,
+        marginLeft: 145,
+    }
     });
     
     export default styles;

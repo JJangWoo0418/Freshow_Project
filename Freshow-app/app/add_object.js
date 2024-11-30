@@ -162,7 +162,7 @@ const add_object = () => {
                         </TouchableOpacity>
                         <Text style={styles.title}>물건 추가</Text>
                         <TouchableOpacity style={styles.saveButton} onPress={saveToFirestore}>
-                            <Text style={styles.saveButtonText}>저장</Text>
+                            <Text style={styles.saveButtonText}>  저장</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -209,13 +209,13 @@ const add_object = () => {
                                 냉동
                             </Text>
                         </TouchableOpacity>
-                    </View>
 
-                    <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
+                        <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
                         <Text style={styles.tagButtonText}>
                             {selectedTag ? selectedTag : "태그 설정"}
                         </Text>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                    </View>
 
                     <Text style={styles.label}>이름</Text>
                     <TextInput
@@ -240,14 +240,16 @@ const add_object = () => {
                         >
                             <Text style={styles.countButtonText}>+</Text>
                         </TouchableOpacity>
-                    </View>
 
-                    <TextInput
-                        style={styles.input}
+                        <TextInput
+                        style={styles.unitput}
                         placeholder="용량 단위"
                         value={unit}
                         onChangeText={setUnit}
-                    />
+                        />
+                    </View>
+
+                    
 
                     <Text style={styles.label}>메모</Text>
                     <TextInput
@@ -258,16 +260,27 @@ const add_object = () => {
                     />
 
                     <Text style={styles.label}>유통기한</Text>
-                    <TouchableOpacity style={styles.expiryButton} onPress={showDatePicker}>
+                    <TouchableOpacity style={styles.expiryButton}>
                         <Text style={styles.expiryButtonText}>유통기한 인식하기</Text>
                     </TouchableOpacity>
+                    <View style={styles.dateContainer}>
+                            <TextInput
+                                style={styles.dateInput}
+                                placeholder="YYYY. MM. DD."
+                                placeholderTextColor="#999"
+                                value={expiryDate}
+                                onChangeText={setExpiryDate}
+                            />
+                            <TouchableOpacity style={styles.calendarIcon} onPress={showDatePicker}>
+                                <Text style={styles.calendarIconText}>📅</Text>
+                            </TouchableOpacity>
+                    </View>
                     <DateTimePickerModal
                         isVisible={isDatePickerVisible}
                         mode="date"
                         onConfirm={handleConfirm}
                         onCancel={hideDatePicker}
                     />
-                    <Text style={styles.dateText}>{expiryDate}</Text>
 
                     <Modal
                         key="tag-modal"
