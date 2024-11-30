@@ -29,13 +29,12 @@ const add_object = () => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [image, setImage] = useState(null);
     const [selectedTag, setSelectedTag] = useState("태그 설정");
-    const router = useRouter();
     const [unit, setUnit] = useState("");
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
     const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); 
     const [customTags, setCustomTags] = useState([]); 
     const [newTagName, setNewTagName] = useState(""); 
-    const [newTagContent, setNewTagContent] = useState(""); 
+    const router = useRouter();
 
     useEffect(() => {
         (async () => {
@@ -126,35 +125,37 @@ const add_object = () => {
 
     const openCustomTagModal = () => {
         setNewTagName("");
-        setNewTagContent("");
         setIsCustomTagModalVisible(true);
     };
-    const closeCustomTagModal = () => setIsCustomTagModalVisible(false);
+
+    const closeCustomTagModal = () => {
+        setIsCustomTagModalVisible(false);
+    };
 
     const saveCustomTag = () => {
         if (!newTagName.trim()) {
             Alert.alert("오류", "태그 이름을 입력해주세요.");
             return;
         }
-
-    const isDuplicate = customTags.some((tag) => tag.label === newTagName);
+    
+        const isDuplicate = customTags.some((tag) => tag.label === newTagName);
         if (isDuplicate) {
             Alert.alert("오류", "이미 존재하는 태그 이름입니다.");
             return;
         }
-
-        const newTag = { icon: "🔖", label: newTagName };
-        setCustomTags((prevTags) => [...prevTags, newTag]);
-        setSelectedTag(newTagName);
-        closeCustomTagModal();
+    
+        const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
+        setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
+        setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
+        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
     };
     
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <StatusBar barStyle="dark-content" />
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                 <View style={styles.container}>
-                    {/* 헤더 */}
                     <View style={styles.header}>
                         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                             <Ionicons name="arrow-back" size={24} color="black" />
@@ -165,7 +166,6 @@ const add_object = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* 사진 등록 */}
                     <Text style={styles.label}>사진 등록</Text>
                     <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
                         {image ? (
@@ -175,7 +175,6 @@ const add_object = () => {
                         )}
                     </TouchableOpacity>
 
-                    {/* 물건 종류 */}
                     <Text style={styles.label}>물건 종류</Text>
                     <View style={styles.itemTypeContainer}>
                         <TouchableOpacity
@@ -212,14 +211,12 @@ const add_object = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* 태그 설정 */}
                     <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
-                            <Text style={styles.tagButtonText}>
-                                {selectedTag ? selectedTag : "태그 설정"}
-                            </Text>
+                        <Text style={styles.tagButtonText}>
+                            {selectedTag ? selectedTag : "태그 설정"}
+                        </Text>
                     </TouchableOpacity>
 
-                    {/* 이름 입력 */}
                     <Text style={styles.label}>이름</Text>
                     <TextInput
                         style={styles.input}
@@ -228,7 +225,6 @@ const add_object = () => {
                         onChangeText={setProductName}
                     />
 
-                    {/* 남은 수량 */}
                     <Text style={styles.label}>남은 수량</Text>
                     <View style={styles.countContainer}>
                         <TouchableOpacity
@@ -253,7 +249,6 @@ const add_object = () => {
                         onChangeText={setUnit}
                     />
 
-                    {/* 메모 입력 */}
                     <Text style={styles.label}>메모</Text>
                     <TextInput
                         style={styles.input}
@@ -262,7 +257,6 @@ const add_object = () => {
                         onChangeText={setProductMemo}
                     />
 
-                    {/* 유통기한 설정 */}
                     <Text style={styles.label}>유통기한</Text>
                     <TouchableOpacity style={styles.expiryButton} onPress={showDatePicker}>
                         <Text style={styles.expiryButtonText}>유통기한 인식하기</Text>
@@ -274,68 +268,15 @@ const add_object = () => {
                         onCancel={hideDatePicker}
                     />
                     <Text style={styles.dateText}>{expiryDate}</Text>
-                </View>
-                <Modal
-                        animationType="fade"
-                        transparent={true}
-                        visible={isTagModalVisible}
-                        onRequestClose={closeTagModal}
-                    >
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.modalBox}>
-                                <View style={styles.modalHeader}>
-                                    <Text style={styles.modalTitle}>태그 설정하기</Text>
-                                    <TouchableOpacity onPress={closeTagModal}>
-                                        <Text style={styles.closeButton}>×</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={styles.tagList}>
-                                    {[
-                                        { icon: "🍖", label: "육류" },
-                                        { icon: "🥦", label: "채소류" },
-                                        { icon: "🍼", label: "유제품" },
-                                        { icon: "🥫", label: "소스" },
-                                    ].map((tag, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            style={styles.tagItem}
-                                            onPress={() => selectTag(tag.label)}
-                                        >
-                                            <Text style={styles.tagIcon}>{tag.icon}</Text>
-                                            <Text style={styles.tagLabel}>{tag.label}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-
-                                    {customTags.map((tag, index) => (
-                                        <TouchableOpacity
-                                            key={`custom-${index}`}
-                                            style={styles.tagItem}
-                                            onPress={() => selectTag(tag.label)}
-                                        >
-                                            <Text style={styles.tagIcon}>{tag.icon}</Text>
-                                            <Text style={styles.tagLabel}>{tag.label}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-
-                                    <TouchableOpacity
-                                        style={styles.customTagButton}
-                                        onPress={openCustomTagModal}
-                                    >
-                                        <Text style={styles.customTagText}>+ 사용자 지정 태그</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
 
                     <Modal
+                        key="tag-modal"
                         animationType="fade"
                         transparent={true}
                         visible={isTagModalVisible}
                         onRequestClose={closeTagModal}
                     >
-                        <View style={styles.modalOverlay}>
+                        <TouchableOpacity style={styles.modalOverlay} onPress={closeTagModal}>
                             <View style={styles.modalBox}>
                                 <View style={styles.modalHeader}>
                                     <Text style={styles.modalTitle}>태그 설정하기</Text>
@@ -343,8 +284,8 @@ const add_object = () => {
                                         <Text style={styles.closeButton}>×</Text>
                                     </TouchableOpacity>
                                 </View>
-
                                 <View style={styles.tagList}>
+                                    {/* 기본 제공 태그 */}
                                     {[
                                         { icon: "🍖", label: "육류" },
                                         { icon: "🥦", label: "채소류" },
@@ -360,7 +301,7 @@ const add_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
-
+                                    {/* 사용자 지정 태그 */}
                                     {customTags.map((tag, index) => (
                                         <TouchableOpacity
                                             key={`custom-${index}`}
@@ -371,7 +312,7 @@ const add_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
-
+                                    {/* 사용자 지정 태그 추가 버튼 */}
                                     <TouchableOpacity
                                         style={styles.customTagButton}
                                         onPress={openCustomTagModal}
@@ -380,8 +321,9 @@ const add_object = () => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </Modal>
+
 
                     <Modal
                         animationType="slide"
@@ -411,6 +353,7 @@ const add_object = () => {
                             </View>
                         </View>
                     </Modal>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
