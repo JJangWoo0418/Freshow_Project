@@ -149,6 +149,11 @@ const add_object = () => {
         setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
         closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
     };
+
+    const serviceunready = () => {
+        Alert.alert('😭 서비스 준비 중입니다! 😭');
+        console.log('😭 서비스 준비 중입니다! 😭')
+    }
     
 
     return (
@@ -166,49 +171,56 @@ const add_object = () => {
                         </TouchableOpacity>
                     </View>
 
+                    <TouchableOpacity style={styles.expiryButton} onPress={serviceunready}>
+                        <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
+                    </TouchableOpacity>
+
                     <Text style={styles.label}>사진 등록</Text>
                     <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
                         {image ? (
                             <Image source={{ uri: image }} style={styles.imagePreview} />
                         ) : (
-                            <Text style={styles.imageButtonText}>사진 등록</Text>
+                            <Image source={require('../assets/PhotoDropIcon.png')} style={styles.imageButtonText}/>
                         )}
                     </TouchableOpacity>
 
                     <Text style={styles.label}>물건 종류</Text>
                     <View style={styles.itemTypeContainer}>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggleButton,
-                                selectedType === "냉장" && styles.selectedToggleButton,
-                            ]}
-                            onPress={() => setSelectedType("냉장")}
-                        >
-                            <Text
+                        <View style={styles.toggleContainer}>
+                            <TouchableOpacity
                                 style={[
-                                    styles.toggleButtonText,
-                                    selectedType === "냉장" && styles.selectedToggleButtonText,
+                                    styles.toggleButton,
+                                    selectedType === "냉장" && styles.selectedToggleButton,
                                 ]}
+                                onPress={() => setSelectedType("냉장")}
                             >
-                                냉장
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggleButton,
-                                selectedType === "냉동" && styles.selectedToggleButton,
-                            ]}
-                            onPress={() => setSelectedType("냉동")}
-                        >
-                            <Text
+                                <Text
+                                    style={[
+                                        styles.toggleButtonText,
+                                        selectedType === "냉장" && styles.selectedToggleButtonText,
+                                    ]}
+                                >
+                                    냉장
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
                                 style={[
-                                    styles.toggleButtonText,
-                                    selectedType === "냉동" && styles.selectedToggleButtonText,
+                                    styles.toggleButton,
+                                    selectedType === "냉동" && styles.selectedToggleButton,
                                 ]}
+                                onPress={() => setSelectedType("냉동")}
                             >
-                                냉동
-                            </Text>
-                        </TouchableOpacity>
+                                <Text
+                                    style={[
+                                        styles.toggleButtonText,
+                                        selectedType === "냉동" && styles.selectedToggleButtonText,
+                                    ]}
+                                >
+                                    냉동
+                                </Text>
+                                
+                            </TouchableOpacity>
+                        </View>
 
                         <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
                         <Text style={styles.tagButtonText}>
@@ -260,7 +272,7 @@ const add_object = () => {
                     />
 
                     <Text style={styles.label}>유통기한</Text>
-                    <TouchableOpacity style={styles.expiryButton}>
+                    <TouchableOpacity style={styles.expiryButton} onPress={serviceunready}>
                         <Text style={styles.expiryButtonText}>유통기한 인식하기</Text>
                     </TouchableOpacity>
                     <View style={styles.dateContainer}>

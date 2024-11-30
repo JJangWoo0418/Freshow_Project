@@ -50,6 +50,9 @@ const styles = StyleSheet.create({
     imageButtonText: {
     color: "#333",
     fontSize: 16,
+    width: 70,
+    height: 70,
+    resizeMode: 'contain'
     },
     imagePreview: {
     width: 355, // 원하는 너비
@@ -69,8 +72,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: 10,
     overflow: "hidden",
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#000",
+    backgroundColor: "#B3E5FC",
+    width: 220
     },
     toggleButton: {
     paddingVertical: 4,
@@ -81,9 +86,18 @@ const styles = StyleSheet.create({
     borderRadius: 5, // 버튼 테두리를 둥글게 설정
     width: 100, // 너비를 고정
     height: 40, // 높이를 고정
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 5,
+    marginRight: 5
     },
     selectedToggleButton: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
+    borderRadius: 13,
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 5,
+    marginRight: 5
     },
     toggleButtonText: {
     color: "#fff",
@@ -171,16 +185,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 10,
     backgroundColor: "#FFB6C1",
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#000",
     alignItems: "center",
     justifyContent: "center",
     width: 100, // 너비를 고정
     height: 43, // 높이를 고정
-    marginLeft: 50,
+    marginLeft: 35,
     },
     tagButtonText: {
-    color: "#fff",
+    color: "black",
     fontWeight: "bold",
     },
     customTagButton: {
@@ -258,10 +272,11 @@ const styles = StyleSheet.create({
     expiryButton: {
     backgroundColor: "#FFB6C1",
     paddingVertical: 12,
-    paddingHorizontal: 119,
+    paddingHorizontal: 118,
     borderRadius: 10,
     alignItems: "center",
     marginBottom: 20,
+    borderWidth: 1
     },
     backButton: {
     width: 40, // Ionicons와 동일한 너비
@@ -277,7 +292,7 @@ const styles = StyleSheet.create({
     color: "#000",
     },
     expiryButtonText: {
-    color: "#000",
+    color: "black",
     fontWeight: "bold",
     fontSize: 16,
     },
@@ -314,7 +329,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: 100,
         marginLeft: 145,
-    }
+    },
     });
     
     export default styles;
