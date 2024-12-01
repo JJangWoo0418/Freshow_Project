@@ -82,12 +82,12 @@ export default function MainPage() {
     // Firestore에서 재료 데이터 가져오기
     const fetchIngredients = async () => {
         const currentUser = auth.currentUser;
-
+    
         if (!currentUser || !fridgeId) {
             Alert.alert('로그인 필요', '재료 데이터를 불러오려면 로그인이 필요합니다.');
             return;
         }
-
+    
         try {
             const ingredientsCollection = collection(
                 db,
@@ -98,15 +98,20 @@ export default function MainPage() {
                 '재료'
             );
             const querySnapshot = await getDocs(ingredientsCollection);
+    
             const fetchedIngredients = querySnapshot.docs.map((doc) => {
                 const data = doc.data();
                 return Object.keys(data).map((key) => ({
-                    name: key,
-                    expiryDate: String(data[key]),
-                    expiryPercentage: calculateExpiryPercentage(data[key]),
-                    image: require('../assets/삼겹살.jpg'), // 예제 이미지
+                    name: key, // 음식 이름 (문서 필드 이름)
+                    image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../assets/삼겹살.jpg'), // 이미지
+                    expiryDate: data[key]["유통기한"] || "유통기한 없음", // 유통기한
+                    expiryPercentage: calculateExpiryPercentage(data[key]["유통기한"]), // 유통기한 퍼센트 계산
+                    remaining: data[key]["남은 수량"] || 0, // 남은 수량
+                    memo: data[key]["메모"] || "메모 없음", // 메모
+                    type: data[key]["물건 종류"] || "알 수 없음", // 물건 종류
                 }));
             }).flat();
+    
             setIngredients(
                 fetchedIngredients.sort((a, b) => a.expiryPercentage - b.expiryPercentage)
             );
@@ -114,6 +119,7 @@ export default function MainPage() {
             console.error('재료 데이터 가져오기 오류:', error);
         }
     };
+    
 
     useEffect(() => {
         fetchFridgeName();
@@ -260,26 +266,36 @@ export default function MainPage() {
             >
                 <Text style={styles.sectionTitle}>재료관리</Text>
                 {ingredients.map((ingredient, index) => (
-                    <View key={index} style={styles.ingredientItem}>
-                        <Image source={ingredient.image} style={styles.ingredientImage} />
-                        <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                        <View style={styles.progressWrapper}>
-                            <View
-                                style={{
-                                    ...styles.progress,
-                                    width: `${ingredient.expiryPercentage}%`,
-                                    backgroundColor:
-                                        ingredient.expiryPercentage > 50
-                                            ? 'green'
-                                            : ingredient.expiryPercentage > 20
-                                            ? 'orange'
-                                            : 'red',
-                                }}
-                            />
-                        </View>
-                        <Text>{ingredient.expiryPercentage}%</Text>
+                <View key={index} style={styles.ingredientItem}>
+                    {/* 음식 이미지 */}
+
+                    <View>
+                    <Image source={ingredient.image} style={styles.ingredientImage} />
+                    
+                    {/* 음식 이름 */}
+                    <Text style={styles.ingredientName}>{ingredient.name}</Text>
                     </View>
-                ))}
+
+                    {/* 유통기한 퍼센트 표시 */}
+                    <View style={styles.progressWrapper}>
+                        <View
+                            style={{
+                                ...styles.progress,
+                                width: `${ingredient.expiryPercentage}%`,
+                                backgroundColor:
+                                    ingredient.expiryPercentage > 50
+                                        ? 'green'
+                                        : ingredient.expiryPercentage > 20
+                                        ? 'orange'
+                                        : 'red',
+                            }}
+                        />
+                    </View>
+
+                    {/* 퍼센트 텍스트 */}
+                    <Text style={styles.expirypercentage}>{ingredient.expiryPercentage}%</Text>
+                </View>
+            ))}
             </TouchableOpacity>
         </ScrollView>
     );

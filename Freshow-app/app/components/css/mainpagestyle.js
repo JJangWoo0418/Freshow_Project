@@ -18,7 +18,7 @@ export default StyleSheet.create({
     },
     title: {
         fontFamily: "ONE Mobile POP",
-        fontSize: 32,
+        fontSize: 28,
         color: '#CDEEFF',
         textAlign: 'center',
         textShadowColor: 'black',
@@ -111,20 +111,24 @@ export default StyleSheet.create({
     ingredientImage: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: 10,
         marginRight: 8,
+        marginLeft: 8,
     },
     ingredientName: {
         fontFamily: "ONE Mobile POP",
         fontSize: 14,
         fontWeight: '400',
+        textAlign: 'center',
+        alignSelf: 'center',
+        marginTop: 10,
     },
     progressWrapper: {
         flex: 1,
         height: 8,
         backgroundColor: '#ddd',
         borderRadius: 4,
-        marginLeft: 8,
+        marginLeft: 20,
     },
     progress: {
         height: '100%',
@@ -164,6 +168,10 @@ export default StyleSheet.create({
         marginLeft: 4,
         marginBottom: 20,
         marginTop: 10
-
+    },
+    imageandnamecontainer:{
+    },
+    expirypercentage:{
+        marginLeft: 10    
     }
 });

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: "ONE Mobile POP",
-        fontSize: 32,
+        fontSize: 28,
         color: '#CDEEFF',
         textAlign: 'center',
         textShadowColor: 'black',
