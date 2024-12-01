@@ -15,10 +15,10 @@ import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { doc, setDoc } from "firebase/firestore"; // Firestore 관련 함수
-import { db } from "./firebaseconfig"; // Firebase 설정
+import { auth,db } from "./firebaseconfig"; // Firebase 설정
 import styles from './components/css/add_objectstyle';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 const add_object = () => {
     const [count, setCount] = useState(0);
@@ -35,6 +35,9 @@ const add_object = () => {
     const [customTags, setCustomTags] = useState([]); 
     const [newTagName, setNewTagName] = useState(""); 
     const router = useRouter();
+    const currentUser = auth.currentUser;
+    const { fridgeId } = useLocalSearchParams();
+    console.log("Fridge ID:", fridgeId);
 
     useEffect(() => {
         (async () => {
@@ -83,7 +86,7 @@ const add_object = () => {
     
         const fridgeRef = doc(
             db,
-            `계정/BSWmZf7ZmIdueVSBVhMqeJ28Dho1/냉장고/6VLSPb5QcLYrScp0Ncj6/재료/${selectedTag}`
+            `계정/${currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`
         );
     
         const itemData = {
@@ -99,7 +102,8 @@ const add_object = () => {
     
         try {
             await setDoc(fridgeRef, itemData, { merge: true }); // 병합 저장
-            Alert.alert("성공", "데이터가 Firestore에 저장되었습니다!");
+            Alert.alert("👏재료가 추가되었습니다!👏");
+            router.back()
         } catch (error) {
             console.error("Firestore 저장 중 오류 발생:", error);
             Alert.alert("오류", "Firestore 저장 중 문제가 발생했습니다.");
@@ -368,6 +372,7 @@ const add_object = () => {
                                 <TextInput
                                     style={styles.taginput}
                                     placeholder="태그 이름"
+                                    placeholderTextColor={"gray"}
                                     value={newTagName}
                                     onChangeText={setNewTagName}
                                 />

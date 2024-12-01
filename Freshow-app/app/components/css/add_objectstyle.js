@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,
-    width: 280,
+    width: 280,    
     },
     countContainer: {
     flexDirection: "row",
