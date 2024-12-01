@@ -192,10 +192,14 @@ export default function MainPage() {
             </View>
 
             <View style={styles.topIcons}>
-                <Link href="/recipepage" style={styles.iconWrapper}>
-                    <Image source={require('../assets/RecipeSuggestBtn.png')} style={styles.icon} />
-                </Link>
-
+            <Link href = {{ pathname: "/recipepage",  // 원하는 페이지 경로
+                    params: { userId: auth.currentUser?.uid, fridgeId: fridgeId },  // userId와 fridgeId 전달
+                }}
+                style={styles.iconWrapper}
+            >
+                <Image source={require('../assets/RecipeSuggestBtn.png')} style={styles.icon} />
+            </Link>
+            
                 <TouchableOpacity style={styles.iconWrapper} onPress={() => router.push({
                     pathname: "/add_object",
                     params: {fridgeId}, // fridgeId 전달
