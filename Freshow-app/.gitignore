@@ -13,8 +13,5 @@ web-build/
 # macOS
 .DS_Store
 
-# Firebase configuration file
-firebaseconfig.js
-
 # GPT API 
 apikey.js
