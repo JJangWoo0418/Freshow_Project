@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20, // 전체 헤더 아래 여백
+        marginBottom: 4, // 전체 헤더 아래 여백
         paddingHorizontal: 16,
         paddingTop: 16, // 헤더 상단 여백
         marginRight: 33, 
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     ingredientImage: {
         width: 50,
         height: 50,
-        borderRadius: 25,
+        borderRadius: 10,
         marginRight: 10,
     },
     ingredientDetails: {
@@ -97,6 +97,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: "ONE Mobile POP",
         color: '#555',
+        marginTop: 22,
+        marginLeft: 10,
     },
 });
 

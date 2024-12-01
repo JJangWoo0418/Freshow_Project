@@ -56,10 +56,10 @@ const IngredientManagement = () => {
             categorySnapshot.forEach((doc) => {
                 const data = doc.data();
                 const items = Object.keys(data).map((key) => ({
-                    name: key,
-                    expiryDate: data[key],
-                    expiryPercentage: calculateExpiryPercentage(data[key]),
-                    image: require('../assets/삼겹살.jpg'), // 예제 이미지
+                    name: key, // 음식 이름 (문서 필드 이름)
+                    image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../assets/삼겹살.jpg'), // 이미지
+                    expiryDate: data[key]["유통기한"] || "유통기한 없음", // 유통기한
+                    expiryPercentage: calculateExpiryPercentage(data[key]["유통기한"]), // 유통기한 퍼센트 계산
                 }));
                 fetchedCategories.push({
                     title: doc.id,
@@ -94,7 +94,7 @@ const IngredientManagement = () => {
     }, [fridgeId]);
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             {/* 헤더 영역 */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -103,40 +103,42 @@ const IngredientManagement = () => {
                 <Text style={styles.title}>{fridgeName}</Text>
                 <View style={{ width: 24 }} /> {/* 오른쪽 공간 확보 */}
             </View>
-
+    
             {/* 재료 관리 영역 */}
-            {categories.map((category, index) => (
-                <View key={index} style={styles.categoryContainer}>
-                    <View style={styles.categoryHeader}>
-                        <Text style={styles.categoryTitle}>{category.title}</Text>
-                    </View>
-                    {category.items.map((ingredient, index) => (
-                        <View key={index} style={styles.ingredientRow}>
-                            <Image source={ingredient.image} style={styles.ingredientImage} />
-                            <View style={styles.ingredientDetails}>
-                                <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                                <View style={styles.progressBarContainer}>
-                                    <View
-                                        style={{
-                                            ...styles.progressBar,
-                                            width: `${ingredient.expiryPercentage}%`,
-                                            backgroundColor:
-                                                ingredient.expiryPercentage > 50
-                                                    ? 'green'
-                                                    : ingredient.expiryPercentage > 20
-                                                    ? 'orange'
-                                                    : 'red',
-                                        }}
-                                    />
-                                </View>
-                            </View>
-                            <Text style={styles.percentageText}>{ingredient.expiryPercentage}%</Text>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                {categories.map((category, index) => (
+                    <View key={index} style={styles.categoryContainer}>
+                        <View style={styles.categoryHeader}>
+                            <Text style={styles.categoryTitle}>{category.title}</Text>
                         </View>
-                    ))}
-                </View>
-            ))}
-        </ScrollView>
-    );
+                        {category.items.map((ingredient, index) => (
+                            <View key={index} style={styles.ingredientRow}>
+                                <Image source={ingredient.image} style={styles.ingredientImage} />
+                                <View style={styles.ingredientDetails}>
+                                    <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                                    <View style={styles.progressBarContainer}>
+                                        <View
+                                            style={{
+                                                ...styles.progressBar,
+                                                width: `${ingredient.expiryPercentage}%`,
+                                                backgroundColor:
+                                                    ingredient.expiryPercentage > 50
+                                                        ? 'green'
+                                                        : ingredient.expiryPercentage > 20
+                                                        ? 'orange'
+                                                        : 'red',
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                                <Text style={styles.percentageText}>{ingredient.expiryPercentage}%</Text>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+            </ScrollView>
+        </View>
+    );    
 };
 
 export default IngredientManagement;
