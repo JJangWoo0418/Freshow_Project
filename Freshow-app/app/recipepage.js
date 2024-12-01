@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { db } from './firebaseconfig'; // Firestore 인스턴스 가져오기
-import { collection, getDocs, doc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import styles from './components/css/recipepagestyle';
 import OpenAI from "openai";
 import { OPENAI_API_KEY } from './components/apikey';
+import { useLocalSearchParams } from 'expo-router';
 
 // OpenAI 설정
 const openai = new OpenAI({
@@ -17,6 +18,7 @@ const openai = new OpenAI({
 
 const RecipePage = () => {
     const router = useRouter();
+    const { userId, fridgeId } = useLocalSearchParams(); // userId와 fridgeId를 URL 파라미터로 받아오기
     const [recipes, setRecipes] = useState([]); // 추천된 레시피 목록
     const [loading, setLoading] = useState(false); // 로딩 상태 관리
     const [fetching, setFetching] = useState(false); // 중복 요청 방지 상태
@@ -34,34 +36,42 @@ const RecipePage = () => {
     // 재료 데이터 Firebase에서 가져오기
     const fetchIngredients = async () => {
         try {
-            const userId = "qA1vecXHMyX7wqfRY53UuWa2NvB2"; // 현재 사용자 ID (예시)
-            const refrigeratorId = "u7mCQptga2njYSCBgkho"; // 냉장고 ID (예시)
+            console.log("fetchIngredients 호출됨");
 
             // '재료' 컬렉션에서 모든 카테고리 문서 가져오기
-            const ingredientsRef = collection(db, '계정', userId, '냉장고', refrigeratorId, '재료');
+            const ingredientsRef = collection(db, '계정', userId, '냉장고', fridgeId, '재료');
 
             // 모든 카테고리 문서 가져오기
             const snapshot = await getDocs(ingredientsRef);
             const validIngredients = [];
-            const todayDate = getTodayDate();
+            const todayDate = getTodayDate(); // 오늘 날짜 계산 (yyyyMMdd 형식)
 
             // 각 카테고리에서 유효한 재료만 추출
             snapshot.forEach(docSnapshot => {
                 const categoryData = docSnapshot.data();
+                
+                // 카테고리 내의 각 재료를 확인 (삼겹살, 소고기 등)
                 for (let ingredient in categoryData) {
-                    const expiryDate = categoryData[ingredient]; // 유통기한 (yyyyMMdd 형식)
-                    if (expiryDate >= todayDate) {
+                    const ingredientData = categoryData[ingredient]; // 예: 삼겹살(Map 형식)
+                    const expiryDate = ingredientData['유통기한']; // 유통기한(yyyyMMdd 형식)
+                    
+                    // 유통기한이 존재하고, 유통기한이 오늘 날짜 이상인 경우만 유효한 재료로 추가
+                    if (expiryDate && expiryDate >= todayDate) {
                         validIngredients.push(ingredient); // 유통기한이 지나지 않은 재료만 추가
                     }
                 }
             });
 
-            setIngredients(validIngredients); // 유효한 재료 상태 업데이트
-            console.log('유효한 냉장고 재료:', validIngredients); // 콘솔에 알림 출력
-            Alert.alert('냉장고 속 재료로 레시피 검색. . .', `포함된 재료 : ${validIngredients.join(', ')}`); //휴대폰에서 알림 표시
+            // 유효한 재료가 있을 경우 레시피 추천 요청
+            if (validIngredients.length > 0) {
+                console.log('유효한 냉장고 재료:', validIngredients); // 유효한 재료 출력
+                Alert.alert('냉장고 속 재료로 레시피 검색. . .', `포함된 재료 : ${validIngredients.join(', ')}`); // 알림 표시
 
-            // OpenAI에 유효한 재료를 전달하여 레시피 추천 받기
-            fetchRecipes(validIngredients);
+                // 유효한 재료를 바탕으로 레시피 추천 받기
+                fetchRecipes(validIngredients);
+            } else {
+                Alert.alert('오류', '유효한 재료가 없습니다. 냉장고를 확인해주세요.');
+            }
 
         } catch (error) {
             console.error('재료 가져오기 오류:', error);
@@ -83,9 +93,7 @@ const RecipePage = () => {
                     { role: "system", content: "You are a helpful assistant that suggests dishes." },
                     {
                         role: "user",
-                        content: `Using the following ingredients: ${ingredients.join(
-                            ", "
-                        )}, recommend three dishes that can be made using only these ingredients. Provide titles only in Korean.`,
+                        content: `Using the following ingredients: ${ingredients.join(", ")}, recommend three dishes that can be made using only these ingredients. Provide titles only in Korean.`,
                     },
                 ],
                 max_tokens: 100,
@@ -163,8 +171,12 @@ const RecipePage = () => {
 
     // 페이지가 처음 렌더링될 때 fetchIngredients 함수 실행
     useEffect(() => {
-        fetchIngredients();
-    }, []);
+        if (userId && fridgeId) {
+            fetchIngredients();
+        } else {
+            Alert.alert('오류', '사용자 ID와 냉장고 ID를 확인해주세요.');
+        }
+    }, [userId, fridgeId]);
 
     return (
         <View style={styles.container}>
