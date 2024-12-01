@@ -269,37 +269,36 @@ export default function MainPage() {
                 onPress={() => router.push(`/IngredientManagement?fridgeId=${fridgeId}`)}
             >
                 <Text style={styles.sectionTitle}>재료관리</Text>
-                {ingredients.map((ingredient, index) => (
-                <View key={index} style={styles.ingredientItem}>
-                    {/* 음식 이미지 */}
+                {ingredients.slice(0, 4).map((ingredient, index) => ( // 처음 4개만 표시
+                    <View key={index} style={styles.ingredientItem}>
+                        {/* 음식 이미지 */}
+                        <View>
+                            <Image source={ingredient.image} style={styles.ingredientImage} />
+                            
+                            {/* 음식 이름 */}
+                            <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                        </View>
 
-                    <View>
-                    <Image source={ingredient.image} style={styles.ingredientImage} />
-                    
-                    {/* 음식 이름 */}
-                    <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                        {/* 유통기한 퍼센트 표시 */}
+                        <View style={styles.progressWrapper}>
+                            <View
+                                style={{
+                                    ...styles.progress,
+                                    width: `${ingredient.expiryPercentage}%`,
+                                    backgroundColor:
+                                        ingredient.expiryPercentage > 50
+                                            ? 'green'
+                                            : ingredient.expiryPercentage > 20
+                                            ? 'orange'
+                                            : 'red',
+                                }}
+                            />
+                        </View>
+
+                        {/* 퍼센트 텍스트 */}
+                        <Text style={styles.expirypercentage}>{ingredient.expiryPercentage}%</Text>
                     </View>
-
-                    {/* 유통기한 퍼센트 표시 */}
-                    <View style={styles.progressWrapper}>
-                        <View
-                            style={{
-                                ...styles.progress,
-                                width: `${ingredient.expiryPercentage}%`,
-                                backgroundColor:
-                                    ingredient.expiryPercentage > 50
-                                        ? 'green'
-                                        : ingredient.expiryPercentage > 20
-                                        ? 'orange'
-                                        : 'red',
-                            }}
-                        />
-                    </View>
-
-                    {/* 퍼센트 텍스트 */}
-                    <Text style={styles.expirypercentage}>{ingredient.expiryPercentage}%</Text>
-                </View>
-            ))}
+                ))}
             </TouchableOpacity>
         </ScrollView>
     );
