@@ -23,7 +23,7 @@ export default function Layout() {
     if (!fontsLoaded) {
         return null;
     }
-
+    
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <Slot />
