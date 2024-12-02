@@ -114,11 +114,15 @@ export default function WebBarcodeScanner() {
                         <p><strong>바코드:</strong> {productData.barcode}</p>
                         <p><strong>상품명:</strong> {productData.productName}</p>
                         <p><strong>제조사:</strong> {productData.manufacturer}</p>
-                        <img
-                            src={productData.imageUrl}
-                            alt="Product"
-                            style={{ width: "100%", marginTop: "10px", borderRadius: "8px" }}
-                        />
+                        {productData.imageUrl ? (
+                            <img
+                                src={productData.imageUrl}
+                                alt="Product"
+                                style={{ width: "100%", marginTop: "10px", borderRadius: "8px" }}
+                            />
+                        ) : (
+                            <p style={{ color: "#999" }}>이미지가 제공되지 않았습니다.</p>
+                        )}
                     </div>
                 )
             )}

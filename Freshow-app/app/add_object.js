@@ -9,32 +9,33 @@ import {
     Image,
     Alert,
     Modal,
-    StatusBar
+    StatusBar,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { doc, setDoc } from "firebase/firestore"; // Firestore 관련 함수
 import { auth, db } from "./firebaseconfig"; // Firebase 설정
-import styles from './components/css/add_objectstyle';
-import { Ionicons } from '@expo/vector-icons';
+import styles from "./components/css/add_objectstyle";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 
 const add_object = () => {
+    const router = useRouter();
+    const { productName: initialProductName, imageUrl } = useLocalSearchParams();
     const [count, setCount] = useState(0);
     const [selectedType, setSelectedType] = useState("냉장");
-    const [productName, setProductName] = useState("");
+    const [productName, setProductName] = useState(initialProductName || "");
     const [productMemo, setProductMemo] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState(imageUrl || null);
     const [selectedTag, setSelectedTag] = useState("태그 설정");
     const [unit, setUnit] = useState("");
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
     const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
     const [customTags, setCustomTags] = useState([]);
     const [newTagName, setNewTagName] = useState("");
-    const router = useRouter();
     const currentUser = auth.currentUser;
     const { fridgeId } = useLocalSearchParams();
     console.log("Fridge ID:", fridgeId);
@@ -90,20 +91,20 @@ const add_object = () => {
         );
 
         const itemData = {
-            [productName]: { // 이름을 키로 사용하고, map 타입 데이터 저장
+            [productName]: {
                 "남은 수량": count || 0,
                 "메모": productMemo || "메모 없음",
                 "물건 종류": selectedType,
-                "사진": image || "사진 없음", // 선택된 이미지 경로나 기본값
+                "사진": image || "사진 없음",
                 "용량 단위": unit,
-                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음", // YYYYMMDD 형식
-            }
+                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음",
+            },
         };
 
         try {
-            await setDoc(fridgeRef, itemData, { merge: true }); // 병합 저장
+            await setDoc(fridgeRef, itemData, { merge: true });
             Alert.alert("👏재료가 추가되었습니다!👏");
-            router.back()
+            router.back();
         } catch (error) {
             console.error("Firestore 저장 중 오류 발생:", error);
             Alert.alert("오류", "Firestore 저장 중 문제가 발생했습니다.");
@@ -148,17 +149,16 @@ const add_object = () => {
             return;
         }
 
-        const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
-        setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
-        setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
-        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
+        const newTag = { icon: "🔖", label: newTagName };
+        setCustomTags((prevTags) => [...prevTags, newTag]);
+        setSelectedTag(newTagName);
+        closeCustomTagModal();
     };
 
     const serviceunready = () => {
-        Alert.alert('😭 서비스 준비 중입니다! 😭');
-        console.log('😭 서비스 준비 중입니다! 😭')
-    }
-
+        Alert.alert("😭 서비스 준비 중입니다! 😭");
+        console.log("😭 서비스 준비 중입니다! 😭");
+    };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -171,24 +171,26 @@ const add_object = () => {
                         </TouchableOpacity>
                         <Text style={styles.title}>물건 추가</Text>
                         <TouchableOpacity style={styles.saveButton} onPress={saveToFirestore}>
-                            <Text style={styles.saveButtonText}>  저장</Text>
+                            <Text style={styles.saveButtonText}> 저장</Text>
                         </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity
                         style={styles.expiryButton}
-                        onPress={() => router.push('/webcamera')} // webcamera.js로 이동
+                        onPress={() => router.push("/webcamera")}
                     >
                         <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
                     </TouchableOpacity>
-
 
                     <Text style={styles.label}>사진 등록</Text>
                     <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
                         {image ? (
                             <Image source={{ uri: image }} style={styles.imagePreview} />
                         ) : (
-                            <Image source={require('../assets/PhotoDropIcon.png')} style={styles.imageButtonText} />
+                            <Image
+                                source={require("../assets/PhotoDropIcon.png")}
+                                style={styles.imageButtonText}
+                            />
                         )}
                     </TouchableOpacity>
 
@@ -226,7 +228,6 @@ const add_object = () => {
                                 >
                                     냉동
                                 </Text>
-
                             </TouchableOpacity>
                         </View>
 
@@ -269,8 +270,6 @@ const add_object = () => {
                         />
                     </View>
 
-
-
                     <Text style={styles.label}>메모</Text>
                     <TextInput
                         style={styles.input}
@@ -302,6 +301,7 @@ const add_object = () => {
                         onCancel={hideDatePicker}
                     />
 
+                    {/* 태그 모달 */}
                     <Modal
                         key="tag-modal"
                         animationType="fade"
@@ -318,13 +318,7 @@ const add_object = () => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.tagList}>
-                                    {/* 기본 제공 태그 */}
-                                    {[
-                                        { icon: "🍖", label: "육류" },
-                                        { icon: "🥦", label: "채소류" },
-                                        { icon: "🍼", label: "유제품" },
-                                        { icon: "🥫", label: "소스" },
-                                    ].map((tag, index) => (
+                                    {[{ icon: "🍖", label: "육류" }].map((tag, index) => (
                                         <TouchableOpacity
                                             key={index}
                                             style={styles.tagItem}
@@ -334,18 +328,6 @@ const add_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
-                                    {/* 사용자 지정 태그 */}
-                                    {customTags.map((tag, index) => (
-                                        <TouchableOpacity
-                                            key={`custom-${index}`}
-                                            style={styles.tagItem}
-                                            onPress={() => selectTag(tag.label)}
-                                        >
-                                            <Text style={styles.tagIcon}>{tag.icon}</Text>
-                                            <Text style={styles.tagLabel}>{tag.label}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                    {/* 사용자 지정 태그 추가 버튼 */}
                                     <TouchableOpacity
                                         style={styles.customTagButton}
                                         onPress={openCustomTagModal}
@@ -357,7 +339,7 @@ const add_object = () => {
                         </TouchableOpacity>
                     </Modal>
 
-
+                    {/* 사용자 지정 태그 추가 */}
                     <Modal
                         animationType="slide"
                         transparent={true}
@@ -381,7 +363,10 @@ const add_object = () => {
                                     onChangeText={setNewTagName}
                                 />
 
-                                <TouchableOpacity style={styles.submitButton} onPress={saveCustomTag}>
+                                <TouchableOpacity
+                                    style={styles.submitButton}
+                                    onPress={saveCustomTag}
+                                >
                                     <Text style={styles.submitButtonText}>저장</Text>
                                 </TouchableOpacity>
                             </View>
