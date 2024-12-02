@@ -15,7 +15,7 @@ import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
 import { doc, setDoc } from "firebase/firestore"; // Firestore 관련 함수
-import { auth,db } from "./firebaseconfig"; // Firebase 설정
+import { auth, db } from "./firebaseconfig"; // Firebase 설정
 import styles from './components/css/add_objectstyle';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -31,9 +31,9 @@ const add_object = () => {
     const [selectedTag, setSelectedTag] = useState("태그 설정");
     const [unit, setUnit] = useState("");
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
-    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); 
-    const [customTags, setCustomTags] = useState([]); 
-    const [newTagName, setNewTagName] = useState(""); 
+    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
+    const [customTags, setCustomTags] = useState([]);
+    const [newTagName, setNewTagName] = useState("");
     const router = useRouter();
     const currentUser = auth.currentUser;
     const { fridgeId } = useLocalSearchParams();
@@ -83,23 +83,23 @@ const add_object = () => {
             Alert.alert("오류", "상품 이름과 태그를 입력해주세요.");
             return;
         }
-    
+
         const fridgeRef = doc(
             db,
             `계정/${currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`
         );
-    
+
         const itemData = {
             [productName]: { // 이름을 키로 사용하고, map 타입 데이터 저장
                 "남은 수량": count || 0,
                 "메모": productMemo || "메모 없음",
                 "물건 종류": selectedType,
                 "사진": image || "사진 없음", // 선택된 이미지 경로나 기본값
-                "용량 단위": unit, 
+                "용량 단위": unit,
                 "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음", // YYYYMMDD 형식
             }
         };
-    
+
         try {
             await setDoc(fridgeRef, itemData, { merge: true }); // 병합 저장
             Alert.alert("👏재료가 추가되었습니다!👏");
@@ -141,13 +141,13 @@ const add_object = () => {
             Alert.alert("오류", "태그 이름을 입력해주세요.");
             return;
         }
-    
+
         const isDuplicate = customTags.some((tag) => tag.label === newTagName);
         if (isDuplicate) {
             Alert.alert("오류", "이미 존재하는 태그 이름입니다.");
             return;
         }
-    
+
         const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
         setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
         setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
@@ -158,7 +158,7 @@ const add_object = () => {
         Alert.alert('😭 서비스 준비 중입니다! 😭');
         console.log('😭 서비스 준비 중입니다! 😭')
     }
-    
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -175,16 +175,20 @@ const add_object = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity style={styles.expiryButton} onPress={serviceunready}>
+                    <TouchableOpacity
+                        style={styles.expiryButton}
+                        onPress={() => router.push('/webcamera')} // webcamera.js로 이동
+                    >
                         <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
                     </TouchableOpacity>
+
 
                     <Text style={styles.label}>사진 등록</Text>
                     <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
                         {image ? (
                             <Image source={{ uri: image }} style={styles.imagePreview} />
                         ) : (
-                            <Image source={require('../assets/PhotoDropIcon.png')} style={styles.imageButtonText}/>
+                            <Image source={require('../assets/PhotoDropIcon.png')} style={styles.imageButtonText} />
                         )}
                     </TouchableOpacity>
 
@@ -222,14 +226,14 @@ const add_object = () => {
                                 >
                                     냉동
                                 </Text>
-                                
+
                             </TouchableOpacity>
                         </View>
 
                         <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
-                        <Text style={styles.tagButtonText}>
-                            {selectedTag ? selectedTag : "태그 설정"}
-                        </Text>
+                            <Text style={styles.tagButtonText}>
+                                {selectedTag ? selectedTag : "태그 설정"}
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
@@ -258,14 +262,14 @@ const add_object = () => {
                         </TouchableOpacity>
 
                         <TextInput
-                        style={styles.unitput}
-                        placeholder="용량 단위"
-                        value={unit}
-                        onChangeText={setUnit}
+                            style={styles.unitput}
+                            placeholder="용량 단위"
+                            value={unit}
+                            onChangeText={setUnit}
                         />
                     </View>
 
-                    
+
 
                     <Text style={styles.label}>메모</Text>
                     <TextInput
@@ -280,16 +284,16 @@ const add_object = () => {
                         <Text style={styles.expiryButtonText}>유통기한 인식하기</Text>
                     </TouchableOpacity>
                     <View style={styles.dateContainer}>
-                            <TextInput
-                                style={styles.dateInput}
-                                placeholder="YYYY. MM. DD."
-                                placeholderTextColor="#999"
-                                value={expiryDate}
-                                onChangeText={setExpiryDate}
-                            />
-                            <TouchableOpacity style={styles.calendarIcon} onPress={showDatePicker}>
-                                <Text style={styles.calendarIconText}>📅</Text>
-                            </TouchableOpacity>
+                        <TextInput
+                            style={styles.dateInput}
+                            placeholder="YYYY. MM. DD."
+                            placeholderTextColor="#999"
+                            value={expiryDate}
+                            onChangeText={setExpiryDate}
+                        />
+                        <TouchableOpacity style={styles.calendarIcon} onPress={showDatePicker}>
+                            <Text style={styles.calendarIconText}>📅</Text>
+                        </TouchableOpacity>
                     </View>
                     <DateTimePickerModal
                         isVisible={isDatePickerVisible}
