@@ -72,8 +72,9 @@ export default function WebBarcodeScanner() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "flex-start",
                 height: "100vh",
+                overflowY: "auto", // 스크롤 가능하도록 설정
                 backgroundColor: "#CDEEFF",
                 padding: "20px",
             }}
@@ -92,6 +93,7 @@ export default function WebBarcodeScanner() {
                         border: "2px solid #E0E0E0",
                         borderRadius: "12px",
                         padding: "10px",
+                        marginBottom: "16px",
                     }}
                 ></div>
             ) : (
