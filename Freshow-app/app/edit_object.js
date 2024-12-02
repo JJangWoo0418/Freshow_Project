@@ -23,7 +23,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 const edit_object = () => {
     const router = useRouter();
     const { fridgeId, tag, itemName, image, expiryDate, memo, remaining, type, unit } = useLocalSearchParams();
-    console.log("라우팅된 데이터:", { fridgeId, tag, itemName, image, expiryDate, memo, remaining, type, unit });
+    console.log("라우팅된 데이터:", { fridgeId, tag, itemName, unit });
     // State 초기화
     const [productName, setProductName] = useState('');
     const [productMemo, setProductMemo] = useState('');
@@ -122,9 +122,10 @@ const edit_object = () => {
             return;
         }
     
-        const docRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`);
+        const currentDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${tag}`);
+        const newDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`);
     
-        const newData = {
+        const updatedData = {
             [productName]: {
                 "남은 수량": count,
                 "메모": productMemo || "메모 없음",
@@ -136,28 +137,41 @@ const edit_object = () => {
         };
     
         try {
-            // 기존 데이터 가져오기
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const existingData = docSnap.data();
-    
-                // 기존 데이터를 병합
-                const updatedData = { ...existingData, ...newData };
-    
-                // Firestore 업데이트
-                await updateDoc(docRef, updatedData);
-            } else {
-                // 문서가 없는 경우 새로 생성
-                await setDoc(docRef, newData);
+            // 1. 기존 태그에서 물건 삭제
+            if (tag !== selectedTag) {
+                await updateDoc(currentDocRef, {
+                    [productName]: deleteField(),
+                });
+                console.log(`기존 태그 ${tag}에서 ${productName} 삭제 완료`);
             }
     
-            Alert.alert("👏 물건이 성공적으로 추가되었습니다! 👏");
+            // 2. 새 태그 문서의 기존 데이터 가져오기
+            const existingDocSnap = await getDoc(newDocRef);
+            let existingData = {};
+            if (existingDocSnap.exists()) {
+                existingData = existingDocSnap.data();
+            }
+    
+            // 3. 기존 데이터에 새 데이터 병합
+            const mergedData = {
+                ...existingData,
+                ...updatedData,
+            };
+    
+            // 4. 새 태그 문서 업데이트
+            await updateDoc(newDocRef, mergedData);
+            console.log(`새 태그 ${selectedTag}에 데이터 추가 완료`, mergedData);
+    
+            Alert.alert("👏 수정이 성공적으로 완료되었습니다! 👏");
             router.back(); // 이전 화면으로 돌아가기
         } catch (error) {
             console.error("Firestore 저장 오류:", error.message);
-            Alert.alert("오류", "물건 저장 중 문제가 발생했습니다.");
+            Alert.alert("오류", "수정 저장 중 문제가 발생했습니다.");
         }
     };
+    
+    
+    
     
     const openTagModal = () => {
         setIsTagModalVisible(true);
