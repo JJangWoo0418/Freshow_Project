@@ -331,6 +331,16 @@ const styles = StyleSheet.create({
         width: 100,
         marginLeft: 145,
     },
+    deleteButton: {
+        backgroundColor: "#FFB6C1",
+        paddingVertical: 12,
+        paddingHorizontal: 118,
+        borderRadius: 10,
+        alignItems: "center",
+        marginBottom: 20,
+        borderWidth: 1,
+        marginTop: 30,
+        },
     });
     
     export default styles;
