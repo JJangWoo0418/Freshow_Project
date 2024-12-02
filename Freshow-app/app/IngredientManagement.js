@@ -64,6 +64,9 @@ const IngredientManagement = () => {
                     expiryPercentage: calculateExpiryPercentage(data[key]["유통기한"]), // 유통기한 퍼센트 계산
                     memo: data[key]["메모"] || '', // 메모 추가
                     remaining: data[key]["남은수량"] || 1, // 남은 수량 추가
+                    unit: data[key]["용량 단위"] || '',
+                    tag: doc.id,
+                    type: data[key]["물건 종류"] || ''
                 }));
                 fetchedCategories.push({
                     title: doc.id,
@@ -118,46 +121,54 @@ const IngredientManagement = () => {
                         </View>
                         {category.items.map((ingredient, ingredientIndex) => (
                             <TouchableOpacity
-                                key={ingredientIndex}
-                                onPress={() =>
-                                    router.push({
-                                        pathname: '/edit_object', // 이동할 페이지 경로
-                                        params: {
-                                            name: ingredient.name,
-                                            image: ingredient.image.uri || null,
-                                            expiryDate: ingredient.expiryDate,
-                                            memo: ingredient.memo || '',
-                                            remaining: ingredient.remaining || 1,
-                                            category: category.title,
-                                            type: ingredient.type || '', // 물건 종류
-                                            tag: ingredient.tag || '', // 태그
-                                            unit: ingredient.unit || '', // 용량 단위
-                                        },
-                                    })
-                                }
-                            >
-                                <View style={styles.ingredientRow}>
-                                    <Image source={ingredient.image} style={styles.ingredientImage} />
-                                    <View style={styles.ingredientDetails}>
-                                        <Text style={styles.ingredientName}>{ingredient.name}</Text>
-                                        <View style={styles.progressBarContainer}>
-                                            <View
-                                                style={{
-                                                    ...styles.progressBar,
-                                                    width: `${ingredient.expiryPercentage}%`,
-                                                    backgroundColor:
-                                                        ingredient.expiryPercentage > 50
-                                                            ? 'green'
-                                                            : ingredient.expiryPercentage > 20
-                                                            ? 'orange'
-                                                            : 'red',
-                                                }}
-                                            />
-                                        </View>
+                            key={ingredientIndex}
+                            onPress={() => {
+                                console.log("라우터로 전달된 params:", {
+                                    itemName: ingredient.name,
+                                    tag: category.title, // 수정: category.title을 tag로 전달
+                                    fridgeId,
+                                    unit: ingredient.unit,
+                                });
+                        
+                                router.push({
+                                    pathname: '/edit_object', // 이동할 페이지 경로
+                                    params: {
+                                        itemName: ingredient.name, // 음식 이름 전달
+                                        image: ingredient.image.uri || null,
+                                        expiryDate: ingredient.expiryDate,
+                                        memo: ingredient.memo || '',
+                                        remaining: ingredient.remaining || 1,
+                                        type: ingredient.type || '', // 물건 종류
+                                        tag: category.title, // 수정: category.title을 tag로 전달
+                                        unit: ingredient.unit || '', // 용량 단위
+                                        fridgeId: fridgeId, // 냉장고 ID 추가
+                                    },
+                                });
+                            }}
+                        >
+                            <View style={styles.ingredientRow}>
+                                <Image source={ingredient.image} style={styles.ingredientImage} />
+                                <View style={styles.ingredientDetails}>
+                                    <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                                    <View style={styles.progressBarContainer}>
+                                        <View
+                                            style={{
+                                                ...styles.progressBar,
+                                                width: `${ingredient.expiryPercentage}%`,
+                                                backgroundColor:
+                                                    ingredient.expiryPercentage > 50
+                                                        ? 'green'
+                                                        : ingredient.expiryPercentage > 20
+                                                        ? 'orange'
+                                                        : 'red',
+                                            }}
+                                        />
                                     </View>
-                                    <Text style={styles.percentageText}>{ingredient.expiryPercentage}%</Text>
                                 </View>
-                            </TouchableOpacity>
+                                <Text style={styles.percentageText}>{ingredient.expiryPercentage}%</Text>
+                            </View>
+                        </TouchableOpacity>
+                        
                         ))}
                     </View>
                 ))}
