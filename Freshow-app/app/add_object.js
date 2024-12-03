@@ -320,6 +320,13 @@ const add_object = () => {
                                         { icon: "🥦", label: "채소류" },
                                         { icon: "🍼", label: "유제품" },
                                         { icon: "🥫", label: "소스" },
+                                        { icon: "🍎", label: "과일류" },
+                                        { icon: "🍚", label: "곡류/건과류" },
+                                        { icon: "🐟", label: "수산물" },
+                                        { icon: "🍰", label: "디저트" },
+                                        { icon: "❄️", label: "냉동식품" },
+                                        { icon: "🍜", label: "면류" },
+                                        { icon: "🪕", label: "기타" },
                                     ].map((tag, index) => (
                                         <TouchableOpacity
                                             key={index}

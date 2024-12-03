@@ -122,9 +122,11 @@ const edit_object = () => {
             return;
         }
     
+        // 기존 태그와 새 태그 참조
         const currentDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${tag}`);
         const newDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`);
     
+        // 새 태그로 이동할 데이터
         const updatedData = {
             [productName]: {
                 "남은 수량": count,
@@ -137,41 +139,25 @@ const edit_object = () => {
         };
     
         try {
-            // 1. 기존 태그에서 물건 삭제
+            // 1. 기존 태그에서 해당 물건만 삭제
             if (tag !== selectedTag) {
+                console.log("기존 태그에서 삭제 중:", tag, productName);
                 await updateDoc(currentDocRef, {
                     [productName]: deleteField(),
                 });
-                console.log(`기존 태그 ${tag}에서 ${productName} 삭제 완료`);
             }
     
-            // 2. 새 태그 문서의 기존 데이터 가져오기
-            const existingDocSnap = await getDoc(newDocRef);
-            let existingData = {};
-            if (existingDocSnap.exists()) {
-                existingData = existingDocSnap.data();
-            }
+            // 2. 새 태그로 데이터 병합 저장
+            console.log("새 태그로 병합 중:", selectedTag, updatedData);
+            await setDoc(newDocRef, updatedData, { merge: true });
     
-            // 3. 기존 데이터에 새 데이터 병합
-            const mergedData = {
-                ...existingData,
-                ...updatedData,
-            };
-    
-            // 4. 새 태그 문서 업데이트
-            await updateDoc(newDocRef, mergedData);
-            console.log(`새 태그 ${selectedTag}에 데이터 추가 완료`, mergedData);
-    
-            Alert.alert("👏 수정이 성공적으로 완료되었습니다! 👏");
-            router.back(); // 이전 화면으로 돌아가기
+            Alert.alert("👏 수정이 완료되었습니다!");
+            router.back();
         } catch (error) {
             console.error("Firestore 저장 오류:", error.message);
             Alert.alert("오류", "수정 저장 중 문제가 발생했습니다.");
         }
     };
-    
-    
-    
     
     const openTagModal = () => {
         setIsTagModalVisible(true);
@@ -434,6 +420,13 @@ const edit_object = () => {
                                         { icon: "🥦", label: "채소류" },
                                         { icon: "🍼", label: "유제품" },
                                         { icon: "🥫", label: "소스" },
+                                        { icon: "🍎", label: "과일류" },
+                                        { icon: "🍚", label: "곡류/건과류" },
+                                        { icon: "🐟", label: "수산물" },
+                                        { icon: "🍰", label: "디저트" },
+                                        { icon: "❄️", label: "냉동식품" },
+                                        { icon: "🍜", label: "면류" },
+                                        { icon: "🪕", label: "기타" },
                                     ].map((tag, index) => (
                                         <TouchableOpacity
                                             key={index}
