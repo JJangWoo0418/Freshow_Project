@@ -100,7 +100,7 @@ const add_object = () => {
         };
 
         try {
-            await setDoc(fridgeRef, { [productName]: itemData }, { merge: true }); // Firebase에 저장
+            await setDoc(fridgeRef, { [productName]: itemData }, { merge: true });
             Alert.alert("저장 완료", "재료가 성공적으로 저장되었습니다!");
         } catch (error) {
             console.error("Firestore 저장 중 오류 발생:", error);
@@ -257,7 +257,6 @@ const add_object = () => {
                         >
                             <Text style={styles.countButtonText}>+</Text>
                         </TouchableOpacity>
-
                         <TextInput
                             style={styles.unitput}
                             placeholder="용량 단위"
@@ -328,7 +327,6 @@ const add_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
-
                                     {customTags.map((tag, index) => (
                                         <TouchableOpacity
                                             key={`custom-${index}`}
@@ -339,7 +337,6 @@ const add_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
-
                                     <TouchableOpacity
                                         style={styles.customTagButton}
                                         onPress={openCustomTagModal}
@@ -366,7 +363,6 @@ const add_object = () => {
                                         <Text style={styles.closeButton}>×</Text>
                                     </TouchableOpacity>
                                 </View>
-
                                 <TextInput
                                     style={styles.taginput}
                                     placeholder="태그 이름"
@@ -374,7 +370,6 @@ const add_object = () => {
                                     value={newTagName}
                                     onChangeText={setNewTagName}
                                 />
-
                                 <TouchableOpacity
                                     style={styles.submitButton}
                                     onPress={saveCustomTag}
