@@ -152,26 +152,36 @@ const RecipePage = () => {
     const renderRecipeItem = ({ item }) => (
         <TouchableOpacity
             style={styles.recipeItem}
-            onPress={() =>
+            onPress={() => {
+                console.log("Navigating to recipemakepage.js with:", {
+                    id: item.id,
+                    name: item.name,
+                    image: item.image || 'https://via.placeholder.com/1024',
+                    fridgeId: fridgeId,
+                }); // 로그 추가
+    
                 router.push({
                     pathname: '/recipemakepage',
                     params: {
                         id: item.id,
                         name: item.name,
                         image: item.image || 'https://via.placeholder.com/1024',
+                        fridgeId: fridgeId, // fridgeId 전달
                     },
-                })
-            }
+                });
+            }}
         >
             <Image source={{ uri: item.image }} style={styles.recipeImage} />
             <Text style={styles.recipeName}>{item.name}</Text>
             <Image source={require('../assets/ArrowRightBtn.png')} style={styles.arrowIcon} />
         </TouchableOpacity>
     );
+    
 
     // 페이지가 처음 렌더링될 때 fetchIngredients 함수 실행
     useEffect(() => {
         if (userId && fridgeId) {
+            console.log("Fetching ingredients with:", { userId, fridgeId }); // 로그 추가
             fetchIngredients();
         } else {
             Alert.alert('오류', '사용자 ID와 냉장고 ID를 확인해주세요.');

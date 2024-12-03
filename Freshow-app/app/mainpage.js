@@ -34,6 +34,20 @@ export default function MainPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [fridgeName, setFridgeName] = useState('냉장고 이름');
 
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user && fridgeId) {
+                fetchFridgeName();
+                fetchMemos();
+                fetchIngredients();
+            } else if (!user) {
+                Alert.alert("로그인이 필요합니다.");
+                router.push("/home"); // 로그인 페이지로 이동
+            }
+        });
+        return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
+    }, [fridgeId]);
+
     // 알림 설정
     Notifications.setNotificationHandler({
         handleNotification: async () => ({

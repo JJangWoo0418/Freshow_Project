@@ -13,7 +13,8 @@ const openai = new OpenAI({
 
 const HealthRecipe = () => {
     const router = useRouter();
-    const { name } = useLocalSearchParams(); // 선택된 요리 이름 가져오기
+    const { name, fridgeId} = useLocalSearchParams(); // 선택된 요리 이름 가져오기
+    console.log('Received fridgeId in HealthRecipe:', fridgeId); // 로그로 확인
     const [tips, setTips] = useState([]); // GPT로부터 받은 건강한 요리 방법
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
 
@@ -79,7 +80,15 @@ const HealthRecipe = () => {
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
                     <Image source={require('../assets/back.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.footerButton} onPress={() => router.push('mainpage')}>
+                <TouchableOpacity
+                    style={styles.footerButton}
+                    onPress={() =>
+                        router.push({
+                            pathname: 'mainpage',
+                            params: { fridgeId }, // fridgeId를 함께 전달
+                        })
+                    }
+                >
                     <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>
