@@ -76,7 +76,7 @@ const add_object = () => {
     };
 
     const handleConfirm = (date) => {
-        setExpiryDate(format(date, "yyyy. MM. dd"));
+        setExpiryDate(format(date, "yyyyMMdd"));
         hideDatePicker();
     };
 
@@ -292,7 +292,7 @@ const add_object = () => {
                     <View style={styles.dateContainer}>
                             <TextInput
                                 style={styles.dateInput}
-                                placeholder="YYYY. MM. DD."
+                                placeholder="YYYYMMDD"
                                 placeholderTextColor="#999"
                                 value={expiryDate}
                                 onChangeText={setExpiryDate}
