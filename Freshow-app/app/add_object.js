@@ -22,7 +22,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 const add_object = () => {
     const router = useRouter();
-    const { productName: initialProductName, imageUrl } = useLocalSearchParams();
+    const { productName: initialProductName, imageUrl, fridgeId } = useLocalSearchParams();
     const [count, setCount] = useState(0);
     const [selectedType, setSelectedType] = useState("냉장");
     const [productName, setProductName] = useState(initialProductName || "");
@@ -37,8 +37,6 @@ const add_object = () => {
     const [customTags, setCustomTags] = useState([]);
     const [newTagName, setNewTagName] = useState("");
     const currentUser = auth.currentUser;
-    const { fridgeId } = useLocalSearchParams();
-    console.log("Fridge ID:", fridgeId);
 
     useEffect(() => {
         (async () => {
@@ -91,20 +89,19 @@ const add_object = () => {
         );
 
         const itemData = {
-            [productName]: {
-                "남은 수량": count || 0,
-                "메모": productMemo || "메모 없음",
-                "물건 종류": selectedType,
-                "사진": image || "사진 없음",
-                "용량 단위": unit,
-                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음",
-            },
+            name: productName,
+            count: count || 0,
+            memo: productMemo || "메모 없음",
+            type: selectedType,
+            image: image || "사진 없음",
+            unit: unit,
+            expiryDate: expiryDate.replace(/\. /g, "") || "유통기한 없음",
+            createdAt: new Date().toISOString(),
         };
 
         try {
-            await setDoc(fridgeRef, itemData, { merge: true });
-            Alert.alert("👏재료가 추가되었습니다!👏");
-            router.back();
+            await setDoc(fridgeRef, { [productName]: itemData }, { merge: true }); // Firebase에 저장
+            Alert.alert("저장 완료", "재료가 성공적으로 저장되었습니다!");
         } catch (error) {
             console.error("Firestore 저장 중 오류 발생:", error);
             Alert.alert("오류", "Firestore 저장 중 문제가 발생했습니다.");
@@ -157,7 +154,6 @@ const add_object = () => {
 
     const serviceunready = () => {
         Alert.alert("😭 서비스 준비 중입니다! 😭");
-        console.log("😭 서비스 준비 중입니다! 😭");
     };
 
     return (
@@ -303,7 +299,6 @@ const add_object = () => {
 
                     {/* 태그 모달 */}
                     <Modal
-                        key="tag-modal"
                         animationType="fade"
                         transparent={true}
                         visible={isTagModalVisible}
@@ -318,7 +313,12 @@ const add_object = () => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.tagList}>
-                                    {[{ icon: "🍖", label: "육류" }].map((tag, index) => (
+                                    {[
+                                        { icon: "🍖", label: "육류" },
+                                        { icon: "🥦", label: "채소류" },
+                                        { icon: "🍼", label: "유제품" },
+                                        { icon: "🥫", label: "소스" },
+                                    ].map((tag, index) => (
                                         <TouchableOpacity
                                             key={index}
                                             style={styles.tagItem}
@@ -328,6 +328,18 @@ const add_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
+
+                                    {customTags.map((tag, index) => (
+                                        <TouchableOpacity
+                                            key={`custom-${index}`}
+                                            style={styles.tagItem}
+                                            onPress={() => selectTag(tag.label)}
+                                        >
+                                            <Text style={styles.tagIcon}>{tag.icon}</Text>
+                                            <Text style={styles.tagLabel}>{tag.label}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+
                                     <TouchableOpacity
                                         style={styles.customTagButton}
                                         onPress={openCustomTagModal}
