@@ -13,7 +13,10 @@ const openai = new OpenAI({
 
 const RecipeMakePage = () => {
     const router = useRouter();
-    const { id, name, image = 'https://via.placeholder.com/1024'} = useLocalSearchParams();// 라우팅 데이터 가져오기
+    const { id, name, image = 'https://via.placeholder.com/1024', fridgeId } = useLocalSearchParams();
+
+    // 로그 추가: fridgeId 값 확인
+    console.log("Received parameters in recipemakepage.js:", { id, name, fridgeId });
     const [recipeSteps, setRecipeSteps] = useState([]); // 레시피 단계
     const [loading, setLoading] = useState(true); // 로딩 상태 관리
     const [imageLoading, setImageLoading] = useState(true); // 이미지 로딩 상태
@@ -77,10 +80,19 @@ const RecipeMakePage = () => {
                 <Text style={styles.recipeTitle}>{name || "레시피"} 레시피</Text>
                 <TouchableOpacity
                     style={styles.footerButton}
-                    onPress={() => router.push('/healthrecipe?name=' + name)}
+                    onPress={() =>
+                        router.push({
+                            pathname: '/healthrecipe',
+                            params: {
+                                name,      // 요리 이름 전달
+                                fridgeId,  // fridgeId 추가 전달
+                            },
+                        })
+                    }
                 >
                     <Image source={require('../assets/HealthEatBtn.png')} style={styles.healtheatbtn} />
                 </TouchableOpacity>
+
 
 
                 <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
@@ -105,7 +117,15 @@ const RecipeMakePage = () => {
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
                     <Image source={require('../assets/back.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.footerButton} onPress={() => router.push('mainpage')}>
+                <TouchableOpacity
+                    style={styles.footerButton}
+                    onPress={() =>
+                        router.push({
+                            pathname: 'mainpage',
+                            params: { fridgeId: fridgeId || '' }, // fridgeId가 없으면 빈 값 전달
+                        })
+                    }
+                >
                     <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>

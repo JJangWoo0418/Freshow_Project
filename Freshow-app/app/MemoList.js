@@ -193,9 +193,14 @@ export default function MemoList() {
                     <View style={{ flex: 1 }}>
                         <ScrollView contentContainerStyle={styles.container}>
                             <View style={styles.header}>
-                                <Link href="/mainpage">
-                                    <Ionicons name="arrow-back" size={24} color="black" />
-                                </Link>
+                            <Link
+                                href={{
+                                    pathname: "/mainpage",
+                                    params: { fridgeId }, // fridgeId를 명시적으로 전달
+                                }}
+                            >
+                                <Ionicons name="arrow-back" size={24} color="black" />
+                            </Link>
                                 <Text style={styles.headerTitle}>MEMO</Text>
                                 <TouchableOpacity onPress={createMemo}>
                                     <Ionicons name="add" size={24} color="black" />
