@@ -18,7 +18,7 @@ export default StyleSheet.create({
     },
     title: {
         fontFamily: "ONE Mobile POP",
-        fontSize: 28,
+        fontSize: 25,
         color: '#CDEEFF',
         textAlign: 'center',
         textShadowColor: 'black',

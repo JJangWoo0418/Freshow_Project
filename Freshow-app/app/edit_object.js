@@ -426,6 +426,7 @@ const edit_object = () => {
                                         { icon: "🍰", label: "디저트" },
                                         { icon: "❄️", label: "냉동식품" },
                                         { icon: "🍜", label: "면류" },
+                                        { icon: "🧃", label: "음료" },
                                         { icon: "🪕", label: "기타" },
                                     ].map((tag, index) => (
                                         <TouchableOpacity
