@@ -115,7 +115,7 @@ const RecipeMakePage = () => {
             {/* 하단 버튼 영역 */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
-                    <Image source={require('../assets/back.png')} style={styles.footerIcon} />
+                    <Image source={require('../assets/AgainButton.png')} style={styles.footerIcon2} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.footerButton}

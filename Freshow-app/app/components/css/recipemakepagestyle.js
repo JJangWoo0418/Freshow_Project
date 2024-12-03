@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     footerIcon: {
         width: 50,
         height: 50,
+        resizeMode:'contain'
     },
     imageLoader: {
         position: 'absolute',
@@ -110,7 +111,13 @@ const styles = StyleSheet.create({
     healtheatbtn: {
         marginBottom: 15,
         marginTop: 10,
-    }
+    },
+    footerIcon2: {
+        width: 50,
+        height: 50,
+        resizeMode:'contain',
+        margin: 4
+    },
     
 });
 
