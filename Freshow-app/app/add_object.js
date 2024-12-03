@@ -9,7 +9,9 @@ import {
     Image,
     Alert,
     Modal,
-    StatusBar
+    StatusBar,
+    Platform,
+    KeyboardAvoidingView
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -161,6 +163,11 @@ const add_object = () => {
     
 
     return (
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        >
         <SafeAreaView style={{ flex: 1 }}>
             <StatusBar barStyle="dark-content" />
             <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
@@ -237,6 +244,7 @@ const add_object = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="물건의 이름"
+                        placeholderTextColor={'gray'}
                         value={productName}
                         onChangeText={setProductName}
                     />
@@ -260,6 +268,7 @@ const add_object = () => {
                         <TextInput
                         style={styles.unitput}
                         placeholder="용량 단위"
+                        placeholderTextColor={'gray'}
                         value={unit}
                         onChangeText={setUnit}
                         />
@@ -271,6 +280,7 @@ const add_object = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="물건의 메모"
+                        placeholderTextColor={'gray'}
                         value={productMemo}
                         onChangeText={setProductMemo}
                     />
@@ -394,6 +404,7 @@ const add_object = () => {
                 </View>
             </ScrollView>
         </SafeAreaView>
+        </KeyboardAvoidingView>
     );
 };
 

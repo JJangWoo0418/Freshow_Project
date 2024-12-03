@@ -185,9 +185,10 @@ export default function MemoList() {
     return (
         <ScrollView>
             <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            >
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+            >   
                 <Pressable onPress={Keyboard.dismiss}>
                     <View style={{ flex: 1 }}>
                         <ScrollView contentContainerStyle={styles.container}>
@@ -226,6 +227,7 @@ export default function MemoList() {
                                             setIsEditing(false);
                                         }}
                                         placeholder="제목을 입력하세요"
+                                        placeholderTextColor={'gray'}
                                     />
                                     <TextInput
                                         style={styles.memoContent}
@@ -246,6 +248,7 @@ export default function MemoList() {
                                             setIsEditing(false);
                                         }}
                                         placeholder="메모 내용을 입력하세요"
+                                        placeholderTextColor={'gray'}
                                         multiline
                                     />
                                     <Text style={styles.timeAgo}>{getTimeAgo(memo.updatedAt)}</Text>
