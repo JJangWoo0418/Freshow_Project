@@ -32,7 +32,15 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",  
+          "color": "#FF0000",                      
+          "iosDisplayInForeground": true          
+        }
+      ]
     ],
     "name": "Freshow-App",
     "slug": "Freshow-App",

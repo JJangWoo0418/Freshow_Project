@@ -13,7 +13,6 @@ import {
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './components/css/mainpagestyle';
-
 import { auth, db } from '../app/firebaseconfig';
 import {
     collection,
@@ -23,6 +22,7 @@ import {
     addDoc,
     serverTimestamp,
 } from 'firebase/firestore';
+import * as Notifications from 'expo-notifications';
 
 export default function MainPage() {
     const { fridgeId } = useLocalSearchParams(); // fridgeId를 받아옵니다
@@ -34,7 +34,37 @@ export default function MainPage() {
     const [showPopup, setShowPopup] = useState(false);
     const [fridgeName, setFridgeName] = useState('냉장고 이름');
 
-    // Firestore에서 냉장고 이름 가져오기
+    // 알림 설정
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+        }),
+    });
+
+    const sendExpiryNotification = (itemName, percentage) => {
+        let message = '';
+        if (percentage <= 10) {
+            message = `⏰ ${itemName}의 유통기한이 매우 임박했습니다! (10%) ⏰`;
+        } else if (percentage <= 25) {
+            message = `⏰ ${itemName}의 유통기한이 얼마 남지 않았습니다. (25%) ⏰`;
+        } else if (percentage <= 50) {
+            message = `⏰ ${itemName}의 유통기한이 어느 정도 지나갔습니다. (50%) ⏰`;
+        }
+
+        if (message) {
+            Notifications.scheduleNotificationAsync({
+                content: {
+                    title: 'Freshow(프레시오)',
+                    body: message,
+                    sound: true,
+                },
+                trigger: null, // 즉시 알림
+            });
+        }
+    };
+
     const fetchFridgeName = async () => {
         const currentUser = auth.currentUser;
         if (!currentUser || !fridgeId) return;
@@ -51,7 +81,6 @@ export default function MainPage() {
         }
     };
 
-    // Firestore에서 메모 가져오기
     const fetchMemos = async () => {
         const currentUser = auth.currentUser;
         if (!currentUser || !fridgeId) {
@@ -79,15 +108,14 @@ export default function MainPage() {
         }
     };
 
-    // Firestore에서 재료 데이터 가져오기
     const fetchIngredients = async () => {
         const currentUser = auth.currentUser;
-    
+
         if (!currentUser || !fridgeId) {
             Alert.alert('로그인 필요', '재료 데이터를 불러오려면 로그인이 필요합니다.');
             return;
         }
-    
+
         try {
             const ingredientsCollection = collection(
                 db,
@@ -98,20 +126,31 @@ export default function MainPage() {
                 '재료'
             );
             const querySnapshot = await getDocs(ingredientsCollection);
-    
-            const fetchedIngredients = querySnapshot.docs.map((doc) => {
-                const data = doc.data();
-                return Object.keys(data).map((key) => ({
-                    name: key, // 음식 이름 (문서 필드 이름)
-                    image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../assets/삼겹살.jpg'), // 이미지
-                    expiryDate: data[key]["유통기한"] || "유통기한 없음", // 유통기한
-                    expiryPercentage: calculateExpiryPercentage(data[key]["유통기한"]), // 유통기한 퍼센트 계산
-                    remaining: data[key]["남은 수량"] || 0, // 남은 수량
-                    memo: data[key]["메모"] || "메모 없음", // 메모
-                    type: data[key]["물건 종류"] || "알 수 없음", // 물건 종류
-                }));
-            }).flat();
-    
+
+            const fetchedIngredients = querySnapshot.docs
+                .map((doc) => {
+                    const data = doc.data();
+                    return Object.keys(data).map((key) => {
+                        const expiryPercentage = calculateExpiryPercentage(data[key]["유통기한"]);
+                        
+                        // 유통기한 알림 보내기
+                        if (expiryPercentage <= 50) {
+                            sendExpiryNotification(key, expiryPercentage);
+                        }
+
+                        return {
+                            name: key,
+                            image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../assets/삼겹살.jpg'),
+                            expiryDate: data[key]["유통기한"] || "유통기한 없음",
+                            expiryPercentage,
+                            remaining: data[key]["남은 수량"] || 0,
+                            memo: data[key]["메모"] || "메모 없음",
+                            type: data[key]["물건 종류"] || "알 수 없음",
+                        };
+                    });
+                })
+                .flat();
+
             setIngredients(
                 fetchedIngredients.sort((a, b) => a.expiryPercentage - b.expiryPercentage)
             );
@@ -119,7 +158,6 @@ export default function MainPage() {
             console.error('재료 데이터 가져오기 오류:', error);
         }
     };
-    
 
     useEffect(() => {
         fetchFridgeName();
@@ -127,7 +165,6 @@ export default function MainPage() {
         fetchIngredients();
     }, [fridgeId]);
 
-    // 유통기한을 퍼센트로 계산하는 함수
     const calculateExpiryPercentage = (expiryDate) => {
         try {
             if (typeof expiryDate === 'number') {
@@ -140,9 +177,8 @@ export default function MainPage() {
                 );
                 const today = new Date();
                 const totalDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-                const maxShelfLife = 10; // 최대 유통기한 일수
-                const percentage = Math.max(0, Math.min(100, Math.round((totalDays / maxShelfLife) * 100)));
-                return percentage;
+                const maxShelfLife = 14;
+                return Math.max(0, Math.min(100, Math.round((totalDays / maxShelfLife) * 100)));
             }
         } catch (error) {
             console.error('유통기한 계산 오류:', error);
@@ -150,7 +186,6 @@ export default function MainPage() {
         return 0;
     };
 
-    // 메모 저장 함수
     const handleMemoSave = async () => {
         const currentUser = auth.currentUser;
 
@@ -178,8 +213,8 @@ export default function MainPage() {
                 setTitle('');
                 setMemo('');
                 fetchMemos();
-                setShowPopup(true); // 메모 저장 후 팝업 표시
-                setTimeout(() => setShowPopup(false), 2000); // 2초 후 팝업 숨기기
+                setShowPopup(true);
+                setTimeout(() => setShowPopup(false), 2000);
             } catch (error) {
                 console.error('메모 저장 오류:', error);
             }

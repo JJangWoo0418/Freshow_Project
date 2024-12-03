@@ -31,7 +31,7 @@ const IngredientManagement = () => {
                 );
                 const today = new Date();
                 const totalDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-                const maxShelfLife = 10; // 최대 유통기한 일수
+                const maxShelfLife = 14; // 최대 유통기한 일수
                 const percentage = Math.max(0, Math.min(100, Math.round((totalDays / maxShelfLife) * 100)));
                 return percentage;
             }
