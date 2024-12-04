@@ -1,0 +1,8 @@
+version: "3"
+tunnels:
+  test1:
+    proto: http
+    addr: 8081
+  test2:
+    proto: http
+    addr: 3000

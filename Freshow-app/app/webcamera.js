@@ -38,7 +38,9 @@ export default function WebBarcodeScanner() {
 
     const fetchProductData = async (barcode) => {
         try {
-            const response = await axios.post("http://localhost:3000/", { barcode });
+            console.log("엑시오스 요청")
+            const response = await axios.post("https://753d-61-34-253-109.ngrok-free.app/", { barcode });
+            console.log("요청 끝 ㄳㅂ")
             console.log("Server Response:", response.data);
             if (response.data.success) {
                 setProductData(response.data.data);
