@@ -1,6 +1,6 @@
 version: "3"
 agent:
-  authtoken: 2pg6hNjZpdukrhRXpdqoSwfCxCj_83magQssRPvSMCgojEzyk
+  authtoken: 2pgc10IZpmLjIOkmYdU1gea6ptr_ZLheFiHsmzujvPVNz3nh
 tunnels:
   test1:
     proto: http
