@@ -158,7 +158,7 @@ const add_object = () => {
     };
 
     const openWebCamera = () => {3345
-        const webCameraURL = "https://c528-61-34-253-109.ngrok-free.app/webcamera";
+        const webCameraURL = "https://c811-61-34-253-109.ngrok-free.app/webcamera";
         Linking.openURL(webCameraURL).catch(() => {
             Alert.alert("오류", "웹 카메라 페이지를 열 수 없습니다.");
         });
