@@ -37,6 +37,7 @@ const add_object = () => {
     const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
     const [customTags, setCustomTags] = useState([]);
     const [newTagName, setNewTagName] = useState("");
+    const [openBarcodeScan, setOpenBarcodeScan] = useState(false);
     const currentUser = auth.currentUser;
 
     useEffect(() => {
@@ -155,7 +156,7 @@ const add_object = () => {
     };
 
     const openWebCamera = () => {3345
-        const webCameraURL = "https://5635-61-34-253-109.ngrok-free.app/webcamera";
+        const webCameraURL = " https://25dc-61-34-253-110.ngrok-free.app/webcamera";
         Linking.openURL(webCameraURL).catch(() => {
             Alert.alert("오류", "웹 카메라 페이지를 열 수 없습니다.");
         });
@@ -189,6 +190,22 @@ const add_object = () => {
                     >
                         <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
                     </TouchableOpacity>
+
+                    {
+                        openBarcodeScan && (
+                            Platform.OS === "web" ? (
+                                <iframe
+                                    src="https://57b5-61-34-253-110.ngrok-free.app/webcamera"
+                                    style={{ width: "100%", height: "100%" }}
+                                />
+                            ) : (
+                                <WebView
+                                    source={{ uri: "https://57b5-61-34-253-110.ngrok-free.app/webcamera" }}
+                                    style={{ flex: 1, marginTop: 22 }}
+                                />
+                            )
+                        )
+                    }
 
                     <Text style={styles.label}>사진 등록</Text>
                     <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
