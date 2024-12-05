@@ -10,36 +10,36 @@ import {
     Alert,
     Modal,
     StatusBar,
-    Linking,
     Platform,
     KeyboardAvoidingView
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "./firebaseconfig";
-import styles from "./components/css/add_objectstyle";
-import { Ionicons } from "@expo/vector-icons";
+import { doc, setDoc } from "firebase/firestore"; // Firestore 관련 함수
+import { auth,db } from "./firebaseconfig"; // Firebase 설정
+import styles from './components/css/add_objectstyle';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from "expo-router";
 
 const add_object = () => {
-    const router = useRouter();
-    const { productName: initialProductName, imageUrl, fridgeId } = useLocalSearchParams(); // fridgeId 포함
     const [count, setCount] = useState(0);
     const [selectedType, setSelectedType] = useState("냉장");
-    const [productName, setProductName] = useState(initialProductName || "");
+    const [productName, setProductName] = useState("");
     const [productMemo, setProductMemo] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [image, setImage] = useState(imageUrl || null);
+    const [image, setImage] = useState(null);
     const [selectedTag, setSelectedTag] = useState("태그 설정");
     const [unit, setUnit] = useState("");
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
-    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
-    const [customTags, setCustomTags] = useState([]);
-    const [newTagName, setNewTagName] = useState("");
+    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); 
+    const [customTags, setCustomTags] = useState([]); 
+    const [newTagName, setNewTagName] = useState(""); 
+    const router = useRouter();
     const currentUser = auth.currentUser;
+    const { fridgeId } = useLocalSearchParams();
+    console.log("Fridge ID:", fridgeId);
 
     useEffect(() => {
         (async () => {
@@ -76,7 +76,7 @@ const add_object = () => {
     };
 
     const handleConfirm = (date) => {
-        setExpiryDate(format(date, "yyyy. MM. dd"));
+        setExpiryDate(format(date, "yyyyMMdd"));
         hideDatePicker();
     };
 
@@ -85,28 +85,27 @@ const add_object = () => {
             Alert.alert("오류", "상품 이름과 태그를 입력해주세요.");
             return;
         }
-
-        // 냉장고 ID를 포함하여 데이터 저장
+    
         const fridgeRef = doc(
             db,
-            `accounts/${currentUser.uid}/fridges/${fridgeId}/ingredients/${selectedTag}`
+            `계정/${currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`
         );
-
+    
         const itemData = {
-            [productName]: {
-                quantity: count || 0,
-                memo: productMemo || "메모 없음",
-                type: selectedType,
-                image: image || "이미지 없음",
-                unit: unit,
-                expiryDate: expiryDate.replace(/\. /g, "") || "유통기한 없음",
-            },
+            [productName]: { // 이름을 키로 사용하고, map 타입 데이터 저장
+                "남은 수량": count || 0,
+                "메모": productMemo || "메모 없음",
+                "물건 종류": selectedType,
+                "사진": image || "사진 없음", // 선택된 이미지 경로나 기본값
+                "용량 단위": unit, 
+                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음", // YYYYMMDD 형식
+            }
         };
-
+    
         try {
-            await setDoc(fridgeRef, itemData, { merge: true });
+            await setDoc(fridgeRef, itemData, { merge: true }); // 병합 저장
             Alert.alert("👏재료가 추가되었습니다!👏");
-            router.push({ pathname: "/fridgeselect", params: { fridgeId } }); // 저장 후 다시 냉장고로 이동
+            router.back()
         } catch (error) {
             console.error("Firestore 저장 중 오류 발생:", error);
             Alert.alert("오류", "Firestore 저장 중 문제가 발생했습니다.");
@@ -144,58 +143,46 @@ const add_object = () => {
             Alert.alert("오류", "태그 이름을 입력해주세요.");
             return;
         }
-
+    
         const isDuplicate = customTags.some((tag) => tag.label === newTagName);
         if (isDuplicate) {
             Alert.alert("오류", "이미 존재하는 태그 이름입니다.");
             return;
         }
-
-        const newTag = { icon: "🔖", label: newTagName };
-        setCustomTags((prevTags) => [...prevTags, newTag]);
-        setSelectedTag(newTagName);
-        closeCustomTagModal();
-    };
-
-    const openWebCamera = () => {3345
-        const webCameraURL = "https://c811-61-34-253-109.ngrok-free.app/webcamera";
-        Linking.openURL(webCameraURL).catch(() => {
-            Alert.alert("오류", "웹 카메라 페이지를 열 수 없습니다.");
-        });
+    
+        const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
+        setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
+        setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
+        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
     };
 
     const serviceunready = () => {
-        Alert.alert("😭 서비스 준비 중입니다! 😭");
-    };
+        Alert.alert('😭 서비스 준비 중입니다! 😭');
+        console.log('😭 서비스 준비 중입니다! 😭')
+    }
+    
 
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         >
-            <SafeAreaView style={{ flex: 1 }}>
-                <StatusBar barStyle="dark-content" />
-                <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-                    <View style={styles.container}>
-                        <View style={styles.header}>
-                            <TouchableOpacity
-                                onPress={() =>
-                                    router.push({ pathname: "/fridgeselect", params: { fridgeId } })
-                                }
-                                style={styles.backButton}
-                            >
-                                <Ionicons name="arrow-back" size={24} color="black" />
-                            </TouchableOpacity>
-                            <Text style={styles.title}>물건 추가</Text>
-                            <TouchableOpacity style={styles.saveButton} onPress={saveToFirestore}>
-                                <Text style={styles.saveButtonText}>저장</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <TouchableOpacity
-                        style={styles.expiryButton}
-                        onPress={openWebCamera} // 외부 브라우저로 WebCamera 열기
-                    >
+        <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar barStyle="dark-content" />
+            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+                <View style={styles.container}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                            <Ionicons name="arrow-back" size={24} color="black" />
+                        </TouchableOpacity>
+                        <Text style={styles.title}>물건 추가</Text>
+                        <TouchableOpacity style={styles.saveButton} onPress={saveToFirestore}>
+                            <Text style={styles.saveButtonText}>  저장</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity style={styles.expiryButton} onPress={serviceunready}>
                         <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
                     </TouchableOpacity>
 

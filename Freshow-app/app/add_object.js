@@ -39,7 +39,7 @@ const add_object = () => {
     const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
     const [customTags, setCustomTags] = useState([]);
     const [newTagName, setNewTagName] = useState("");
-    const currentUser = auth.currentUser;
+    console.log("Fridge ID:", fridgeId);
 
     useEffect(() => {
         (async () => {
@@ -93,14 +93,14 @@ const add_object = () => {
         );
 
         const itemData = {
-            [productName]: {
-                quantity: count || 0,
-                memo: productMemo || "메모 없음",
-                type: selectedType,
-                image: image || "이미지 없음",
-                unit: unit,
-                expiryDate: expiryDate.replace(/\. /g, "") || "유통기한 없음",
-            },
+            [productName]: { // 이름을 키로 사용하고, map 타입 데이터 저장
+                "남은 수량": count || 0,
+                "메모": productMemo || "메모 없음",
+                "물건 종류": selectedType,
+                "사진": image || "사진 없음", // 선택된 이미지 경로나 기본값
+                "용량 단위": unit, 
+                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음", // YYYYMMDD 형식
+            }
         };
 
         try {
@@ -151,14 +151,14 @@ const add_object = () => {
             return;
         }
 
-        const newTag = { icon: "🔖", label: newTagName };
-        setCustomTags((prevTags) => [...prevTags, newTag]);
-        setSelectedTag(newTagName);
-        closeCustomTagModal();
+        const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
+        setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
+        setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
+        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
     };
 
     const openWebCamera = () => {3345
-        const webCameraURL = "https://c528-61-34-253-109.ngrok-free.app/webcamera";
+        const webCameraURL = "https://105a-222-118-68-18.ngrok-free.app/webcamera";
         Linking.openURL(webCameraURL).catch(() => {
             Alert.alert("오류", "웹 카메라 페이지를 열 수 없습니다.");
         });
