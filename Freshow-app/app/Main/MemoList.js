@@ -15,8 +15,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { styles } from '../app/components/css/MemoListStyle';
-import { db, auth } from './firebaseconfig';
+import { styles } from '../components/css/Main/MemoListStyle';
+import { db, auth } from '../Firebase/firebaseconfig';
 import {
     collection,
     getDocs,
@@ -195,7 +195,7 @@ export default function MemoList() {
                             <View style={styles.header}>
                             <Link
                                 href={{
-                                    pathname: "/mainpage",
+                                    pathname: "Main/mainpage",
                                     params: { fridgeId }, // fridgeId를 명시적으로 전달
                                 }}
                             >

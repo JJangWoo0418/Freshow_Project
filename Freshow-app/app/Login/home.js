@@ -13,8 +13,8 @@ import {
     Keyboard 
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { COLORS } from "../constants";
-import styles from './components/css/homestyle';
+import { COLORS } from "../../constants";
+import styles from '../components/css/Login/homestyle';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { TouchableWithoutFeedback } from 'react-native';
 
@@ -36,7 +36,7 @@ const Home = () => {
             const user = userCredential.user;
 
             Alert.alert('👏 로그인 성공', `${username}님, 환영합니다!`);
-            router.push('fridgeselect');
+            router.push('Fridge/fridgeselect');
         } catch (error) {
             console.error('Login Error:', error);
             Alert.alert('🚨 로그인 실패', '아이디 또는 비밀번호를 확인해주세요.');
@@ -73,7 +73,7 @@ const Home = () => {
                         >
                             <View style={styles.topContent}>
                                 <Image
-                                    source={require('../assets/Freshow Intro.png')}
+                                    source={require('../../assets/Freshow Intro.png')}
                                     style={styles.mascot}
                                 />
                             </View>
@@ -98,18 +98,18 @@ const Home = () => {
                                     style={styles.loginButton}
                                     onPress={handleLogin}
                                 >
-                                    <Image source={require('../assets/LoginBtn.png')} />
+                                    <Image source={require('../../assets/LoginBtn.png')} />
                                 </TouchableOpacity>
-                                <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
+                                <Image source={require('../../assets/Stick.png')} style={styles.stickBar} />
                                 <TouchableOpacity style={styles.kakaoButton} onPress={kakaologin}>
                                     <Image
-                                        source={require('../assets/KakaoBtn.png')}
+                                        source={require('../../assets/KakaoBtn.png')}
                                         style={styles.socialIcon}
                                     />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => router.push('register')}>
+                                <TouchableOpacity onPress={() => router.push('Login/register')}>
                                     <Image 
-                                        source={require('../assets/RegisterBtn.png')}
+                                        source={require('../../assets/RegisterBtn.png')}
                                         style={styles.registerBtn}
                                     />
                                 </TouchableOpacity>

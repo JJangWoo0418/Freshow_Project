@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, Alert, FlatList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { auth, db } from './firebaseconfig';
+import { auth, db } from '../Firebase/firebaseconfig';
 import { collection, addDoc } from "firebase/firestore";
-import styles from './components/css/fridgeaddstyle';
+import styles from '../components/css/Fridge/fridgeaddstyle';
 
 const FridgeAdd = () => {
     const router = useRouter();
@@ -73,7 +73,7 @@ const FridgeAdd = () => {
             await addDoc(fridgeCollection, fridgeData);
 
             Alert.alert("성공", "냉장고가 추가되었습니다!");
-            router.push('/fridgeselect', { refresh: true }); // 데이터 재로드 트리거
+            router.push('Fridge/fridgeselect', { refresh: true }); // 데이터 재로드 트리거
         } catch (error) {
             console.error("냉장고 추가 오류:", error);
             Alert.alert("오류", "냉장고를 추가하는 도중 문제가 발생했습니다.");
@@ -87,7 +87,7 @@ const FridgeAdd = () => {
                 <View style={styles.container}>
                     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                         <Image
-                            source={require('../assets/Arrow-Left.png')}
+                            source={require('../../assets/Arrow-Left.png')}
                             style={styles.backButtonImage}
                         />
                     </TouchableOpacity>

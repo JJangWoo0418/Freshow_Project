@@ -12,8 +12,8 @@ import {
 } from 'react-native';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import styles from './components/css/mainpagestyle';
-import { auth, db } from '../app/firebaseconfig';
+import styles from '../components/css/Main/mainpagestyle';
+import { auth, db } from '../Firebase/firebaseconfig';
 import {
     collection,
     doc,
@@ -42,7 +42,7 @@ export default function MainPage() {
                 fetchIngredients();
             } else if (!user) {
                 Alert.alert("로그인이 필요합니다.");
-                router.push("/home"); // 로그인 페이지로 이동
+                router.push("Login/home"); // 로그인 페이지로 이동
             }
         });
         return () => unsubscribe(); // 컴포넌트 언마운트 시 구독 해제
@@ -154,7 +154,7 @@ export default function MainPage() {
 
                         return {
                             name: key,
-                            image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../assets/삼겹살.jpg'),
+                            image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../../assets/삼겹살.jpg'),
                             expiryDate: data[key]["유통기한"] || "유통기한 없음",
                             expiryPercentage,
                             remaining: data[key]["남은 수량"] || 0,
@@ -239,7 +239,7 @@ export default function MainPage() {
         <ScrollView contentContainerStyle={styles.container}>
             <StatusBar barStyle="dark-content"/>
             <View style={styles.header}>
-                <Link href="/fridgeselect" style={styles.backButton}>
+                <Link href="Fridge/fridgeselect" style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </Link>
                 <Text style={styles.title}>{fridgeName}</Text>
@@ -247,24 +247,24 @@ export default function MainPage() {
             </View>
 
             <View style={styles.topIcons}>
-            <Link href = {{ pathname: "/recipepage",  // 원하는 페이지 경로
+            <Link href = {{ pathname: "Recipe/recipepage",  // 원하는 페이지 경로
                     params: { userId: auth.currentUser?.uid, fridgeId: fridgeId },  // userId와 fridgeId 전달
                 }}
                 style={styles.iconWrapper}
             >
-                <Image source={require('../assets/RecipeSuggestBtn.png')} style={styles.icon} />
+                <Image source={require('../../assets/RecipeSuggestBtn.png')} style={styles.icon} />
             </Link>
             
                 <TouchableOpacity style={styles.iconWrapper} onPress={() => router.push({
-                    pathname: "/add_object",
+                    pathname: "Ingredient/add_object",
                     params: {fridgeId}, // fridgeId 전달
                 })}>
-                    <Image source={require('../assets/AddIngredientBtn.png')} style={styles.icon} />
+                    <Image source={require('../../assets/AddIngredientBtn.png')} style={styles.icon} />
                 </TouchableOpacity>
             </View>
 
             {/* 메모 영역 */}
-            <Image source={require('../assets/MemoText.png')} style={styles.memotext} />
+            <Image source={require('../../assets/MemoText.png')} style={styles.memotext} />
             {/* 메모 및 제목, 햄버거 버튼 영역 */}
             <View style={styles.memoSection}>
                 <View style={styles.memoHeader}>
@@ -275,7 +275,7 @@ export default function MainPage() {
                         placeholder="메모 제목..."
                         onBlur={handleMemoSave}
                     />
-                    <Link href={`/MemoList?fridgeId=${fridgeId}`} style={styles.menuIcon}>
+                    <Link href={`Main/MemoList?fridgeId=${fridgeId}`} style={styles.menuIcon}>
                         <Ionicons name="menu" size={24} color="black" />
                     </Link>
                 </View>
@@ -315,7 +315,7 @@ export default function MainPage() {
             {/* 재료 관리 버튼 */}
             <TouchableOpacity
                 style={styles.ingredientSection}
-                onPress={() => router.push(`/IngredientManagement?fridgeId=${fridgeId}`)}
+                onPress={() => router.push(`Ingredient/IngredientManagement?fridgeId=${fridgeId}`)}
             >
                 <Text style={styles.sectionTitle}>재료관리</Text>
                 {ingredients.slice(0, 4).map((ingredient, index) => ( // 처음 4개만 표시

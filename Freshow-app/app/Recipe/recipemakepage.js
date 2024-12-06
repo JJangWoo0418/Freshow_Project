@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, ScrollView, StatusBar } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import OpenAI from "openai";
-import { OPENAI_API_KEY } from './components/apikey';
-import styles from './components/css/recipemakepagestyle';
+import { OPENAI_API_KEY } from '../components/apikey';
+import styles from '../components/css/Recipe/recipemakepagestyle';
 
 // OpenAI 설정
 const openai = new OpenAI({
@@ -82,7 +82,7 @@ const RecipeMakePage = () => {
                     style={styles.footerButton}
                     onPress={() =>
                         router.push({
-                            pathname: '/healthrecipe',
+                            pathname: 'Recipe/healthrecipe',
                             params: {
                                 name,      // 요리 이름 전달
                                 fridgeId,  // fridgeId 추가 전달
@@ -90,12 +90,12 @@ const RecipeMakePage = () => {
                         })
                     }
                 >
-                    <Image source={require('../assets/HealthEatBtn.png')} style={styles.healtheatbtn} />
+                    <Image source={require('../../assets/HealthEatBtn.png')} style={styles.healtheatbtn} />
                 </TouchableOpacity>
 
 
 
-                <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
+                <Image source={require('../../assets/Stick.png')} style={styles.stickBar} />
             </View>
 
             {/* 레시피 설명 영역 */}
@@ -115,18 +115,18 @@ const RecipeMakePage = () => {
             {/* 하단 버튼 영역 */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
-                    <Image source={require('../assets/AgainButton.png')} style={styles.footerIcon2} />
+                    <Image source={require('../../assets/AgainButton.png')} style={styles.footerIcon2} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.footerButton}
                     onPress={() =>
                         router.push({
-                            pathname: 'mainpage',
+                            pathname: 'Main/mainpage',
                             params: { fridgeId: fridgeId || '' }, // fridgeId가 없으면 빈 값 전달
                         })
                     }
                 >
-                    <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
+                    <Image source={require('../../assets/GoMainBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>
         </View>

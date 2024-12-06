@@ -7,10 +7,10 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { auth, db } from './firebaseconfig';
+import { auth, db } from '../Firebase/firebaseconfig';
 import { collection, getDoc, getDocs, doc } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';
-import styles from './components/css/IngredientManagementStyle';
+import styles from '../components/css/Ingredient/IngredientManagementStyle';
 
 const IngredientManagement = () => {
     const { fridgeId } = useLocalSearchParams(); // MainPage에서 전달받은 fridgeId
@@ -59,7 +59,7 @@ const IngredientManagement = () => {
                 const data = doc.data();
                 const items = Object.keys(data).map((key) => ({
                     name: key, // 음식 이름 (문서 필드 이름)
-                    image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../assets/삼겹살.jpg'), // 이미지
+                    image: data[key]["사진"] ? { uri: data[key]["사진"] } : require('../../assets/삼겹살.jpg'), // 이미지
                     expiryDate: data[key]["유통기한"] || "유통기한 없음", // 유통기한
                     expiryPercentage: calculateExpiryPercentage(data[key]["유통기한"]), // 유통기한 퍼센트 계산
                     memo: data[key]["메모"] || '', // 메모 추가
@@ -131,7 +131,7 @@ const IngredientManagement = () => {
                                 });
                         
                                 router.push({
-                                    pathname: '/edit_object', // 이동할 페이지 경로
+                                    pathname: 'Ingredient/edit_object', // 이동할 페이지 경로
                                     params: {
                                         itemName: ingredient.name, // 음식 이름 전달
                                         image: ingredient.image.uri || null,

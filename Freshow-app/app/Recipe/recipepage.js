@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { db } from './firebaseconfig'; // Firestore 인스턴스 가져오기
+import { db } from '../Firebase/firebaseconfig'; // Firestore 인스턴스 가져오기
 import { collection, getDocs } from 'firebase/firestore';
-import styles from './components/css/recipepagestyle';
+import styles from '../components/css/Recipe/recipepagestyle';
 import OpenAI from "openai";
-import { OPENAI_API_KEY } from './components/apikey';
+import { OPENAI_API_KEY } from '../components/apikey';
 import { useLocalSearchParams } from 'expo-router';
 
 // OpenAI 설정
@@ -161,7 +161,7 @@ const RecipePage = () => {
                 }); // 로그 추가
     
                 router.push({
-                    pathname: '/recipemakepage',
+                    pathname: 'Recipe/recipemakepage',
                     params: {
                         id: item.id,
                         name: item.name,
@@ -173,7 +173,7 @@ const RecipePage = () => {
         >
             <Image source={{ uri: item.image }} style={styles.recipeImage} />
             <Text style={styles.recipeName}>{item.name}</Text>
-            <Image source={require('../assets/ArrowRightBtn.png')} style={styles.arrowIcon} />
+            <Image source={require('../../assets/ArrowRightBtn.png')} style={styles.arrowIcon} />
         </TouchableOpacity>
     );
     
@@ -191,15 +191,15 @@ const RecipePage = () => {
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
-            <Image source={require('../assets/RecipeRecommendLogo.png')} style={styles.Logo} />
+            <Image source={require('../../assets/RecipeRecommendLogo.png')} style={styles.Logo} />
 
             {loading ? (
                 <View style={styles.loadingContainer}>
-                    <Image source={require('../assets/tom-and-jerry-searching.gif')} style={styles.loadingImage} />
-                    <Image source={require('../assets/RecipeWaitText.png')} style={styles.loadingText} />
+                    <Image source={require('../../assets/tom-and-jerry-searching.gif')} style={styles.loadingImage} />
+                    <Image source={require('../../assets/RecipeWaitText.png')} style={styles.loadingText} />
                 </View>
             ) : recipes.length === 0 ? (
-                <Image source={require('../assets/RecipeLogo.png')} style={styles.recipeLogo} />
+                <Image source={require('../../assets/RecipeLogo.png')} style={styles.recipeLogo} />
             ) : (
                 <FlatList
                     data={recipes}
@@ -210,7 +210,7 @@ const RecipePage = () => {
             )}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                    <Image source={require('../assets/back.png')} style={styles.backButtonIcon} />
+                    <Image source={require('../../assets/back.png')} style={styles.backButtonIcon} />
                 </TouchableOpacity>
             </View>
         </View>

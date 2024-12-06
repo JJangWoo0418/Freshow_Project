@@ -3,8 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-nat
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { auth, db } from './firebaseconfig';
-import styles from './components/css/fridgeeditstyle';
+import { auth, db } from '../Firebase/firebaseconfig';
+import styles from '../components/css/Fridge/fridgeeditstyle';
 
 const FridgeEdit = () => {
     const router = useRouter();
@@ -65,7 +65,7 @@ const FridgeEdit = () => {
             });
 
             Alert.alert("성공", "냉장고가 수정되었습니다.");
-            router.push('/fridgeselect', { refresh: true });
+            router.push('Fridge/fridgeselect', { refresh: true });
         } catch (error) {
             console.error("냉장고 수정 오류:", error);
         }
@@ -79,7 +79,7 @@ const FridgeEdit = () => {
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                 <Image
-                    source={require('../assets/Arrow-Left.png')}
+                    source={require('../../assets/Arrow-Left.png')}
                     style={styles.backButtonImage}
                 />
             </TouchableOpacity>

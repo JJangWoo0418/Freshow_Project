@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, StatusBar } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import OpenAI from "openai";
-import { OPENAI_API_KEY } from './components/apikey';
-import styles from './components/css/healthrecipestyle';
+import { OPENAI_API_KEY } from '../components/apikey';
+import styles from '../components/css/Recipe/healthrecipestyle';
 
 // OpenAI 설정
 const openai = new OpenAI({
@@ -60,7 +60,7 @@ const HealthRecipe = () => {
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
-            <Image source={require('../assets/HealthEatLogo.png')} style={styles.healtheatlogo} />
+            <Image source={require('../../assets/HealthEatLogo.png')} style={styles.healtheatlogo} />
 
             {loading ? (
                 <ActivityIndicator size="large" color="#FF6347" style={styles.loader} />
@@ -78,18 +78,18 @@ const HealthRecipe = () => {
             {/* 하단 버튼 영역 */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.footerButton} onPress={() => router.back()}>
-                    <Image source={require('../assets/back.png')} style={styles.footerIcon} />
+                    <Image source={require('../../assets/back.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.footerButton}
                     onPress={() =>
                         router.push({
-                            pathname: 'mainpage',
+                            pathname: 'Main/mainpage',
                             params: { fridgeId }, // fridgeId를 함께 전달
                         })
                     }
                 >
-                    <Image source={require('../assets/GoMainBtn.png')} style={styles.footerIcon} />
+                    <Image source={require('../../assets/GoMainBtn.png')} style={styles.footerIcon} />
                 </TouchableOpacity>
             </View>
         </View>

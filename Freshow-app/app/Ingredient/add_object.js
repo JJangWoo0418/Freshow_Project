@@ -8,85 +8,47 @@ import {
     TouchableOpacity,
     Image,
     Alert,
-    StatusBar,
     Modal,
+    StatusBar,
     Platform,
     KeyboardAvoidingView
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
-import { doc, getDoc, setDoc, updateDoc, deleteField } from "firebase/firestore";
-import { auth, db } from "./firebaseconfig";
-import styles from './components/css/add_objectstyle';
+import { doc, setDoc } from "firebase/firestore"; // Firestore 관련 함수
+import { auth,db } from "../Firebase/firebaseconfig"; // Firebase 설정
+import styles from '../components/css/Ingredient/add_objectstyle';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from "expo-router";
 
-const edit_object = () => {
-    const router = useRouter();
-    const { fridgeId, tag, itemName, image, expiryDate, memo, remaining, type, unit } = useLocalSearchParams();
-    console.log("라우팅된 데이터:", { fridgeId, tag, itemName, unit });
-    // State 초기화
-    const [productName, setProductName] = useState('');
-    const [productMemo, setProductMemo] = useState('');
+const add_object = () => {
     const [count, setCount] = useState(0);
-    const [unitState, setUnit] = useState('');
-    const [expiryDateState, setExpiryDate] = useState('');
-    const [imageState, setImage] = useState(null);
-    const [selectedType, setSelectedType] = useState('냉장');
+    const [selectedType, setSelectedType] = useState("냉장");
+    const [productName, setProductName] = useState("");
+    const [productMemo, setProductMemo] = useState("");
+    const [expiryDate, setExpiryDate] = useState("");
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [image, setImage] = useState(null);
+    const [selectedTag, setSelectedTag] = useState("태그 설정");
+    const [unit, setUnit] = useState("");
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
     const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); 
     const [customTags, setCustomTags] = useState([]); 
-    const [newTagName, setNewTagName] = useState("");
-    const [selectedTag, setSelectedTag] = useState("태그 설정");
+    const [newTagName, setNewTagName] = useState(""); 
+    const router = useRouter();
+    const currentUser = auth.currentUser;
+    const { fridgeId } = useLocalSearchParams();
+    console.log("Fridge ID:", fridgeId);
 
-    // Firestore에서 데이터 가져오기
-    const fetchData = async () => {
-        try {
-            console.log("Fetching data for fridgeId:", fridgeId, "tag:", tag, "itemName:", itemName);
-    
-            // Firestore 문서 참조
-            const docRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${tag}`);
-            const docSnap = await getDoc(docRef);
-    
-            if (docSnap.exists()) {
-                console.log("Document data:", docSnap.data());
-    
-                // 선택된 항목의 데이터 가져오기
-                const data = docSnap.data()[itemName];
-                if (data) {
-                    // 데이터 상태 업데이트
-                    setProductName(itemName || '');
-                    setCount(data?.["남은 수량"] || 0);
-                    setProductMemo(data?.["메모"] || '');
-                    setSelectedType(data?.["물건 종류"] || '냉장');
-                    setImage(data?.["사진"] || null);
-                    setUnit(data?.["용량 단위"] || '');
-                    setExpiryDate(data?.["유통기한"] || '');
-                    setSelectedTag(tag || "태그 설정"); // 태그 상태 업데이트
-    
-                    console.log("Fetched item data:", data);
-                } else {
-                    Alert.alert("오류", "선택한 항목의 데이터를 찾을 수 없습니다.");
-                }
-            } else {
-                Alert.alert("오류", "태그 데이터를 찾을 수 없습니다.");
-            }
-        } catch (error) {
-            console.error("데이터 가져오기 오류:", error.message); // 오류 메시지 출력
-            Alert.alert("오류", "데이터를 가져오는 중 문제가 발생했습니다.");
-        }
-    };
-    
     useEffect(() => {
-        if (fridgeId && tag && itemName) {
-            fetchData();
-        } else {
-            console.error("필수 데이터가 누락되었습니다:", { fridgeId, tag, itemName });
-        }
-    }, [fridgeId, tag, itemName]);
-    
+        (async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                Alert.alert("권한 필요", "이미지를 선택하려면 갤러리 접근 권한이 필요합니다.");
+            }
+        })();
+    }, []);
 
     const pickImage = async () => {
         try {
@@ -118,49 +80,38 @@ const edit_object = () => {
         hideDatePicker();
     };
 
-    const saveEditsToFirestore = async () => {
-        if (!productName || !selectedTag || selectedTag === "태그 설정") {
+    const saveToFirestore = async () => {
+        if (!productName || selectedTag === "태그 설정") {
             Alert.alert("오류", "상품 이름과 태그를 입력해주세요.");
             return;
         }
     
-        // 기존 태그와 새 태그 참조
-        const currentDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${tag}`);
-        const newDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`);
+        const fridgeRef = doc(
+            db,
+            `계정/${currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`
+        );
     
-        // 새 태그로 이동할 데이터
-        const updatedData = {
-            [productName]: {
-                "남은 수량": count,
+        const itemData = {
+            [productName]: { // 이름을 키로 사용하고, map 타입 데이터 저장
+                "남은 수량": count || 0,
                 "메모": productMemo || "메모 없음",
                 "물건 종류": selectedType,
-                "사진": imageState || "사진 없음",
-                "용량 단위": unitState || "단위 없음",
-                "유통기한": expiryDateState || "유통기한 없음",
-            },
+                "사진": image || "사진 없음", // 선택된 이미지 경로나 기본값
+                "용량 단위": unit, 
+                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음", // YYYYMMDD 형식
+            }
         };
     
         try {
-            // 1. 기존 태그에서 해당 물건만 삭제
-            if (tag !== selectedTag) {
-                console.log("기존 태그에서 삭제 중:", tag, productName);
-                await updateDoc(currentDocRef, {
-                    [productName]: deleteField(),
-                });
-            }
-    
-            // 2. 새 태그로 데이터 병합 저장
-            console.log("새 태그로 병합 중:", selectedTag, updatedData);
-            await setDoc(newDocRef, updatedData, { merge: true });
-    
-            Alert.alert("👏 수정이 완료되었습니다!");
-            router.back();
+            await setDoc(fridgeRef, itemData, { merge: true }); // 병합 저장
+            Alert.alert("👏재료가 추가되었습니다!👏");
+            router.back()
         } catch (error) {
-            console.error("Firestore 저장 오류:", error.message);
-            Alert.alert("오류", "수정 저장 중 문제가 발생했습니다.");
+            console.error("Firestore 저장 중 오류 발생:", error);
+            Alert.alert("오류", "Firestore 저장 중 문제가 발생했습니다.");
         }
     };
-    
+
     const openTagModal = () => {
         setIsTagModalVisible(true);
     };
@@ -187,59 +138,29 @@ const edit_object = () => {
         setIsCustomTagModalVisible(false);
     };
 
-    const saveCustomTag = async () => {
+    const saveCustomTag = () => {
         if (!newTagName.trim()) {
             Alert.alert("오류", "태그 이름을 입력해주세요.");
             return;
         }
     
-        // Firestore 문서 경로
-        const newDocRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${newTagName}`);
-    
-        try {
-            // Firestore에 새 태그 생성 (빈 데이터로 초기화)
-            await setDoc(newDocRef, {});
-    
-            // 사용자 지정 태그 추가
-            const newTag = { icon: "🔖", label: newTagName }; // 새 태그 데이터 생성
-            setCustomTags((prevTags) => [...prevTags, newTag]);
-            setSelectedTag(newTagName); // 새 태그를 현재 선택된 태그로 설정
-            closeCustomTagModal();
-    
-            Alert.alert("👏 새 태그가 성공적으로 추가되었습니다! 👏");
-        } catch (error) {
-            console.error("태그 생성 중 오류:", error.message);
-            Alert.alert("오류", "새 태그 생성 중 문제가 발생했습니다.");
+        const isDuplicate = customTags.some((tag) => tag.label === newTagName);
+        if (isDuplicate) {
+            Alert.alert("오류", "이미 존재하는 태그 이름입니다.");
+            return;
         }
-    };
     
+        const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
+        setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
+        setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
+        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
+    };
 
     const serviceunready = () => {
         Alert.alert('😭 서비스 준비 중입니다! 😭');
         console.log('😭 서비스 준비 중입니다! 😭')
     }
-
-    const deleteItemFromFirestore = async () => {
-        if (!selectedTag || !productName) {
-            Alert.alert("오류", "삭제할 항목이 유효하지 않습니다.");
-            return;
-        }
     
-        const docRef = doc(db, `계정/${auth.currentUser.uid}/냉장고/${fridgeId}/재료/${selectedTag}`);
-    
-        try {
-            // Firestore에서 해당 항목 삭제
-            await updateDoc(docRef, {
-                [productName]: deleteField(),
-            });
-    
-            Alert.alert("👏 물건이 성공적으로 삭제되었습니다! 👏");
-            router.back(); // 이전 화면으로 돌아가기
-        } catch (error) {
-            console.error("물건 삭제 중 오류:", error.message);
-            Alert.alert("오류", "물건 삭제 중 문제가 발생했습니다.");
-        }
-    };
 
     return (
         <KeyboardAvoidingView
@@ -255,9 +176,9 @@ const edit_object = () => {
                         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                             <Ionicons name="arrow-back" size={24} color="black" />
                         </TouchableOpacity>
-                        <Text style={styles.title}>물건 수정</Text>
-                        <TouchableOpacity style={styles.saveButton} onPress={saveEditsToFirestore}>
-                            <Text style={styles.saveButtonText}>저장</Text>
+                        <Text style={styles.title}>물건 추가</Text>
+                        <TouchableOpacity style={styles.saveButton} onPress={saveToFirestore}>
+                            <Text style={styles.saveButtonText}>  저장</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -265,28 +186,27 @@ const edit_object = () => {
                         <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
                     </TouchableOpacity>
 
-                    {/* 사진 등록 */}
                     <Text style={styles.label}>사진 등록</Text>
                     <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-                        {imageState ? (
-                            <Image source={{ uri: imageState }} style={styles.imagePreview} />
+                        {image ? (
+                            <Image source={{ uri: image }} style={styles.imagePreview} />
                         ) : (
-                            <Image source={require('../assets/PhotoDropIcon.png')} style={styles.imageButtonText} />
+                            <Image source={require('../../assets/PhotoDropIcon.png')} style={styles.imageButtonText}/>
                         )}
                     </TouchableOpacity>
 
-                    {/* 물건 종류 */}
                     <Text style={styles.label}>물건 종류</Text>
                     <View style={styles.itemTypeContainer}>
-                    <View style={styles.toggleContainer}>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggleButton,
-                                selectedType === "냉장" && styles.selectedToggleButton,
-                            ]}
-                            onPress={() => setSelectedType("냉장")}
-                        >
-                            <Text style={[
+                        <View style={styles.toggleContainer}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.toggleButton,
+                                    selectedType === "냉장" && styles.selectedToggleButton,
+                                ]}
+                                onPress={() => setSelectedType("냉장")}
+                            >
+                                <Text
+                                    style={[
                                         styles.toggleButtonText,
                                         selectedType === "냉장" && styles.selectedToggleButtonText,
                                     ]}
@@ -294,14 +214,14 @@ const edit_object = () => {
                                     냉장
                                 </Text>
                             </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.toggleButton,
-                                selectedType === "냉동" && styles.selectedToggleButton,
-                            ]}
-                            onPress={() => setSelectedType("냉동")}
-                        >
-                            <Text
+                            <TouchableOpacity
+                                style={[
+                                    styles.toggleButton,
+                                    selectedType === "냉동" && styles.selectedToggleButton,
+                                ]}
+                                onPress={() => setSelectedType("냉동")}
+                            >
+                                <Text
                                     style={[
                                         styles.toggleButtonText,
                                         selectedType === "냉동" && styles.selectedToggleButtonText,
@@ -311,26 +231,24 @@ const edit_object = () => {
                                 </Text>
                                 
                             </TouchableOpacity>
-                    </View>
+                        </View>
 
                         <TouchableOpacity style={styles.tagButton} onPress={openTagModal}>
-                            <Text style={styles.tagButtonText}>
-                                {selectedTag ? selectedTag : "태그 설정"}
-                            </Text>
+                        <Text style={styles.tagButtonText}>
+                            {selectedTag ? selectedTag : "태그 설정"}
+                        </Text>
                         </TouchableOpacity>
-                    </View>                    
+                    </View>
 
-                    {/* 이름 입력 */}
                     <Text style={styles.label}>이름</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="물건의 이름"
-                        placeholderTextColor={"gray"}
+                        placeholderTextColor={'gray'}
                         value={productName}
                         onChangeText={setProductName}
                     />
 
-                    {/* 남은 수량 및 단위 */}
                     <Text style={styles.label}>남은 수량</Text>
                     <View style={styles.countContainer}>
                         <TouchableOpacity
@@ -346,69 +264,50 @@ const edit_object = () => {
                         >
                             <Text style={styles.countButtonText}>+</Text>
                         </TouchableOpacity>
+
                         <TextInput
-                            style={styles.unitput}
-                            placeholder="용량 단위"
-                            placeholderTextColor={"gray"}
-                            value={unitState}
-                            onChangeText={setUnit}
+                        style={styles.unitput}
+                        placeholder="용량 단위"
+                        placeholderTextColor={'gray'}
+                        value={unit}
+                        onChangeText={setUnit}
                         />
                     </View>
 
-                    {/* 메모 */}
+                    
+
                     <Text style={styles.label}>메모</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="물건의 메모"
-                        placeholderTextColor={"gray"}
+                        placeholderTextColor={'gray'}
                         value={productMemo}
                         onChangeText={setProductMemo}
                     />
 
-                    {/* 유통기한 */}
                     <Text style={styles.label}>유통기한</Text>
                     <TouchableOpacity style={styles.expiryButton} onPress={serviceunready}>
                         <Text style={styles.expiryButtonText}>유통기한 인식하기</Text>
                     </TouchableOpacity>
                     <View style={styles.dateContainer}>
-                        <TextInput
-                            style={styles.dateInput}
-                            placeholder="YYYYMMDD"
-                            value={expiryDateState}
-                            onChangeText={setExpiryDate}
-                        />
-                        <TouchableOpacity onPress={showDatePicker}>
-                            <Text style={styles.calendarIconText}>📅</Text>
-                        </TouchableOpacity>
+                            <TextInput
+                                style={styles.dateInput}
+                                placeholder="YYYYMMDD"
+                                placeholderTextColor="#999"
+                                value={expiryDate}
+                                onChangeText={setExpiryDate}
+                            />
+                            <TouchableOpacity style={styles.calendarIcon} onPress={showDatePicker}>
+                                <Text style={styles.calendarIconText}>📅</Text>
+                            </TouchableOpacity>
                     </View>
-                    
-                    <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => {
-                            Alert.alert(
-                                "삭제 확인",
-                                "정말로 이 물건을 삭제하시겠습니까?",
-                                [
-                                    { text: "취소", style: "cancel" },
-                                    {
-                                        text: "삭제",
-                                        style: "destructive",
-                                        onPress: deleteItemFromFirestore,
-                                    },
-                                ]
-                            );
-                        }}
-                    >
-                        <Text style={styles.expiryButtonText}>삭제하기</Text>
-                    </TouchableOpacity>
-
-
                     <DateTimePickerModal
                         isVisible={isDatePickerVisible}
                         mode="date"
                         onConfirm={handleConfirm}
                         onCancel={hideDatePicker}
                     />
+
                     <Modal
                         key="tag-modal"
                         animationType="fade"
@@ -416,7 +315,7 @@ const edit_object = () => {
                         visible={isTagModalVisible}
                         onRequestClose={closeTagModal}
                     >
-                        <View style={styles.modalOverlay}>
+                        <TouchableOpacity style={styles.modalOverlay} onPress={closeTagModal}>
                             <View style={styles.modalBox}>
                                 <View style={styles.modalHeader}>
                                     <Text style={styles.modalTitle}>태그 설정하기</Text>
@@ -425,6 +324,7 @@ const edit_object = () => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.tagList}>
+                                    {/* 기본 제공 태그 */}
                                     {[
                                         { icon: "🍖", label: "육류" },
                                         { icon: "🥦", label: "채소류" },
@@ -448,16 +348,18 @@ const edit_object = () => {
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
+                                    {/* 사용자 지정 태그 */}
                                     {customTags.map((tag, index) => (
                                         <TouchableOpacity
                                             key={`custom-${index}`}
                                             style={styles.tagItem}
                                             onPress={() => selectTag(tag.label)}
                                         >
-                                            <Text style={styles.tagIcon}>🔖</Text>
+                                            <Text style={styles.tagIcon}>{tag.icon}</Text>
                                             <Text style={styles.tagLabel}>{tag.label}</Text>
                                         </TouchableOpacity>
                                     ))}
+                                    {/* 사용자 지정 태그 추가 버튼 */}
                                     <TouchableOpacity
                                         style={styles.customTagButton}
                                         onPress={openCustomTagModal}
@@ -466,8 +368,9 @@ const edit_object = () => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </Modal>
+
 
                     <Modal
                         animationType="slide"
@@ -505,4 +408,4 @@ const edit_object = () => {
     );
 };
 
-export default edit_object;
+export default add_object;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, TextInput, StatusBar, Image, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import styles from './components/css/registerstyle';
-import { COLORS } from "../constants";
-import { signup } from './firebaseauth'; // firebaseconfig에서 signup 함수 임포트
-import { db } from './firebaseconfig'; // Firestore 인스턴스 가져오기
+import styles from '../components/css/Login/registerstyle';
+import { COLORS } from "../../constants";
+import { signup } from '../Firebase/firebaseauth'; // firebaseconfig에서 signup 함수 임포트
+import { db } from '../Firebase/firebaseconfig'; // Firestore 인스턴스 가져오기
 import { collection, addDoc } from 'firebase/firestore';
 
 const Register = () => {
@@ -59,7 +59,7 @@ const Register = () => {
             });
 
             Alert.alert('🎉 회원가입 성공', `${username}님, 환영합니다!`);
-            router.push('home');
+            router.push('Login/home');
         } catch (error) {
             console.error('Signup Error:', error);
             Alert.alert('🚨 회원가입 오류', error.message);
@@ -119,16 +119,16 @@ const Register = () => {
                         <Text style={styles.errorText}>{passwordError}</Text>
                     ) : null}
 
-                    <Image source={require('../assets/Stick.png')} style={styles.stickBar} />
+                    <Image source={require('../../assets/Stick.png')} style={styles.stickBar} />
 
                     <TouchableOpacity style={styles.registerButton} onPress={handleSignup}>
-                        <Image source={require('../assets/registerbtn2.png')} />
+                        <Image source={require('../../assets/registerbtn2.png')} />
                     </TouchableOpacity>
 
                     <View style={styles.footer}>
-                        <TouchableOpacity onPress={() => router.push('home')}>
+                        <TouchableOpacity onPress={() => router.push('Login/home')}>
                             <Image 
-                                source={require('../assets/registerquestionbtn.png')}
+                                source={require('../../assets/registerquestionbtn.png')}
                                 style={styles.registerBtn}
                             />
                         </TouchableOpacity>

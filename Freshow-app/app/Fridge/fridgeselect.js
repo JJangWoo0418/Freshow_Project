@@ -4,9 +4,9 @@ import { useRouter } from 'expo-router';
 import { Card, Button } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import { auth, db } from './firebaseconfig';
+import { auth, db } from '../Firebase/firebaseconfig';
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import styles from './components/css/fridgeselectstyle';
+import styles from '../components/css/Fridge/fridgeselectstyle';
 
 const FridgeSelect = () => {
     const router = useRouter();
@@ -75,7 +75,7 @@ const FridgeSelect = () => {
     const renderRightActions = (item) => (
         <TouchableOpacity
             style={styles.editButton}
-            onPress={() => router.push(`/fridgeedit?fridgeId=${item.id}`)}
+            onPress={() => router.push(`Fridge/fridgeedit?fridgeId=${item.id}`)}
         >
             <Text style={styles.actionText}>수정</Text>
         </TouchableOpacity>
@@ -86,12 +86,12 @@ const FridgeSelect = () => {
             <StatusBar barStyle="dark-content" />
             <View style={styles.header}>
                 <Image
-                    source={require('../assets/Freshow.png')}
+                    source={require('../../assets/Freshow.png')}
                     style={styles.freshow}
                 />
-                <TouchableOpacity style={styles.addButton} onPress={() => router.push('/fridgeadd')}>
+                <TouchableOpacity style={styles.addButton} onPress={() => router.push('Fridge/fridgeadd')}>
                     <Image
-                        source={require('../assets/plus.png')}
+                        source={require('../../assets/plus.png')}
                         style={styles.mascot}
                     />
                 </TouchableOpacity>
@@ -130,7 +130,7 @@ const FridgeSelect = () => {
                                         marginBottom: 0,
                                     }}
                                     title="냉장고 선택"
-                                    onPress={() => router.push(`/mainpage?fridgeId=${item.id}`)}
+                                    onPress={() => router.push(`Main/mainpage?fridgeId=${item.id}`)}
                                 />
                             </Card>
                         </Swipeable>
