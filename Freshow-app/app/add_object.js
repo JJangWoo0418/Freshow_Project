@@ -89,18 +89,20 @@ const add_object = () => {
         // 냉장고 ID를 포함하여 데이터 저장
         const fridgeRef = doc(
             db,
-            `accounts/${currentUser.uid}/fridges/${fridgeId}/ingredients/${selectedTag}`
+            `accounts/${currentUser.uid}/fridges/${fridgeId}/ingredients/${selectedTag}/items/${productName}
+`
         );
 
         const itemData = {
-            [productName]: {
-                quantity: count || 0,
-                memo: productMemo || "메모 없음",
-                type: selectedType,
-                image: image || "이미지 없음",
-                unit: unit,
-                expiryDate: expiryDate.replace(/\. /g, "") || "유통기한 없음",
-            },
+            productName: productName || "알 수 없음",
+            image: image || "이미지 없음", // 서버에서 받은 이미지 URL
+            tag: selectedTag || "미지정",
+            memo: productMemo || "메모 없음",
+            quantity: count || 0,
+            unit: unit || "개",
+            expiryDate: expiryDate.replace(/\. /g, "") || "유통기한 없음",
+            barcode: barcode || "바코드 없음", // 바코드 번호
+            createdAt: new Date().toISOString(), // 저장 시점
         };
 
         try {
@@ -158,7 +160,7 @@ const add_object = () => {
     };
 
     const openWebCamera = () => {3345
-        const webCameraURL = "https://2f66-61-34-253-110.ngrok-free.app/webcamera";
+        const webCameraURL = "https://f8ad-1-247-53-66.ngrok-free.app/webcamera";
         Linking.openURL(webCameraURL).catch(() => {
             Alert.alert("오류", "웹 카메라 페이지를 열 수 없습니다.");
         });

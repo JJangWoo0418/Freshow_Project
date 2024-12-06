@@ -20,5 +20,3 @@ const db = getFirestore(app); // Firestore
 const analytics = getAnalytics(app); // Analytics
 
 export { auth, db, analytics }; // 필요한 객체를 내보냄
-
-
