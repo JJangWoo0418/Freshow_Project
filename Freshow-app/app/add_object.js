@@ -39,7 +39,7 @@ const add_object = () => {
     const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
     const [customTags, setCustomTags] = useState([]);
     const [newTagName, setNewTagName] = useState("");
-    const currentUser = auth.currentUser;
+    console.log("Fridge ID:", fridgeId);
 
     useEffect(() => {
         (async () => {
@@ -89,20 +89,18 @@ const add_object = () => {
         // 냉장고 ID를 포함하여 데이터 저장
         const fridgeRef = doc(
             db,
-            `accounts/${currentUser.uid}/fridges/${fridgeId}/ingredients/${selectedTag}/items/${productName}
-`
+            `accounts/${currentUser.uid}/fridges/${fridgeId}/ingredients/${selectedTag}`
         );
 
         const itemData = {
-            productName: productName || "알 수 없음",
-            image: image || "이미지 없음", // 서버에서 받은 이미지 URL
-            tag: selectedTag || "미지정",
-            memo: productMemo || "메모 없음",
-            quantity: count || 0,
-            unit: unit || "개",
-            expiryDate: expiryDate.replace(/\. /g, "") || "유통기한 없음",
-            barcode: barcode || "바코드 없음", // 바코드 번호
-            createdAt: new Date().toISOString(), // 저장 시점
+            [productName]: { // 이름을 키로 사용하고, map 타입 데이터 저장
+                "남은 수량": count || 0,
+                "메모": productMemo || "메모 없음",
+                "물건 종류": selectedType,
+                "사진": image || "사진 없음", // 선택된 이미지 경로나 기본값
+                "용량 단위": unit, 
+                "유통기한": expiryDate.replace(/\. /g, "") || "유통기한 없음", // YYYYMMDD 형식
+            }
         };
 
         try {
@@ -153,10 +151,10 @@ const add_object = () => {
             return;
         }
 
-        const newTag = { icon: "🔖", label: newTagName };
-        setCustomTags((prevTags) => [...prevTags, newTag]);
-        setSelectedTag(newTagName);
-        closeCustomTagModal();
+        const newTag = { icon: "🔖", label: newTagName }; // 새 태그 생성
+        setCustomTags((prevTags) => [...prevTags, newTag]); // customTags 배열 업데이트
+        setSelectedTag(newTagName); // 추가된 태그를 현재 선택된 태그로 설정
+        closeCustomTagModal(); // 사용자 지정 태그 모달 닫기
     };
 
     const openWebCamera = () => {3345
