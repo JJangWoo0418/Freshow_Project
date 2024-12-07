@@ -198,7 +198,7 @@ export default function MainPage() {
             </View>
 
             <View style={styles.topIcons}>
-            <Link href = {{ pathname: "/recipepage",  // 원하는 페이지 경로
+            <Link href = {{ pathname: "/test",  // 원하는 페이지 경로
                     params: { userId: auth.currentUser?.uid, fridgeId: fridgeId },  // userId와 fridgeId 전달
                 }}
                 style={styles.iconWrapper}

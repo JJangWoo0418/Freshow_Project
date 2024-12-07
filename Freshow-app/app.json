@@ -32,7 +32,14 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends.",
+          "cameraPermission": "The app needs camera access to let you take pictures."
+        }
+      ]
     ],
     "name": "Freshow-App",
     "slug": "Freshow-App",
@@ -51,10 +58,19 @@
       "url": "https://u.expo.dev/2ce3950e-43df-4898-8984-45a111a9efce"
     },
     "android": {
-      "package": "com.shim010418.FreshowApp"
+      "package": "com.shim010418.FreshowApp",
+      "permissions": [
+        "CAMERA",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE"
+      ]
     },
     "ios": {
-      "bundleIdentifier": "com.shim010418.FreshowApp"
+      "bundleIdentifier": "com.shim010418.FreshowApp",
+      "infoPlist": {
+        "NSCameraUsageDescription": "The app needs camera access to let you take pictures.",
+        "NSPhotoLibraryUsageDescription": "The app needs access to your photo library to save or share pictures."
+      }
     }
   }
 }
