@@ -93,7 +93,7 @@ const add_object = () => {
                 }
             } catch (error) {
                 console.error("서버 요청 에러:", error);
-                Alert.alert("오류", "서버 요청 중 문제가 발생했습니다.");
+                Alert.alert("오류", "바코드가 잘 안보여요! 다시해도 안된다면 수기로 입력해주세요!");
             }
         } catch (error) {
             console.error("카메라 실행 에러:", error);
