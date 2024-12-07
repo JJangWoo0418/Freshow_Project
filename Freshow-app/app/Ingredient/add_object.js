@@ -14,10 +14,11 @@ import {
     KeyboardAvoidingView
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import axios from "axios";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { format } from "date-fns";
-import { doc, setDoc } from "firebase/firestore"; // Firestore 관련 함수
-import { auth,db } from "../Firebase/firebaseconfig"; // Firebase 설정
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../Firebase/firebaseconfig";
 import styles from '../components/css/Ingredient/add_objectstyle';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -33,13 +34,12 @@ const add_object = () => {
     const [selectedTag, setSelectedTag] = useState("태그 설정");
     const [unit, setUnit] = useState("");
     const [isTagModalVisible, setIsTagModalVisible] = useState(false);
-    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false); 
-    const [customTags, setCustomTags] = useState([]); 
-    const [newTagName, setNewTagName] = useState(""); 
+    const [isCustomTagModalVisible, setIsCustomTagModalVisible] = useState(false);
+    const [customTags, setCustomTags] = useState([]);
+    const [newTagName, setNewTagName] = useState("");
     const router = useRouter();
     const currentUser = auth.currentUser;
     const { fridgeId } = useLocalSearchParams();
-    console.log("Fridge ID:", fridgeId);
 
     useEffect(() => {
         (async () => {
@@ -50,20 +50,54 @@ const add_object = () => {
         })();
     }, []);
 
-    const pickImage = async () => {
+    const pickImageAndAnalyze = async () => {
         try {
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: "images",
+            // 카메라 실행
+            const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 1,
             });
 
-            if (!result.canceled) {
-                setImage(result.assets[0].uri);
+            if (result.canceled) {
+                console.log("사용자가 카메라를 취소했습니다.");
+                return;
+            }
+
+            const imageUri = result.assets[0].uri;
+            setImage(imageUri);
+
+            // 이미지 서버로 전송
+            const formData = new FormData();
+            formData.append("file", {
+                uri: imageUri,
+                type: "image/jpeg",
+                name: "barcode.jpg",
+            });
+
+            try {
+                const response = await axios.post(
+                    "https://cc83-222-118-68-18.ngrok-free.app/analyze",
+                    formData,
+                    { headers: { "Content-Type": "multipart/form-data" } }
+                );
+
+                if (response.data.success) {
+                    const { productName, manufacturer, imageUrl } = response.data.data;
+                    Alert.alert("바코드 인식 성공!", `제품명: ${productName}\n제조사: ${manufacturer}`);
+                    setProductName(productName);
+                    setImage(imageUrl); // 서버에서 받은 제품 이미지로 업데이트
+                } else {
+                    Alert.alert("바코드 인식 실패", "제품 정보를 찾을 수 없습니다.");
+                }
+            } catch (error) {
+                console.error("서버 요청 에러:", error);
+                Alert.alert("오류", "서버 요청 중 문제가 발생했습니다.");
             }
         } catch (error) {
-            console.log("이미지 선택 에러:", error);
+            console.error("카메라 실행 에러:", error);
+            Alert.alert("오류", "카메라 실행 중 문제가 발생했습니다.");
         }
     };
 
@@ -182,12 +216,12 @@ const add_object = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity style={styles.expiryButton} onPress={serviceunready}>
+                    <TouchableOpacity style={styles.expiryButton} onPress={pickImageAndAnalyze}>
                         <Text style={styles.expiryButtonText}>바코드 인식하기</Text>
                     </TouchableOpacity>
 
                     <Text style={styles.label}>사진 등록</Text>
-                    <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+                    <TouchableOpacity style={styles.imageButton} onPress={pickImageAndAnalyze}>
                         {image ? (
                             <Image source={{ uri: image }} style={styles.imagePreview} />
                         ) : (
