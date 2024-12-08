@@ -78,7 +78,7 @@ const add_object = () => {
 
             try {
                 const response = await axios.post(
-                    "https://cc83-222-118-68-18.ngrok-free.app/analyze",
+                    "https://be17-222-118-68-18.ngrok-free.app/analyze",
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
